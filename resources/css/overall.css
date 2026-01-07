@@ -1,0 +1,60 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+#main {
+    display: flex;
+    flex-direction: row;
+    min-height: calc(100vh - 4.5rem);
+}
+
+.menu_teacher {
+    flex-shrink: 0;
+}
+
+#content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background-color: #F6F9FD;
+    margin-top: 5px;
+    margin-left: 2px;
+    padding: 4rem;
+}
+
+#content #tieudechinh {
+    font-size: 2rem;
+    font-weight: 500;
+    font-weight: bolder;
+}
+
+#content #tieudephu {
+    font-size: 1.2rem;
+    font-weight: lighter !important;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+/* Tablet - màn hình từ 768px trở xuống */
+@media (max-width: 768px) {
+    #main {
+        flex-direction: column;
+    }
+    
+    .menu_teacher {
+        width: 100%;
+    }
+    
+    #content {
+        width: 100%;
+    }
+}
