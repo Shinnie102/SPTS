@@ -31,14 +31,14 @@ class DatabaseSeeder extends Seeder
             'is_active' => true,
         ]);
 
-        // Create Teachers
-        $teachers = [];
+        // Create Lecturers
+        $lecturers = [];
         for ($i = 1; $i <= 5; $i++) {
-            $teachers[] = User::create([
-                'name' => "Teacher $i",
-                'email' => "teacher$i@spts.com",
+            $lecturers[] = User::create([
+                'name' => "Lecturer $i",
+                'email' => "lecturer$i@spts.com",
                 'password' => Hash::make('password123'),
-                'role' => 'teacher',
+                'role' => 'lecturer',
                 'phone' => "0901234$i$i$i",
                 'gender' => $i % 2 == 0 ? 'female' : 'male',
                 'is_active' => true,
@@ -87,11 +87,11 @@ class DatabaseSeeder extends Seeder
         // Create Classes
         $classes = [];
         foreach ($subjectModels as $index => $subject) {
-            $teacher = $teachers[$index % count($teachers)];
+            $lecturer = $lecturers[$index % count($lecturers)];
             
             $class = ClassModel::create([
                 'subject_id' => $subject->id,
-                'teacher_id' => $teacher->id,
+                'lecturer_id' => $lecturer->id,
                 'code' => $subject->code . '-A1',
                 'name' => $subject->name . ' - Section A1',
                 'room' => 'Room ' . (101 + $index),
@@ -143,7 +143,7 @@ class DatabaseSeeder extends Seeder
                         'feedback' => $isGraded ? 'Good work!' : null,
                         'submitted_at' => $hasSubmitted ? now()->subDays(rand(1, 5)) : null,
                         'graded_at' => $isGraded ? now()->subDays(rand(0, 3)) : null,
-                        'graded_by' => $isGraded ? $teacher->id : null,
+                        'graded_by' => $isGraded ? $lecturer->id : null,
                     ]);
                 }
             }
@@ -166,7 +166,7 @@ class DatabaseSeeder extends Seeder
                             'date' => $date,
                             'status' => $status,
                             'note' => $status !== 'present' ? 'Note for ' . $status : null,
-                            'marked_by' => $teacher->id,
+                            'marked_by' => $lecturer->id,
                         ]);
                     }
                 }
@@ -175,7 +175,7 @@ class DatabaseSeeder extends Seeder
             // Create announcements
             Announcement::create([
                 'class_id' => $class->id,
-                'created_by' => $teacher->id,
+                'created_by' => $lecturer->id,
                 'title' => 'Welcome to ' . $class->name,
                 'content' => 'Welcome to the new semester! Please check the syllabus and assignment deadlines.',
                 'priority' => 'high',

@@ -7,7 +7,7 @@ html {
     font-size: 16px;
 }
 
-#menu_teacher {
+#menu_lecturer {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -32,12 +32,12 @@ html {
     padding: 0.3125rem;
 }
 
-#menu_teacher i {
+#menu_lecturer i {
     font-size: 1.6875rem;
     margin-bottom: 0.625rem;
 }
 
-#menu_teacher p {
+#menu_lecturer p {
     font-size: 0.875rem;
 }
 
@@ -78,7 +78,7 @@ a {
 
 /* Tablet - màn hình từ 768px trở xuống */
 @media (max-width: 768px) {
-    #menu_teacher {
+    #menu_lecturer {
         width: 6rem;
     }
     
@@ -88,19 +88,19 @@ a {
         margin-top: 1.875rem;
     }
     
-    #menu_teacher i {
+    #menu_lecturer i {
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
     }
     
-    #menu_teacher p {
+    #menu_lecturer p {
         font-size: 0.75rem;
     }
 }
 
 /* Mobile - màn hình từ 480px trở xuống */
 @media (max-width: 480px) {
-    #menu_teacher {
+    #menu_lecturer {
         width: 100%;
         height: auto;
         flex-direction: row;
@@ -121,12 +121,12 @@ a {
         width: 4.5rem;
     }
     
-    #menu_teacher i {
+    #menu_lecturer i {
         font-size: 1.25rem;
         margin-bottom: 0.25rem;
     }
     
-    #menu_teacher p {
+    #menu_lecturer p {
         font-size: 0.65rem;
     }
     

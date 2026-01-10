@@ -101,7 +101,7 @@
                 <div class="bg-white p-4 rounded shadow">
                     <h4 class="font-semibold">{{ $class->name }}</h4>
                     <p class="text-sm text-gray-600">{{ $class->subject->name }}</p>
-                    <p class="text-sm text-gray-600">Teacher: {{ $class->teacher->name }}</p>
+                    <p class="text-sm text-gray-600">Lecturer: {{ $class->lecturer->name }}</p>
                     <p class="text-sm text-gray-600">Room: {{ $class->room }}</p>
                     <a href="{{ route('student.classes.show', $class) }}" class="text-blue-500 text-sm hover:underline mt-2 inline-block">
                         View Details →

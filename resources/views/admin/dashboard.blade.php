@@ -33,8 +33,8 @@
         </div>
 
         <div class="bg-green-100 p-6 rounded-lg shadow">
-            <h3 class="text-gray-600 text-sm font-medium">Total Teachers</h3>
-            <p class="text-3xl font-bold text-green-600">{{ $stats['total_teachers'] }}</p>
+            <h3 class="text-gray-600 text-sm font-medium">Total Lecturers</h3>
+            <p class="text-3xl font-bold text-green-600">{{ $stats['total_lecturers'] }}</p>
         </div>
 
         <div class="bg-purple-100 p-6 rounded-lg shadow">

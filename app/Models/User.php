@@ -90,9 +90,9 @@ class User extends Authenticatable
         return $this->role->role_code === 'admin';
     }
 
-    public function isTeacher()
+    public function isLecturer()
     {
-        return $this->role->role_code === 'teacher';
+        return $this->role->role_code === 'lecturer';
     }
 
     public function isStudent()

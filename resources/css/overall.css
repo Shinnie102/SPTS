@@ -18,7 +18,7 @@ body {
     min-height: calc(100vh - 4.5rem);
 }
 
-.menu_teacher {
+.menu_lecturer {
     flex-shrink: 0;
 }
 
@@ -50,7 +50,7 @@ body {
         flex-direction: column;
     }
     
-    .menu_teacher {
+    .menu_lecturer {
         width: 100%;
     }
     
