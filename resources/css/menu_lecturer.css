@@ -14,7 +14,7 @@ html {
     align-items: center;
     background-color: #E0EAFA;
     width: 7.5rem;
-    height: calc(100vh - 4.5rem);
+    height: 100%;
     border-right: 1px solid #DEDCDC;
     box-shadow: #BEBBBB 0 0.5rem 0.5rem;
 }
