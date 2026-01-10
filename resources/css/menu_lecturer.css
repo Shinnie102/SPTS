@@ -13,10 +13,9 @@ html {
     justify-content: center;
     align-items: center;
     background-color: #E0EAFA;
-    width: 7.5rem;
+    width: 5rem;
     height: 100%;
     border-right: 1px solid #DEDCDC;
-    box-shadow: #BEBBBB 0 0.5rem 0.5rem;
 }
 
 .frame_menu {
@@ -24,29 +23,29 @@ html {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 5.625rem;
-    height: 4rem;
+    width: 4rem;
+    height: 3rem;
     background-color: #E0EAFA;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     border-radius: 20%;
-    padding: 0.3125rem;
+    padding: 0.25rem;
 }
 
 #menu_lecturer i {
-    font-size: 1.6875rem;
-    margin-bottom: 0.625rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
 }
 
 #menu_lecturer p {
-    font-size: 0.875rem;
+    font-size: 0.65rem;
 }
 
 .frame_logout {
     width: 100%;
     margin-top: auto;
-    margin-bottom: 1rem;
-    padding-top: 1.875rem;
-    padding-bottom: 1.875rem;
+    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -58,12 +57,12 @@ html {
 }
 
 .frame_logout i {
-    font-size: 1.6875rem;
-    margin-bottom: 0.625rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
 }
 
 .frame_logout p {
-    font-size: 0.875rem;
+    font-size: 0.7rem;
 }
 
 a {

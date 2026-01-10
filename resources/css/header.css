@@ -15,13 +15,13 @@ a {
 #header {
     background-color: #F6F9FD;
     width: 100%;
-    height: 4.5rem;
-    box-shadow: #BEBBBB 0 0.25rem 0.25rem;
+    height: 3.5rem;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     padding: 0 1rem;
+    border-bottom: 1px solid #DEDCDC;
 }
 
 #frame_logo {
@@ -31,44 +31,44 @@ a {
 }
 
 #logo {
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
     display: inline-block;
     align-items: center;
     border-radius: 30%;
 }
 
 #Name_logo {
-    font-size: 3rem;
+    font-size: 2rem;
     font-family: 'Gabarito', sans-serif;
     font-weight: 400;
-    margin-left: 1.875rem;
+    margin-left: 1rem;
     color: #0088F0;
 }
 
 .notification {
-    font-size: 1.875rem;
-    margin-right: 1.875rem;
+    font-size: 1.25rem;
+    margin-right: 1rem;
     cursor: pointer;
 }
 
 #infor_user {
     text-align: right;
-    font-size: 1rem;
+    font-size: 0.875rem;
     font-family: 'Roboto', sans-serif;
     border-left: 1px solid #000000;
-    padding-left: 1.875rem;
+    padding-left: 1rem;
 }
 
 #frame_MSSV {
     font-weight: 100;
-    font-size: 0.875rem;
+    font-size: 0.75rem;
 }
 
 .avatar {
-    width: 2.625rem;
-    height: 2.625rem;
-    margin-right: 1rem;
+    width: 2rem;
+    height: 2rem;
+    margin-right: 0.5rem;
     cursor: pointer;
 }
 
