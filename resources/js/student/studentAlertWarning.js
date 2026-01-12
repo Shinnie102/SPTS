@@ -113,7 +113,7 @@ class StudentAlertWarning {
                         {
                             type: 'fail_risk',
                             title: 'Cảnh báo nguy cơ không đạt',
-                            message: 'Các môn học dưới đây có nguy cơ không đủ điểm đạt. Vui lòng liên hệ giảng viên hoặc tham gia học phụ đạo.',
+                            message: 'Các môn học dưới đây có nguy cơ không đủ điểm đạt. Vui lòng liên hệ giảng viên hoặc đăng ký học cải thiện.',
                             severity: 'high',
                             subjects: [
                                 { name: 'Mạng máy tính', status: 'Điểm thường xuyên: 3.5' }

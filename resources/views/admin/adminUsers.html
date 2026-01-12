@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- hạn chế đụng vào file overall.css -->
+    <link rel="stylesheet" href="../../css/overall.css">
+    <link rel="stylesheet" href="../../css/admin/adminUsers.css">
+    <!-- --------------------------------- -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/vendor/all.min.css">
+    <title>Quản lý người dùng</title>
+</head>
+
+<body>
+    <!-- Header -->
+    <div class="header"></div>
+    <div id="main">
+        <!-- Menu -->
+        <div class="menu_admin"></div>
+
+        <div id="content">
+            <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
+            <h1 id="tieudechinh">Quản lý người dùng</h1>
+            <p id="tieudephu">Quản lý thông tin người dùng trong hệ thống</p>
+
+            <!-- Tabs -->
+            <div class="user-tabs">
+                <button class="tab active">Tất cả <span>5</span></button>
+                <button class="tab">Quản trị viên <span>1</span></button>
+                <button class="tab">Giáo viên <span>2</span></button>
+                <button class="tab">Sinh viên <span>2</span></button>
+            </div>
+
+            <div class="user-card">
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="btnAddUser">
+                        <i class="fa-solid fa-plus"></i>
+                        Thêm người dùng
+                    </button>
+                    <button class="btn btn-secondary" id="btnBulkAdd">
+                        <i class="fa-solid fa-users-gear"></i>
+                        Thêm hàng loạt
+                    </button>
+                </div>
+
+                <!-- Search -->
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Tìm kiếm theo tên, email hoặc ID..." />
+                </div>
+
+                <!-- Table -->
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>TÊN NGƯỜI DÙNG</th>
+                            <th>EMAIL</th>
+                            <th>VAI TRÒ</th>
+                            <th>TRẠNG THÁI</th>
+                            <th>NGÀY THAM GIA</th>
+                            <th>HÀNH ĐỘNG</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Data will be rendered by JS -->
+                    </tbody>
+                </table>
+
+                <!-- Table Footer with Pagination -->
+                <div class="table-footer">
+                    <span>Hiển thị 5 trên 5 người dùng</span>
+                    <div class="pagination">
+                        <!-- Pagination buttons will be rendered by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: User Detail -->
+    <div id="userDetailModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Thông tin chi tiết người dùng</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- User header with avatar -->
+                <div class="user-detail-header">
+                    <div class="user-avatar-large" id="detailAvatar">VA</div>
+                    <div class="user-detail-info">
+                        <h3 id="detailFullName">-</h3>
+                        <p id="detailUserId">-</p>
+                    </div>
+                </div>
+
+                <!-- Personal Info -->
+                <div class="info-section">
+                    <h4><i class="fa-solid fa-user"></i> Thông tin cá nhân</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Họ và tên</span>
+                            <span class="info-value" id="detailName">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ngày sinh</span>
+                            <span class="info-value" id="detailBirthday"><i class="fa-regular fa-calendar"></i> -</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Email</span>
+                            <span class="info-value" id="detailEmail"><i class="fa-regular fa-envelope"></i> -</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Số điện thoại</span>
+                            <span class="info-value" id="detailPhone"><i class="fa-solid fa-phone"></i> -</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Địa chỉ</span>
+                            <span class="info-value" id="detailAddress"><i class="fa-solid fa-location-dot"></i> -</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic/Work Info -->
+                <div class="info-section" id="academicInfoSection">
+                    <h4><i class="fa-solid fa-graduation-cap"></i> Thông tin học tập</h4>
+                    <div class="info-grid">
+                        <!-- Will be populated dynamically based on role -->
+                    </div>
+                </div>
+
+                <!-- System Info -->
+                <div class="info-section">
+                    <h4><i class="fa-solid fa-gear"></i> Thông tin hệ thống</h4>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Vai trò</span>
+                            <span class="info-value" id="detailRole">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Trạng thái</span>
+                            <span class="info-value" id="detailStatus">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ngày tham gia</span>
+                            <span class="info-value" id="detailJoinDate">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btnCloseDetail">Đóng</button>
+                <button class="btn btn-primary" id="btnEditUser">
+                    <i class="fa-solid fa-pen"></i>
+                    Chỉnh sửa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Add/Edit User Form -->
+    <div id="userFormModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2 id="formModalTitle">Thêm người dùng mới</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm">
+                    <!-- Basic Info -->
+                    <div class="form-group">
+                        <label class="form-label">Vai trò <span class="required">*</span></label>
+                        <select class="form-select" id="formRole" required>
+                            <option value="">-- Chọn vai trò --</option>
+                            <option value="admin">Quản trị viên</option>
+                            <option value="lecturer">Giảng viên</option>
+                            <option value="student">Sinh viên</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Họ và tên <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="formFullName" placeholder="Nguyễn Văn A" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Ngày sinh</label>
+                            <input type="date" class="form-input" id="formBirthday">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Email <span class="required">*</span></label>
+                            <input type="email" class="form-input" id="formEmail" placeholder="email@university.edu.vn" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-input" id="formPhone" placeholder="0912 345 678">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Địa chỉ</label>
+                        <textarea class="form-textarea" id="formAddress" placeholder="Nhập địa chỉ..."></textarea>
+                    </div>
+
+                    <!-- Temporary Password (only for new user) -->
+                    <div id="passwordField">
+                        <div class="form-group">
+                            <label class="form-label">Mật khẩu tạm <span class="required">*</span></label>
+                            <input type="text" class="form-input" id="formPassword" placeholder="Nhập mật khẩu tạm" required>
+                            <p style="font-size: 12px; color: #64748b; margin-top: 4px;">
+                                <i class="fa-solid fa-circle-info"></i>
+                                Người dùng sẽ được yêu cầu đổi mật khẩu khi đăng nhập lần đầu
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Additional Info Based on Role -->
+                    <div id="additionalFields">
+                        <!-- Will be populated dynamically based on role -->
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelForm">Hủy</button>
+                <button type="submit" form="userForm" class="btn btn-success" id="btnSubmitForm">
+                    <i class="fa-solid fa-check"></i>
+                    Lưu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Bulk Add Users -->
+    <div id="bulkAddModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h2>Thêm người dùng hàng loạt</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-tabs">
+                    <button type="button" class="form-tab active" data-tab="file">Tải file Excel/CSV</button>
+                    <button type="button" class="form-tab" data-tab="paste">Dán danh sách</button>
+                </div>
+
+                <!-- Tab: File Upload -->
+                <div class="tab-content" id="bulkTabFile" style="display: block;">
+                    <div class="form-group">
+                        <label class="form-label">Chọn file danh sách người dùng</label>
+                        <div class="file-upload-area" id="fileUploadArea">
+                            <i class="fa-solid fa-cloud-arrow-up"></i>
+                            <p><strong>Kéo thả file vào đây</strong> hoặc click để chọn</p>
+                            <p>Hỗ trợ: .xlsx, .xls, .csv (Tối đa 5MB)</p>
+                            <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-secondary">
+                            <i class="fa-solid fa-download"></i>
+                            Tải file mẫu
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab: Paste List -->
+                <div class="tab-content" id="bulkTabPaste" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Dán danh sách người dùng (Mỗi dòng: Tên, Email, Vai trò)</label>
+                        <textarea class="form-textarea" id="bulkPasteData" rows="10" placeholder="Nguyễn Văn A, nguyenvana@university.edu.vn, student&#10;Trần Thị B, tranthib@university.edu.vn, lecturer"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnCancelBulk">Hủy</button>
+                <button type="button" class="btn btn-primary" id="btnSubmitBulk">
+                    <i class="fa-solid fa-upload"></i>
+                    Tải lên
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script src="../../js/admin/admin.js"></script>
+    <script src="../../js/admin/adminUsers.js"></script>
+</body>
+
+</html>

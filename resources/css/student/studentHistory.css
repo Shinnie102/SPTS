@@ -1,0 +1,335 @@
+.history-container {
+    margin-top: 24px;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* ================= PROGRESS BAR SECTION ================= */
+.progress-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 24px;
+}
+
+.progress-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+}
+
+.progress-subtitle {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0 0 16px 0;
+}
+
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.progress-bar-wrapper {
+    flex: 1;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.progress-percentage {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+    min-width: 60px;
+    text-align: right;
+}
+
+/* ================= STATISTICS SECTION ================= */
+.statistics-section {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.stats-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.stats-header-left h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin: 0 0 6px 0;
+}
+
+.stats-header-left p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+.stats-header-right {
+    flex-shrink: 0;
+}
+
+.semester-dropdown {
+    padding: 8px 32px 8px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #334155;
+    background: white;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23334155' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+}
+
+/* ================= ATTENDANCE TABLE ================= */
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 16px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.attendance-table thead {
+    background: #f8fafc;
+}
+
+.attendance-table th {
+    padding: 12px;
+    text-align: center;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.attendance-table th:first-child,
+.attendance-table th:nth-child(2) {
+    text-align: left;
+}
+
+.attendance-table tbody tr.course-row {
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.attendance-table tbody tr.course-row:hover {
+    background: #f8fafc;
+}
+
+.attendance-table td {
+    padding: 12px;
+    text-align: center;
+    color: #334155;
+}
+
+.attendance-table td:first-child,
+.attendance-table td:nth-child(2) {
+    text-align: left;
+}
+
+.course-code {
+    font-weight: 500;
+    color: #1e293b;
+}
+
+/* Percentage colors */
+.percentage-high {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+.percentage-medium {
+    color: #f59e0b;
+    font-weight: 600;
+}
+
+.percentage-low {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Status badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-pass {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.status-warning {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.status-fail {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.status-learning {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Expand/Collapse icon */
+.expand-icon {
+    display: inline-block;
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+    color: #64748b;
+}
+
+.expand-icon.expanded {
+    transform: rotate(90deg);
+}
+
+/* ================= DETAIL ROWS (EXPANDED) ================= */
+.detail-row {
+    display: none;
+    background: #f8fafc;
+}
+
+.detail-row.show {
+    display: table-row;
+}
+
+.detail-cell {
+    padding: 0 !important;
+}
+
+.detail-content {
+    padding: 16px 24px;
+}
+
+.detail-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    margin: 0 0 12px 0;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.detail-table thead {
+    background: #f1f5f9;
+}
+
+.detail-table th {
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 600;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.detail-table th:first-child {
+    text-align: left;
+}
+
+.detail-table tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.detail-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.detail-table td {
+    padding: 10px 12px;
+    text-align: center;
+    color: #334155;
+}
+
+.detail-table td:first-child {
+    text-align: left;
+}
+
+/* Detail status badges */
+.detail-status {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.detail-present {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.detail-absent {
+    background: #fee2e2;
+    color: #ef4444;
+}
+
+.detail-late {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.detail-excused {
+    background: #e0e7ff;
+    color: #6366f1;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+    .stats-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .progress-bar-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .progress-percentage {
+        text-align: left;
+    }
+    
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}

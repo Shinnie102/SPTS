@@ -1,4 +1,4 @@
-# SPTS – Student Performance Tracking System
+# PointC – Student Performance Tracking System
 
 Hệ thống quản lý và theo dõi kết quả học tập sinh viên được xây dựng trên Laravel Framework.
 
@@ -19,7 +19,7 @@ Hệ thống quản lý và theo dõi kết quả học tập sinh viên đượ
 
 ## Giới thiệu
 
-SPTS (Student Performance Tracking System) là hệ thống quản lý điểm số sinh viên được xây dựng trên nền tảng web với các chức năng:
+PointC (Student Performance Tracking System) là hệ thống quản lý điểm số sinh viên được xây dựng trên nền tảng web với các chức năng:
 
 - **Admin**: Quản lý người dùng, môn học, phân quyền hệ thống
 - **Giảng viên**: Nhập điểm, quản lý lớp học, theo dõi sinh viên
@@ -53,7 +53,7 @@ Xây dựng hệ thống quản lý điểm số sinh viên số hóa, tập tru
 
 ### Phạm vi chức năng
 
-Hệ thống SPTS bao gồm các chức năng chính:
+Hệ thống PointC bao gồm các chức năng chính:
 
 **Quản lý người dùng:**
 - Đăng ký, đăng nhập, phân quyền tài khoản
@@ -133,15 +133,15 @@ git --version   # Git 2.x+
 
 ```bash
 # Clone dự án
-git clone <repository-url> SPTS
+git clone <repository-url> PointC
 
 # Di chuyển vào thư mục dự án
-cd SPTS
+cd PointC
 ```
 
 **Nếu nhận dự án từ đồng đội:**
 
-- Giải nén file zip vào thư mục `D:\Download\Program\xampp\htdocs\SPTS`
+- Giải nén file zip vào thư mục `D:\Download\Program\xampp\htdocs\PointC`
 - Mở Terminal tại thư mục dự án
 
 ### Bước 3: Cài đặt dependencies
@@ -177,14 +177,14 @@ php artisan key:generate
 
 1. **Khởi động XAMPP** → Bật **Apache** và **MySQL**
 2. **Truy cập phpMyAdmin**: http://localhost/phpmyadmin
-3. **Tạo database mới** với tên: `spts_db` 
+3. **Tạo database mới** với tên: `PointC_db` 
 
 ### Bước 4: Cập nhật file `.env`
 
 Mở file `.env` và chỉnh sửa thông tin database:
 
 ```env
-APP_NAME=SPTS
+APP_NAME=PointC
 APP_ENV=local
 APP_KEY=base64:xxxxxxxxxxxx
 APP_DEBUG=true
@@ -193,7 +193,7 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=spts_db          # Tên database vừa tạo
+DB_DATABASE=PointC_db          # Tên database vừa tạo
 DB_USERNAME=root             # Username MySQL
 DB_PASSWORD=                 # Password
 ```
@@ -233,7 +233,7 @@ Truy cập: **http://localhost:8000**
 ## Cấu trúc thư mục
 
 ```
-SPTS/
+PointC/
 ├── app/                    # Mã nguồn ứng dụng
 │   ├── Http/Controllers/   # Controllers (MVC)
 │   ├── Models/             # Models (Eloquent ORM)
@@ -305,5 +305,5 @@ Nếu gặp vấn đề, liên hệ qua:
 
 ## License
 
-Dự án này thuộc về nhóm phát triển SPTS - Sử dụng cho mục đích học tập.
+Dự án này thuộc về nhóm phát triển PointC - Sử dụng cho mục đích học tập.
 
