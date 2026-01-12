@@ -1,0 +1,1285 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+}
+
+
+#top-content, #frame-menu {
+    display: flex;
+    flex-direction: row;
+}
+
+#top-content {
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.875rem;
+    cursor: pointer;
+}
+
+#top-content #frame-menu {
+    width: 24.4375rem;
+    height: 2.5rem;
+    background-color: #EDEFF2;
+    border-radius: 1rem;
+    border: #DEDCDC 0.0625rem solid;
+    padding: 0.3125rem 0.625rem;
+}
+
+#top-content .active-nav {
+    background-color: #F6F9FD;
+    box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
+}
+
+#top-content .menu-in {
+    width: 10.6875rem;
+    height: 1.875rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+#top-content #find {
+    width: 60%;
+    height: 2.5rem;
+    background-color: white;
+    border: #DEDCDC 0.0625rem solid;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 1.25rem;
+}
+#top-content #find input {
+    width: 80%;
+    height: 80%;
+    border: none;
+    outline: none;
+    padding-left: 0.625rem;
+    font-size: 1rem;
+}
+
+#top-content #find i {
+    font-size: 1.25rem;
+    color: #A3A3A3;
+}
+
+#bottom-content .add{
+    width: 14.75rem;
+    height: 2.5rem;
+    background-color: #0088F0;
+    color: white;
+    font-size: 1.25rem;
+    border: none;
+    border-radius: 1rem;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-bottom: 1.875rem;
+}
+
+#bottom-content .khung-khoanganh {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    border: #DEDCDC 0.0625rem solid;
+    border-radius: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+#bottom-content .khung-khoavien {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 5.5625rem;
+    padding: 0.625rem 1.25rem;
+    margin-top: 1.25rem;
+    cursor: pointer;
+}
+
+#bottom-content .khung-chuyennganh {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+#bottom-content .khung-chuyennganh.active {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+#bottom-content .khoa-vien, #bottom-content .right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.khoa-vien p {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.frame-ma {
+    margin-left: 1.25rem;
+    color: #9E9C9C;
+    font-size: 1rem;
+    margin-top: 0.625rem;
+}
+
+.right .frame-loai, .right .frame-chuyennganh, .right .frame-status {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: fit-content;
+    height: 1.5rem;
+    margin-right: 1.25rem;
+    font-size: 1rem;
+    text-align: center;
+    align-items: center;
+    padding: 0.3125rem 1.25rem;
+    border-radius: 0.625rem;
+}
+
+.right .frame-loai {
+    background-color: #F1FFCF;
+}
+
+.right .frame-chuyennganh {
+    background-color: #CFFFFE;
+}
+
+.right .frame-status {
+    background-color: #CFFFE1;
+    color: #00B103;
+}
+
+.right .fa-trash {
+    color: red;
+    font-size: 1.25rem;
+    cursor: pointer;
+}
+
+.khung-chuyennganh {
+    border-top: #DEDCDC 0.0625rem solid;
+    padding-top: 1.875rem;
+    width: 96%;
+    margin: 0 2%;
+}
+
+.khung-chuyennganh .title-chuyennganh {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 1.25rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.khung-chuyennganh button {
+    width: 7.5rem;
+    height: 1.9375rem;
+    background-color: #EDEFF2;
+    font-size: 1.25rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 0.625rem;
+    padding: 0.3125rem 0.625rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.khung-chuyennganh button:hover {
+    background-color: #D4D7DA;
+}
+
+.khung-chuyennganh .nghanh {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 5.5625rem;
+    padding: 0.625rem 2.5rem;
+    margin-bottom: 1.25rem;
+    background-color: #EDEFF2;
+    border-radius: 1.25rem;
+}
+
+.nghanh .left {
+    font-size: 1rem;
+}
+
+.nghanh .manganh {
+    color: #9E9C9C;
+    margin-top: 0.625rem;
+}
+
+#frame-hocphan {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.frame-KhoaVien {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(0.625rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+#bottom-content .add,
+.khung-chuyennganh button,
+.course-table button {
+    transition: all 0.3s ease;
+}
+
+#bottom-content .add:hover,
+.khung-chuyennganh button:hover,
+.course-table button:hover {
+    transform: translateY(-0.1875rem);
+    box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.15);
+}
+
+#bottom-content .add:active,
+.khung-chuyennganh button:active,
+.course-table button:active {
+    transform: translateY(-0.0625rem);
+}
+/* ---------------------- */
+#frame-hocphan #fillter {
+    display: flex;
+    align-items: center;
+}
+
+.fake-select {
+    width: fit-content;
+    height: 2.5rem;
+    position: relative;
+    margin-right: 1.25rem;
+}
+
+.fake-select .selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.5rem;
+    padding: 0 1.25rem;
+    border: 0.0625rem solid #D9D9D9;
+    border-radius: 1rem;
+    cursor: pointer;
+    background: white;
+    font-size: 1.25rem;
+    font-weight: bold;
+    min-width: 12.5rem;
+    transition: all 0.3s ease;
+}
+
+.fake-select .selected:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.fake-select .options {
+    position: absolute;
+    width: 100%;
+    top: calc(100% + 0.3125rem);
+    left: 0;
+    border: 0.0625rem solid #D9D9D9;
+    border-radius: 1rem;
+    background: white;
+    display: none;
+    z-index: 100;
+    max-height: 12.5rem;
+    overflow-y: auto;
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+}
+
+.fake-select .option {
+    padding: 0.75rem 1.25rem;
+    cursor: pointer;
+    font-size: 1.125rem;
+    transition: all 0.2s ease;
+}
+
+.fake-select .option:first-child {
+    border-radius: 1rem 1rem 0 0;
+}
+
+.fake-select .option:last-child {
+    border-radius: 0 0 1rem 1rem;
+}
+
+.fake-select .option:hover {
+    background: #0088F0;
+    color: white;
+}
+
+/* Table styles */
+.table-container {
+    width: 100%;
+    margin-top: 1.875rem;
+    background-color: white;
+    padding: 0.625rem;
+    border-radius: 1.25rem;
+}
+
+.course-table {
+    width: 98%;
+    margin: 0 auto;
+    background: transparent;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.course-table thead {
+}
+
+.course-table th {
+    padding: 0.9375rem;
+    font-size: 1.125rem;
+    font-weight: bold;
+    color: #000000;
+}
+
+.course-table td {
+    padding: 0.9375rem;
+    font-size: 1rem;
+    border-top: 0.0625rem solid #DEDCDC;
+}
+
+.course-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.course-table tbody tr:hover {
+    background: #F6F9FD;
+}
+
+.course-table .actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.625rem;
+}
+
+.course-table button {
+    width: 2.1875rem;
+    height: 2.1875rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.course-table button.edit {
+    background: #E7F3FF;
+    color: #0088F0;
+}
+
+.course-table button.delete {
+    color: #FF0000;
+}
+
+.course-table button.edit:hover {
+    background: #0088F0;
+    color: white;
+}
+
+.course-table button.delete:hover {
+    background: #FF0000;
+    color: white;
+}
+/* --------------------------- */
+
+/* Modal overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: block;
+}
+
+/* Frame new styles */
+.frame-new {
+    width: 46.5625rem;
+    height: fit-content;
+    background-color: white;
+    padding: 1.25rem 1.875rem;
+    border: #DEDCDC 0.0625rem solid;
+    border-radius: 0.9375rem;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    animation: slideIn 0.4s ease;
+}
+
+.frame-new.active {
+    display: block;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.frame-new .title-new {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.title-new .title, .title-new i {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.frame-new .infor {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 0.625rem;
+}
+.frame-new  span {
+    color: red;
+}
+
+.frame-new input {
+    width: 100%;
+    height: 3rem;
+    border: #DEDCDC 0.0625rem solid;
+    border-radius: 0.625rem;
+    margin-top: 0.625rem;
+    padding-left: 0.625rem;
+    font-size: 1.5rem;
+}
+
+.frame-new select {
+    width: 100%;
+    height: 3rem;
+    border: #DEDCDC 0.0625rem solid;
+    border-radius: 0.625rem;
+    margin-top: 0.625rem;
+    padding-left: 0.625rem;
+    font-size: 1.5rem;
+}
+
+.frame-new .thaotac {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1.875rem;
+    gap: 3.125rem;
+}
+
+.frame-new .thaotac button {
+    width: 48%;
+    height: 3.125rem;
+    border-radius: 0.375rem;
+    border: none;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.frame-new .thaotac .them, .frame-new .thaotac .Chinhsua {
+    background-color: #0088F0;
+    color: white;
+}
+
+.frame-new .thaotac .Huy {
+    background-color: #D9D9D9;
+    color: #FFFFFF;
+}
+
+.frame-new .thaotac button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.frame-new .thaotac button:not(:disabled):hover {
+    transform: translateY(-0.1875rem);
+    box-shadow: 0 0.375rem 0.75rem rgba(0, 0, 0, 0.15);
+}
+
+/* ===== RESPONSIVE MEDIA QUERIES ===== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 64rem) {
+    #top-content {
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    #top-content #frame-menu {
+        width: 100%;
+        order: 2;
+    }
+
+    #top-content #find {
+        width: 100%;
+        order: 1;
+    }
+
+    #bottom-content .add {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .frame-new {
+        width: 90%;
+        padding: 1rem 1.25rem;
+    }
+
+    .frame-new .thaotac {
+        gap: 1.5rem;
+    }
+
+    .frame-new .thaotac button {
+        width: 50%;
+    }
+
+    .course-table {
+        font-size: 0.875rem;
+    }
+
+    .course-table th {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .course-table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .course-table button {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+}
+
+/* Mobile (< 768px) */
+@media (max-width: 47.9375rem) {
+    * {
+        font-size: 0.875rem;
+    }
+
+    #top-content {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    #top-content #frame-menu {
+        width: 100%;
+        height: auto;
+        padding: 0.5rem;
+    }
+
+    #top-content .menu-in {
+        width: 50%;
+        height: 2rem;
+        font-size: 0.875rem;
+    }
+
+    #top-content #find {
+        width: 100%;
+        height: 2rem;
+        padding-right: 0.75rem;
+    }
+
+    #top-content #find input {
+        font-size: 0.875rem;
+    }
+
+    #top-content #find i {
+        font-size: 1rem;
+    }
+
+    #bottom-content .add {
+        width: 100%;
+        height: 2rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    #bottom-content .khung-khoanganh {
+        margin-bottom: 1rem;
+        border-radius: 1rem;
+    }
+
+    #bottom-content .khung-khoavien {
+        min-height: 4rem;
+        padding: 0.5rem 1rem;
+        margin-top: 0.75rem;
+    }
+
+    .khoa-vien p {
+        font-size: 1rem;
+    }
+
+    .frame-ma {
+        margin-left: 0.75rem;
+        font-size: 0.75rem;
+        margin-top: 0.25rem;
+    }
+
+    .right .frame-loai, .right .frame-chuyennganh, .right .frame-status {
+        height: 1.25rem;
+        margin-right: 0.75rem;
+        font-size: 0.75rem;
+        padding: 0.25rem 0.75rem;
+        border-radius: 0.5rem;
+    }
+
+    .right .fa-trash {
+        font-size: 1rem;
+    }
+
+    .khung-chuyennganh {
+        padding-top: 1rem;
+    }
+
+    .khung-chuyennganh .title-chuyennganh {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .khung-chuyennganh button {
+        width: 6rem;
+        height: 1.75rem;
+        font-size: 1rem;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .khung-chuyennganh .nghanh {
+        height: auto;
+        padding: 0.5rem 1rem;
+        margin-bottom: 0.75rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .nghanh .left {
+        font-size: 0.875rem;
+    }
+
+    .nghanh .manganh {
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+    }
+
+    #frame-hocphan #fillter {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .fake-select {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .fake-select .selected {
+        width: 100%;
+        height: 2rem;
+        padding: 0 0.75rem;
+        font-size: 1rem;
+    }
+
+    .fake-select .option {
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+    }
+
+    .table-container {
+        margin-top: 1rem;
+        padding: 0.5rem;
+        border-radius: 1rem;
+        overflow-x: auto;
+    }
+
+    .course-table {
+        width: 100%;
+        font-size: 0.75rem;
+    }
+
+    .course-table th {
+        padding: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .course-table td {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .course-table button {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.75rem;
+    }
+
+    .frame-new {
+        width: 95%;
+        padding: 1rem;
+        border-radius: 0.75rem;
+    }
+
+    .title-new .title, .title-new i {
+        font-size: 1.25rem;
+    }
+
+    .frame-new .infor {
+        font-size: 1rem;
+        margin-top: 0.5rem;
+    }
+
+    .frame-new input,
+    .frame-new select {
+        height: 2.5rem;
+        margin-top: 0.5rem;
+        padding-left: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .frame-new .thaotac {
+        margin-top: 1.5rem;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .frame-new .thaotac button {
+        width: 100%;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+}
+
+#bottom-content .add{
+    width: 236px;
+    height: 40px;
+    background-color: #0088F0;
+    color: white;
+    font-size: 20px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+    margin-bottom: 30px;
+}
+
+#bottom-content .khung-khoanganh {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: white;
+    border: #DEDCDC 1px solid;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+#bottom-content .khung-khoavien {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-height: 89px;
+    padding: 10px 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+#bottom-content .khung-chuyennganh {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.5s ease;
+}
+
+#bottom-content .khung-chuyennganh.active {
+    max-height: 1000px;
+    opacity: 1;
+}
+
+#bottom-content .khoa-vien, #bottom-content .right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.khoa-vien p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.frame-ma {
+    margin-left: 20px;
+    color: #9E9C9C;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+.right .frame-loai, .right .frame-chuyennganh, .right .frame-status {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: fit-content;
+    height: 24px;
+    margin-right: 20px;
+    font-size: 16px;
+    text-align: center;
+    align-items: center;
+    padding: 5px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+}
+
+.right .frame-loai {
+    background-color: #F1FFCF;
+}
+
+.right .frame-chuyennganh {
+    background-color: #CFFFFE;
+}
+
+.right .frame-status {
+    background-color: #CFFFE1;
+    color: #00B103;
+}
+
+.right .fa-trash {
+    color: red;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.khung-chuyennganh {
+    border-top: #DEDCDC 1px solid;
+    padding-top: 30px;
+    width: 96%;
+    margin: 0 2%;
+}
+
+.khung-chuyennganh .title-chuyennganh {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.khung-chuyennganh button {
+    width: 120px;
+    height: 31px;
+    background-color: #EDEFF2;
+    font-size: 20px;
+    font-weight: bold;
+    border: none;
+    border-radius: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.khung-chuyennganh button:hover {
+    background-color: #D4D7DA;
+}
+
+.khung-chuyennganh .nghanh {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 89px;
+    padding: 10px 40px;
+    margin-bottom: 20px;
+    background-color: #EDEFF2;
+    border-radius: 20px;
+}
+
+.nghanh .left {
+    font-size: 16px;
+}
+
+.nghanh .manganh {
+    color: #9E9C9C;
+    margin-top: 10px;
+}
+
+#frame-hocphan {
+    display: none;
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.frame-KhoaVien {
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Button hover effects */
+#bottom-content .add,
+.khung-chuyennganh button,
+.course-table button {
+    transition: all 0.3s ease;
+}
+
+#bottom-content .add:hover,
+.khung-chuyennganh button:hover,
+.course-table button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+#bottom-content .add:active,
+.khung-chuyennganh button:active,
+.course-table button:active {
+    transform: translateY(-1px);
+}
+/* ---------------------- */
+#frame-hocphan #fillter {
+    display: flex;
+    align-items: center;
+}
+
+.fake-select {
+    width: fit-content;
+    height: 40px;
+    position: relative;
+    margin-right: 20px;
+}
+
+.fake-select .selected {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+    padding: 0 20px;
+    border: 1px solid #D9D9D9;
+    border-radius: 16px;
+    cursor: pointer;
+    background: white;
+    font-size: 20px;
+    font-weight: bold;
+    min-width: 200px;
+    transition: all 0.3s ease;
+}
+
+.fake-select .selected:hover {
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fake-select .options {
+    position: absolute;
+    width: 100%;
+    top: calc(100% + 5px);
+    left: 0;
+    border: 1px solid #D9D9D9;
+    border-radius: 16px;
+    background: white;
+    display: none;
+    z-index: 100;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.fake-select .option {
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+}
+
+.fake-select .option:first-child {
+    border-radius: 16px 16px 0 0;
+}
+
+.fake-select .option:last-child {
+    border-radius: 0 0 16px 16px;
+}
+
+.fake-select .option:hover {
+    background: #0088F0;
+    color: white;
+}
+
+/* Table styles */
+.table-container {
+    width: 100%;
+    margin-top: 30px;
+    background-color: white;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.course-table {
+    width: 98%;
+    margin: 0 auto;
+    background: transparent;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.course-table thead {
+}
+
+.course-table th {
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+}
+
+.course-table td {
+    padding: 15px;
+    font-size: 16px;
+    border-top: 1px solid #DEDCDC;
+}
+
+.course-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.course-table tbody tr:hover {
+    background: #F6F9FD;
+}
+
+.course-table .actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.course-table button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.course-table button.edit {
+    background: #E7F3FF;
+    color: #0088F0;
+}
+
+.course-table button.delete {
+
+    color: #FF0000;
+}
+
+.course-table button.edit:hover {
+    background: #0088F0;
+    color: white;
+}
+
+.course-table button.delete:hover {
+    background: #FF0000;
+    color: white;
+}
+/* --------------------------- */
+
+/* Modal overlay */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+    display: block;
+}
+
+/* Frame new styles */
+.frame-new {
+    width: 745px;
+    height: fit-content;
+    background-color: white;
+    padding: 20px 30px;
+    border: #DEDCDC 1px solid;
+    border-radius: 15px;
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    animation: slideIn 0.4s ease;
+}
+
+.frame-new.active {
+    display: block;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.frame-new .title-new {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.title-new .title, .title-new i {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.frame-new .infor {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.frame-new  span {
+    color: red;
+}
+
+.frame-new input {
+    width: 100%;
+    height: 48px;
+    border: #DEDCDC 1px solid;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding-left: 10px;
+    font-size: 24px;
+}
+
+.frame-new select {
+    width: 100%;
+    height: 48px;
+    border: #DEDCDC 1px solid;
+    border-radius: 10px;
+    margin-top: 10px;
+    padding-left: 10px;
+    font-size: 24px;
+}
+
+.frame-new .thaotac {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+    gap: 50px;
+}
+
+.frame-new .thaotac button {
+    width: 48%;
+    height: 50px;
+    border-radius: 6px;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.frame-new .thaotac .them, .frame-new .thaotac .Chinhsua {
+    background-color: #0088F0;
+    color: white;
+}
+
+.frame-new .thaotac .Huy {
+    background-color: #D9D9D9;
+    color: #FFFFFF;
+}
+
+.frame-new .thaotac button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.frame-new .thaotac button:not(:disabled):hover {
+    transform: translateY(-3px);
+    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+}
