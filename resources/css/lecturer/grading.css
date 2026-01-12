@@ -1,0 +1,448 @@
+/* ====== BẢNG CẤU TRÚC ĐIỂM ====== */
+.structure-frame {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #dedcdc;
+  margin-top: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.structure-head {
+  display: flex;
+  width: 100%;
+  height: 43px;
+  align-items: center;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-bottom: none;
+}
+
+.structure-head .structure-col {
+  flex: 1;
+  padding: 14px 12px;
+  text-align: left;
+  font-family: "Inter-Bold", Helvetica;
+  font-weight: 700;
+  color: #000000;
+  font-size: 12px;
+  border-right: 1px solid #cbd5e1;
+}
+
+.structure-head .structure-col:last-child {
+  border-right: none;
+}
+
+.structure-body {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-top: none;
+}
+
+.structure-row {
+  display: flex;
+  width: 100%;
+  border-bottom: 1px solid #cbd5e1;
+}
+
+.structure-row:last-child {
+  border-bottom: none;
+}
+
+.structure-cell {
+  flex: 1;
+  padding: 14px 12px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 12px;
+  border-right: 1px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+}
+
+.structure-cell:last-child {
+  border-right: none;
+}
+
+/* Input cho tỉ trọng */
+.structure-input {
+  width: 80px;
+  height: 30px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 12px;
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.structure-input:focus {
+  outline: 2px solid #120367;
+  border-color: #120367;
+}
+
+.structure-input:disabled {
+  background-color: #f1f5f9;
+  cursor: not-allowed;
+  color: #666;
+}
+
+.structure-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 0;
+  margin-top: 10px;
+}
+
+.save-structure-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 92px;
+  height: 34px;
+  background-color: #120367;
+  border-radius: 6px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 13.6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-structure-btn:hover {
+  background-color: #1a0a8a;
+}
+
+.save-structure-btn:active {
+  background-color: #0f0250;
+}
+
+/* ====== BẢNG NHẬP ĐIỂM ====== */
+.grade-table-frame {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #dedcdc;
+  margin-top: 20px;
+  background-color: #ffffff;
+  padding: 20px;
+  position: relative;
+}
+
+.grade-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.grade-search-box {
+  flex: 1;
+  max-width: 447px;
+  height: 42px;
+  position: relative;
+}
+
+.grade-search-input {
+  width: 100%;
+  height: 100%;
+  padding: 8px 45px 8px 26px;
+  border: 1px solid #00000038;
+  border-radius: 15px;
+  font-family: "Inter-Regular", Helvetica;
+  font-size: 15px;
+  color: #000000;
+  background-color: #ffffff;
+  box-sizing: border-box;
+}
+
+.grade-search-input::placeholder {
+  color: #00000080;
+}
+
+.grade-search-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+}
+
+.grade-search-btn::before {
+  content: "🔍";
+  font-size: 16px;
+}
+
+.grade-actions {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.export-grade-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 174px;
+  height: 34px;
+  background-color: #ffffff;
+  border: 1px solid #120367;
+  border-radius: 6px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #120367;
+  font-size: 13.6px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.export-grade-btn:hover {
+  background-color: #f1f5f9;
+  border-color: #1a0a8a;
+  color: #1a0a8a;
+}
+
+.save-grade-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 92px;
+  height: 34px;
+  background-color: #120367;
+  border-radius: 6px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: #ffffff;
+  font-size: 13.6px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.save-grade-btn:hover {
+  background-color: #1a0a8a;
+}
+
+/* Bảng điểm */
+.grade-table-container {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  overflow: hidden;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.grade-table-head {
+  display: flex;
+  background-color: #f1f5f9;
+  border-bottom: 2px solid #cbd5e1;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.grade-header {
+  padding: 12px 15px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  text-align: center;
+  border-right: 1px solid #cbd5e1;
+  flex-shrink: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.grade-header:nth-child(1) { width: 100px; }
+.grade-header:nth-child(2) { 
+  width: 300px; 
+  text-align: left;
+  padding-left: 20px;
+}
+.grade-header:nth-child(3) { width: 150px; }
+.grade-header:nth-child(4) { width: 150px; }
+.grade-header:nth-child(5) { width: 150px; }
+.grade-header:nth-child(6) { width: 120px; }
+.grade-header:nth-child(7) { 
+  flex: 1; 
+  min-width: 100px;
+}
+
+.grade-header:last-child {
+  border-right: none;
+}
+
+.grade-table-body {
+  background-color: #ffffff;
+}
+
+.grade-table-row {
+  display: flex;
+  border-bottom: 1px solid #cbd5e1;
+  min-height: 50px;
+  align-items: center;
+}
+
+.grade-table-row:last-child {
+  border-bottom: none;
+}
+
+.grade-cell {
+  padding: 10px 15px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  color: #000000;
+  font-size: 16px;
+  text-align: center;
+  border-right: 1px solid #cbd5e1;
+  flex-shrink: 0;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.grade-cell:nth-child(1) { width: 100px; }
+.grade-cell:nth-child(2) { 
+  width: 300px; 
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 20px;
+}
+.grade-cell:nth-child(3) { width: 150px; }
+.grade-cell:nth-child(4) { width: 150px; }
+.grade-cell:nth-child(5) { width: 150px; }
+.grade-cell:nth-child(6) { width: 120px; }
+.grade-cell:nth-child(7) { 
+  flex: 1; 
+  min-width: 100px;
+  border-right: none;
+  justify-content: center;
+}
+
+/* Input cho điểm số */
+.grade-input {
+  width: 80px;
+  height: 30px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  padding: 0 8px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-size: 14px;
+  text-align: center;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.grade-input:focus {
+  outline: 2px solid #120367;
+  border-color: #120367;
+}
+
+/* Trạng thái */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-family: "Roboto-Regular", Helvetica;
+  font-weight: 400;
+  font-size: 12px;
+  min-width: 80px;
+}
+
+.status-passed {
+  background-color: rgba(0, 131, 19, 0.15);
+  color: #008313;
+}
+
+.status-failed {
+  background-color: rgba(255, 0, 12, 0.15);
+  color: #ff000c;
+}
+
+.status-warning {
+  background-color: rgba(254, 188, 47, 0.15);
+  color: #febc2f;
+}
+
+.status-empty {
+  background-color: rgba(100, 100, 100, 0.15);
+  color: #646464;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .structure-frame,
+  .grade-table-frame {
+    width: 100%;
+  }
+  
+  .grade-table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .grade-search-box {
+    max-width: 100%;
+  }
+  
+  .grade-actions {
+    justify-content: flex-end;
+  }
+}
+
+/* Custom scrollbar cho bảng điểm */
+.grade-table-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.grade-table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.grade-table-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.grade-table-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Tooltip cho tỉ trọng */
+.structure-input:focus::after {
+  content: "Tổng các tỉ trọng phải bằng 100%";
+  position: absolute;
+  background: #333;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 12px;
+  top: -30px;
+  left: 0;
+  white-space: nowrap;
+}
