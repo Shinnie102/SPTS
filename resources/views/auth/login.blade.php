@@ -54,7 +54,7 @@
                            id="email" 
                            name="email" 
                            value="{{ old('email') }}"
-                           placeholder="Nhập tài khoản email" 
+                           placeholder="Nhập địa chỉ email" 
                            class="input-field"
                            required 
                            autofocus>

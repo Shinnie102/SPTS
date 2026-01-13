@@ -1,0 +1,147 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+#menu_lecturer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #E0EAFA;
+    width: 5rem;
+    height: 100%;
+    border-right: 1px solid #DEDCDC;
+}
+
+.frame_menu {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 4rem;
+    height: 3rem;
+    background-color: #E0EAFA;
+    margin-top: 1rem;
+    border-radius: 20%;
+    padding: 0.25rem;
+}
+
+#menu_lecturer i {
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
+}
+
+#menu_lecturer p {
+    font-size: 0.65rem;
+}
+
+.frame_logout {
+    width: 100%;
+    margin-top: auto;
+    margin-bottom: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #FF0000;
+    opacity: 40%;
+    border-top: 1px solid #DEDCDC;
+}
+
+.frame_logout i {
+    font-size: 1.25rem;
+    margin-bottom: 0.3rem;
+}
+
+.frame_logout p {
+    font-size: 0.7rem;
+}
+
+a {
+    text-decoration: none;
+    color: #0088F0;
+}
+
+.menu_active {
+    background-color: #F6F9FD;
+    font-weight: bold;
+}
+
+/* Tablet - màn hình từ 768px trở xuống */
+@media (max-width: 768px) {
+    #menu_lecturer {
+        width: 6rem;
+    }
+    
+    .frame_menu {
+        width: 5rem;
+        height: 3.5rem;
+        margin-top: 1.875rem;
+    }
+    
+    #menu_lecturer i {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    #menu_lecturer p {
+        font-size: 0.75rem;
+    }
+}
+
+/* Mobile - màn hình từ 480px trở xuống */
+@media (max-width: 480px) {
+    #menu_lecturer {
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: flex-start;
+        overflow-x: auto;
+    }
+    
+    #menu {
+        display: flex;
+        flex-direction: row;
+    }
+    
+    .frame_menu {
+        margin-top: 0;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+        height: 3rem;
+        width: 4.5rem;
+    }
+    
+    #menu_lecturer i {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    #menu_lecturer p {
+        font-size: 0.65rem;
+    }
+    
+    .frame_logout {
+        margin-left: auto;
+        margin-right: 0.5rem;
+        margin-top: 0;
+        margin-bottom: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        border-top: none;
+        border-bottom: none;
+        border-left: 1px solid #DEDCDC;
+    }
+    
+    .frame_logout p {
+        display: none;
+    }
+}

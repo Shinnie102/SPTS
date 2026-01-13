@@ -29,12 +29,13 @@ Route::post('/password/reset', function() {
 })->name('password.reset');
 
 // Admin Routes
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/users', function () { return view('admin.adminUsers'); })->name('users');
 });
 
 // Lecturer Routes
-Route::middleware(['auth'])->prefix('lecturer')->name('lecturer.')->group(function () {
+Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/classes', function () { return 'Classes list'; })->name('classes');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
@@ -43,8 +44,11 @@ Route::middleware(['auth'])->prefix('lecturer')->name('lecturer.')->group(functi
 });
 
 // Student Routes
-Route::middleware(['auth'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/study', function () { return view('student.studentStudy'); })->name('study');
+    Route::get('/history', function () { return view('student.studentHistory'); })->name('history');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
 });
+
 

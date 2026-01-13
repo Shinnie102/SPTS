@@ -26,17 +26,17 @@ class LoginController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->filled('remember'))) {
+        if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
             $user = Auth::user();
 
-            // Redirect based on user role
-            if ($user->role === 'admin') {
+            // Redirect based on user role (using relationship)
+            if ($user->role && $user->role->role_code === 'admin') {
                 return redirect()->intended(route('admin.dashboard'));
-            } elseif ($user->role === 'lecturer') {
+            } elseif ($user->role && $user->role->role_code === 'lecturer') {
                 return redirect()->intended(route('lecturer.dashboard'));
-            } elseif ($user->role === 'student') {
+            } elseif ($user->role && $user->role->role_code === 'student') {
                 return redirect()->intended(route('student.dashboard'));
             }
 

@@ -33,10 +33,12 @@ class User extends Authenticatable
         'major',
         'orientation_day',
         'status_id',
+        'remember_token',
     ];
 
     protected $hidden = [
         'password_hash',
+        'remember_token',
     ];
 
     protected $casts = [
@@ -49,6 +51,29 @@ class User extends Authenticatable
 
     // Override password attribute for Laravel Auth
     public function getAuthPassword()
+    {
+        return $this->password_hash;
+    }
+
+    // Override password name for Laravel Auth
+    public function getAuthPasswordName()
+    {
+        return 'password_hash';
+    }
+
+    // Mutator to hash password when setting (only if not already hashed)
+    public function setPasswordHashAttribute($value)
+    {
+        // Only hash if value doesn't start with $2y$ or $2a$ (bcrypt prefix)
+        if (preg_match('/^\$2[ay]\$/', $value)) {
+            $this->attributes['password_hash'] = $value;
+        } else {
+            $this->attributes['password_hash'] = bcrypt($value);
+        }
+    }
+
+    // Accessor for compatibility (if needed)
+    public function getPasswordAttribute()
     {
         return $this->password_hash;
     }

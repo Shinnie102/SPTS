@@ -1,0 +1,646 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+span {
+    color: red;
+}
+
+#top {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.875rem;
+    gap: 0.5rem;
+}
+
+#top #buoc1, #top #buoc2 {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    background-color: #0088F0;
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.25rem;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+#top #buoc1 {
+    background-color: #B1B5B6;
+}
+
+#top #buoc1:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0.25rem 0.75rem rgba(177, 181, 182, 0.4);
+}
+
+#top #buoc2:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0.25rem 0.75rem rgba(0, 136, 240, 0.4);
+}
+
+#top #process {
+    width: 93%;
+    height: 0.625rem;
+    background-color: #0088F0;
+    border-radius: 0.3125rem;
+}
+
+#bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 2%
+}
+
+#bottom #left {
+    width: 69%;
+}
+
+#bottom #right {
+    width: 29%;
+}
+
+#bottom #frame-giangvien,#bottom #sinhvien, #bottom #right {
+    background-color: white;
+    border: #B1B5B6 0.0625rem solid;
+    border-radius: 0.9375rem;
+    padding: 1.875rem;
+    font-size: 1.25rem;
+    margin-bottom: 1.3rem;
+}
+
+#sinhvien #title-sinhvien{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+#sinhvien #soluong-dachon {
+    width: 11.75rem;
+    height: 2.5rem;
+    border-radius: 0.3125rem;
+    border: #B1B5B6 0.0625rem solid;
+    font-size: 1.25rem;
+    padding-left: 0.625rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+#sinhvien #soluong-dachon:hover {
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
+    border-color: #0088F0;
+}
+
+#sinhvien #dachon {
+    color: black;
+}
+
+#sinhvien #search {
+    width: 100%;
+    height: 2.5rem;
+    border: #B1B5B6 0.0625rem solid;
+    border-radius: 1rem;
+    padding-left: 0.625rem;
+    font-size: 1.25rem;
+    margin-top: 0.3rem;
+    margin-bottom: 0.625rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.3125rem 1.25rem;
+    margin-top: 1.25rem;
+    transition: all 0.3s ease;
+}
+
+#sinhvien #search:hover {
+    border-color: #0088F0;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 136, 240, 0.15);
+}
+
+#sinhvien #search input {
+    border: none;
+    outline: none;
+    font-size: 1.25rem;
+    width: 85%;
+}
+
+#sinhvien #search i {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#sinhvien #search i:hover {
+    transform: scale(1.2);
+    color: #0088F0;
+}
+
+#left #select-form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 2%;
+}
+
+#left select {
+    width: 49%;
+    height: 2.5rem;
+    border: #B1B5B6 0.0625rem solid;
+    border-radius: 0.625rem;
+    padding-left: 0.625rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 0.3rem;
+    margin-bottom: 0.625rem;
+    transition: all 0.3s ease;
+}
+
+#left select:hover {
+    border-color: #0088F0;
+    box-shadow: 0 0.125rem 0.5rem rgba(0, 136, 240, 0.15);
+}
+
+#left select:focus {
+    outline: none;
+    border-color: #0088F0;
+    box-shadow: 0 0 0 0.1875rem rgba(0, 136, 240, 0.15);
+}
+
+#frame-giangvien select {
+    width: 100%;
+}
+
+#left .chan, #right .chan {
+    border-top: 0.0625rem solid black;
+    margin: 1.25rem 0;
+}
+
+#left .title, #right .title {
+    font-size: 1.75rem;
+    margin-bottom: 0.625rem;
+    font-weight: 500;
+}
+
+.student-table-wrapper {
+    border: 0.0625rem solid #B1B5B6;
+    padding: 1.25rem 0;
+    border-radius: 0.5rem;
+    background: white;
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 40rem;
+}
+
+.student-table th {
+    background: #E8E8E8;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 0.125rem solid #DEDCDC;
+}
+
+.student-table td {
+    font-size: 0.875rem;
+    text-align: center;
+    padding: 0.75rem 0.5rem;
+    border-bottom: 0.0625rem solid #DEDCDC;
+}
+
+.student-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.student-table tbody tr {
+    transition: all 0.3s ease;
+}
+
+.student-table tbody tr:hover {
+    transform: translateY(-0.0625rem);
+    box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.08);
+    background-color: #f8f9fa;
+}
+
+#right .ten-hienthi {
+    color: #7F8788;
+    font-size: 1rem;
+}
+
+#right .ketqua {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+}
+
+#thaotac {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 1.875rem;
+}
+
+#thaotac .btn {
+    width: 49%;
+    height: 3.125rem;
+    border: none;
+    border-radius: 0.625rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#thaotac .btn:hover {
+    transform: translateY(-0.1875rem);
+    box-shadow: 0 0.375rem 1rem rgba(0, 0, 0, 0.2);
+}
+
+#quaylai {
+    background-color: #D9D9D9;
+    color: white;
+}
+
+#quaylai:hover {
+    background-color: #c4c4c4;
+    box-shadow: 0 0.375rem 1rem rgba(217, 217, 217, 0.4);
+}
+
+#hoantat {
+    background-color: #3B78F3;
+    color: white;
+}
+
+#hoantat:hover {
+    background-color: #2d66d4;
+    box-shadow: 0 0.375rem 1rem rgba(59, 120, 243, 0.5);
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+    gap: 0.625rem;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.5rem;
+    border: 0.0625rem solid #D0D0D0;
+    background: white;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.page-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.1875rem 0.5rem rgba(0, 0, 0, 0.1);
+}
+
+.page-btn.active {
+    background: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+    transform: translateY(-0.125rem);
+    box-shadow: 0 0.25rem 0.5rem rgba(13, 110, 253, 0.4);
+}
+
+.page-btn.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background: white;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ============================================ */
+
+/* Tablet và màn hình nhỏ hơn (max-width: 64rem / 1024px) */
+@media screen and (max-width: 64rem) {
+    #top {
+        margin-bottom: 1.5rem;
+    }
+
+    #top #buoc1, #top #buoc2 {
+        width: 2.25rem;
+        height: 2.25rem;
+        font-size: 1.125rem;
+    }
+
+    #top #process {
+        height: 0.5rem;
+    }
+
+    #bottom {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    #bottom #left {
+        width: 100%;
+    }
+
+    #bottom #right {
+        width: 100%;
+    }
+
+    #bottom #frame-giangvien, #bottom #sinhvien, #bottom #right {
+        padding: 1.5rem;
+        font-size: 1.125rem;
+    }
+
+    #sinhvien #title-sinhvien {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #sinhvien #soluong-dachon {
+        width: 100%;
+        font-size: 1.125rem;
+    }
+
+    #sinhvien #search {
+        height: 2.25rem;
+        font-size: 1.125rem;
+    }
+
+    #sinhvien #search input {
+        font-size: 1.125rem;
+    }
+
+    #left #select-form {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    #left select {
+        width: 100%;
+        height: 2.25rem;
+        font-size: 1.125rem;
+    }
+
+    #left .title, #right .title {
+        font-size: 1.5rem;
+    }
+
+    .student-table-wrapper {
+        padding: 1rem 0;
+    }
+
+    .student-table {
+        min-width: 35rem;
+    }
+
+    .student-table th {
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.375rem;
+    }
+
+    .student-table td {
+        font-size: 0.8125rem;
+        padding: 0.625rem 0.375rem;
+    }
+
+    #right .ten-hienthi {
+        font-size: 0.9375rem;
+    }
+
+    #right .ketqua {
+        font-size: 1.125rem;
+    }
+
+    #thaotac .btn {
+        height: 2.75rem;
+        font-size: 1.125rem;
+    }
+
+    .page-btn {
+        width: 2rem;
+        height: 2rem;
+        font-size: 0.8125rem;
+    }
+}
+
+/* Mobile (max-width: 48rem / 768px) */
+@media screen and (max-width: 48rem) {
+    #top {
+        margin-bottom: 1.25rem;
+    }
+
+    #top #buoc1, #top #buoc2 {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+    }
+
+    #top #process {
+        height: 0.375rem;
+    }
+
+    #bottom #frame-giangvien, #bottom #sinhvien, #bottom #right {
+        padding: 1.25rem;
+        font-size: 1rem;
+        border-radius: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    #sinhvien #soluong-dachon {
+        height: 2.25rem;
+        font-size: 1rem;
+    }
+
+    #sinhvien #search {
+        height: 2rem;
+        font-size: 1rem;
+        padding: 0.25rem 1rem;
+        border-radius: 0.75rem;
+    }
+
+    #sinhvien #search input {
+        font-size: 1rem;
+    }
+
+    #left select {
+        height: 2rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    #left .chan, #right .chan {
+        margin: 1rem 0;
+    }
+
+    #left .title, #right .title {
+        font-size: 1.375rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .student-table-wrapper {
+        padding: 0.75rem 0;
+    }
+
+    .student-table {
+        min-width: 30rem;
+    }
+
+    .student-table th {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.3125rem;
+    }
+
+    .student-table td {
+        font-size: 0.75rem;
+        padding: 0.5rem 0.3125rem;
+    }
+
+    #right .ten-hienthi {
+        font-size: 0.875rem;
+    }
+
+    #right .ketqua {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    #thaotac {
+        flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+
+    #thaotac .btn {
+        width: 100%;
+        height: 2.5rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .page-btn {
+        width: 1.875rem;
+        height: 1.875rem;
+        font-size: 0.75rem;
+    }
+
+    .pagination {
+        gap: 0.375rem;
+    }
+}
+
+/* Mobile nhỏ (max-width: 30rem / 480px) */
+@media screen and (max-width: 30rem) {
+    #top {
+        margin-bottom: 1rem;
+    }
+
+    #top #buoc1, #top #buoc2 {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.875rem;
+    }
+
+    #top #process {
+        height: 0.3125rem;
+    }
+
+    #bottom #frame-giangvien, #bottom #sinhvien, #bottom #right {
+        padding: 1rem;
+        font-size: 0.9375rem;
+    }
+
+    #sinhvien #soluong-dachon {
+        height: 2rem;
+        font-size: 0.9375rem;
+    }
+
+    #sinhvien #search {
+        height: 1.875rem;
+        font-size: 0.9375rem;
+        padding: 0.25rem 0.75rem;
+    }
+
+    #sinhvien #search input {
+        font-size: 0.9375rem;
+    }
+
+    #left select {
+        height: 1.875rem;
+        font-size: 0.9375rem;
+    }
+
+    #left .title, #right .title {
+        font-size: 1.25rem;
+    }
+
+    .student-table {
+        min-width: 25rem;
+    }
+
+    .student-table th {
+        font-size: 0.8125rem;
+        padding: 0.375rem 0.25rem;
+    }
+
+    .student-table td {
+        font-size: 0.6875rem;
+        padding: 0.375rem 0.25rem;
+    }
+
+    #right .ten-hienthi {
+        font-size: 0.8125rem;
+    }
+
+    #right .ketqua {
+        font-size: 0.9375rem;
+        margin-bottom: 0.75rem;
+    }
+
+    #thaotac {
+        gap: 0.625rem;
+        margin-top: 1.25rem;
+    }
+
+    #thaotac .btn {
+        height: 2.25rem;
+        font-size: 0.9375rem;
+    }
+
+    .page-btn {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.6875rem;
+    }
+
+    .pagination {
+        gap: 0.25rem;
+        margin-top: 1rem;
+    }
+}
