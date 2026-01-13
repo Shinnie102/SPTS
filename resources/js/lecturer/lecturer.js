@@ -1,5 +1,5 @@
 // Load header
-fetch('./../partials/header.html')
+fetch('../partials/header_lecturer.html')
     .then(response => response.text())
     .then(data => {
         document.querySelector('.header').innerHTML = data;
