@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>PointC - Danh sách lớp phụ trách</title>
+    <script src="../../js/lecturer/loadComponents.js"></script>
+    <link rel="stylesheet" href="../../css/lecturer/globals.css" />
+    <link rel="stylesheet" href="../../css/lecturer/style.css" />
+    <style>
+      /* Style cho ô tìm kiếm */
+      .search-section {
+        margin: 20px 0 30px 0;
+      }
+      
+      .search-container {
+        position: relative;
+        width: 447px;
+        height: 42px;
+        margin-left: auto;
+        margin-right: 20px;
+      }
+      
+      .search-input {
+        width: 100%;
+        height: 100%;
+        padding: 0 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 21px; /* Bo tròn góc */
+        font-size: 14px;
+        outline: none;
+        transition: border-color 0.3s;
+        background-color: #f9f9f9;
+      }
+      
+      .search-input:focus {
+        border-color: #0088f0;
+        background-color: #fff;
+      }
+      
+      .search-input::placeholder {
+        color: #999;
+      }
+      
+      .search-icon {
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 18px;
+        height: 18px;
+        color: #999;
+        pointer-events: none;
+      }
+      
+      /* Responsive cho mobile */
+      @media (max-width: 768px) {
+        .search-container {
+          width: 100%;
+          max-width: 447px;
+        }
+      }
+      
+      /* Style cho bảng đầy đủ */
+      .full-table-wrapper {
+        margin-top: 20px;
+      }
+      
+      .back-link {
+        display: inline-block;
+        margin-top: 20px;
+        color: #0088f0;
+        text-decoration: none;
+        font-weight: 500;
+      }
+      
+      .back-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="lecturer">
+      <div id="header-placeholder"></div>
+      
+      <!-- Placeholder cho Sidebar -->
+      <div id="sidebar-placeholder"></div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Overview Section -->
+        <section class="overview-section">
+          <h2 class="section-title">Danh sách lớp học phần</h2>
+          <p class="section-subtitle">Quản lý và theo dõi các lớp học của bạn</p>
+        </section>
+            
+        <!-- Class List Table - Full -->
+        <section class="table-section full-table-wrapper" aria-label="Danh sách đầy đủ lớp học phần">
+          <!-- Search Section -->
+          <section class="search-section" aria-label="Tìm kiếm lớp học">
+            <div class="search-container">
+              <input 
+                type="text" 
+                id="search-class-input" 
+                class="search-input" 
+                placeholder="Nhập nội dung cần tìm (mã lớp, tên môn học...)" 
+                aria-label="Nhập nội dung cần tìm"
+              />
+              <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.35-4.35"/>
+              </svg>
+            </div>
+          </section>
+          <div class="table-wrapper">
+            <table class="class-table" role="table">
+              <thead>
+                <tr role="row">
+                  <th role="columnheader">Mã môn học</th>
+                  <th role="columnheader">Tên môn học</th>
+                  <th role="columnheader">Tổng số sinh viên</th>
+                  <th role="columnheader">Trạng thái</th>
+                  <th role="columnheader">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody id="full-class-table-body">
+                <!-- Rows will be rendered by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          
+          <a href="lecturerDashboard.html" class="back-link">← Quay lại trang chủ</a>
+        </section>
+      </main>
+    </div>
+
+    <script src="../../js/lecturer/data.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Render toàn bộ danh sách lớp
+        renderFullClassTable();
+        
+        // Thêm chức năng tìm kiếm
+        setupSearch();
+      });
+      
+      function renderFullClassTable() {
+        const tableBody = document.getElementById('full-class-table-body');
+        if (!tableBody) return;
+        
+        tableBody.innerHTML = '';
+        
+        // Hiển thị TOÀN BỘ danh sách lớp (không giới hạn)
+        mockData.classes.forEach(cls => {
+          const row = document.createElement('tr');
+          row.setAttribute('role', 'row');
+          row.setAttribute('data-code', cls.code.toLowerCase());
+          row.setAttribute('data-name', cls.name.toLowerCase());
+          
+          // Xác định class cho status
+          let statusClass = cls.status;
+          if (cls.status === 'completed') statusClass = 'completed';
+          if (cls.status === 'pending') statusClass = 'pending';
+          if (cls.status === 'locked') statusClass = 'locked';
+          
+          row.innerHTML = `
+            <td role="cell">${cls.code}</td>
+            <td role="cell">${cls.name}</td>
+            <td role="cell">${cls.total}</td>
+            <td role="cell"><span class="status ${statusClass}">${cls.statusText}</span></td>
+            <td role="cell"><a href="#" class="action-link">Xem chi tiết →</a></td>
+          `;
+          
+          tableBody.appendChild(row);
+        });
+      }
+      
+      function setupSearch() {
+        const searchInput = document.getElementById('search-class-input');
+        if (!searchInput) return;
+        
+        searchInput.addEventListener('input', function() {
+          const searchTerm = this.value.toLowerCase().trim();
+          const rows = document.querySelectorAll('#full-class-table-body tr');
+          
+          if (searchTerm === '') {
+            // Hiển thị tất cả nếu ô tìm kiếm trống
+            rows.forEach(row => {
+              row.style.display = '';
+            });
+            return;
+          }
+          
+          // Lọc theo mã lớp và tên môn học
+          rows.forEach(row => {
+            const code = row.getAttribute('data-code');
+            const name = row.getAttribute('data-name');
+            
+            if (code.includes(searchTerm) || name.includes(searchTerm)) {
+              row.style.display = '';
+            } else {
+              row.style.display = 'none';
+            }
+          });
+        });
+        
+        // Thêm phím tắt (Esc để xóa tìm kiếm)
+        searchInput.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') {
+            this.value = '';
+            const rows = document.querySelectorAll('#full-class-table-body tr');
+            rows.forEach(row => {
+              row.style.display = '';
+            });
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

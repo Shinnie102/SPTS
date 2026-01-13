@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+    <title>PointC - Điểm danh lớp học phần</title>
+    <script src="../../js/lecturer/loadComponents.js"></script>
+    <link rel="stylesheet" href="../../css/lecturer/globals.css" />
+    <link rel="stylesheet" href="../../css/lecturer/style.css" />
+    <link rel="stylesheet" href="../../css/lecturer/attendance.css" />
+  </head>
+  <body>
+    <div class="lecturer">
+      <div id="header-placeholder"></div>
+      
+      <!-- Placeholder cho Sidebar -->
+      <div id="sidebar-placeholder"></div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Title Section -->
+        <section class="overview-section">
+          <h2 class="section-title">Điểm danh lớp học phần</h2>
+          <p class="section-subtitle">Quản lý điểm danh sinh viên</p>
+        </section>
+
+        <!-- Attendance Container -->
+        <div class="attendance-container">
+          <!-- Hàng 1: Chọn lớp học phần -->
+          <div class="class-row">
+            <div class="filter-group">
+              <label for="class-select">Lớp học phần</label>
+              <div class="select-wrapper">
+                <select id="class-select">
+                  <option value="LTM101">LTM101 - Lập trình mạng</option>
+                  <option value="CS101">CS101 - Cơ sở dữ liệu</option>
+                  <option value="WEB101">WEB101 - Lập trình Web</option>
+                </select>
+                <div class="select-arrow">▼</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hàng 2: Thanh điều hướng tab -->
+            <div class="tab-navigation-row">
+            <nav class="tab-navigation">
+                <a href="attendance.html" class="tab-item active">Điểm danh</a>
+                <a href="grading.html" class="tab-item">Nhập điểm</a>
+                <a href="classStatus.html" class="tab-item">Trạng thái lớp</a>
+                <a href="report.html" class="tab-item">Báo cáo</a>
+            </nav>
+            </div>
+
+          <!-- Hàng 3: Buổi điểm danh + Stats + Nút Lưu -->
+          <div class="action-row">
+            <!-- Buổi điểm danh -->
+            <div class="session-filter">
+              <label for="session-select">Buổi điểm danh</label>
+              <div class="select-wrapper">
+                <select id="session-select">
+                  <option value="session1">Buổi 1 - Ngày 12/11/2025</option>
+                  <option value="session2">Buổi 2 - Ngày 19/11/2025</option>
+                  <option value="session3">Buổi 3 - Ngày 26/11/2025</option>
+                </select>
+                <div class="select-arrow">▼</div>
+              </div>
+            </div>
+
+            <!-- Stats - Giữ nguyên format cũ -->
+            <div class="attendance-stats">
+              <div class="stat-box">
+                <span>Có mặt:</span>
+                <span data-count="present">0</span>
+              </div>
+              <div class="stat-box">
+                <span>Vắng:</span>
+                <span data-count="absent">0</span>
+              </div>
+              <div class="stat-box">
+                <span>Vắng có phép:</span>
+                <span data-count="excused">0</span>
+              </div>
+              <div class="stat-box">
+                <span>Tổng số:</span>
+                <span data-count="total">0</span>
+              </div>
+            </div>
+
+            <!-- Nút Lưu -->
+            <div class="save-btn-wrapper">
+              <button id="save-attendance-btn" class="save-btn">
+                <span> Lưu điểm danh</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Bảng điểm danh với thanh cuộn -->
+          <div class="attendance-table-container">
+            <div class="attendance-table">
+              <div class="table-header">
+                <div>STT</div>
+                <div>Tên sinh viên</div>
+                <div>Mã số SV</div>
+                <div>Trạng thái</div>
+              </div>
+              
+              <div id="attendance-table-body">
+                <!-- Danh sách sinh viên sẽ được render ở đây bằng JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Link quay lại -->
+          <div class="back-link-container">
+            <a href="lecturerDashboard.html" class="back-link">← Quay lại trang chủ</a>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../../js/lecturer/dataAttendance.js"></script>
+    <script src="../../js/lecturer/attendance.js"></script>
+    
+  </body>
+</html>
