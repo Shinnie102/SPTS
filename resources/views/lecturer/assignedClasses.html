@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi">
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="utf-8" />
-    <title>PointC - Danh sách lớp phụ trách</title>
-    <script src="../../js/lecturer/loadComponents.js"></script>
-    <link rel="stylesheet" href="../../css/lecturer/globals.css" />
-    <link rel="stylesheet" href="../../css/lecturer/style.css" />
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- hạn chế đụng vào file overall.css -->
+    <link rel="stylesheet" href="../../css/lecturer/styleL.css">
+    <link rel="stylesheet" href="../../css/overall.css">
+    <!-- --------------------------------- -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/vendor/all.min.css">
+    <title>Danh sách lớp học phần - Giảng viên</title>
     <style>
       /* Style cho ô tìm kiếm */
       .search-section {
@@ -80,19 +86,22 @@
     </style>
   </head>
   <body>
-    <div class="lecturer">
-      <div id="header-placeholder"></div>
-      
-      <!-- Placeholder cho Sidebar -->
-      <div id="sidebar-placeholder"></div>
+    <!-- Header -->
+    <div class="header"></div>
+    <div id="main">
+        <!-- Menu -->
+        <div class="menu_lecturer"></div>
 
+        <div id="content">
+            <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
+            <h1 id="tieudechinh">Danh sách Lớp học phần</h1>
+            <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
+
+            <!-- ------------------------------------------------ -->
+            <!-- Nội dung riêng của từng trang sẽ được chèn vào đây -->
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Overview Section -->
-        <section class="overview-section">
-          <h2 class="section-title">Danh sách lớp học phần</h2>
-          <p class="section-subtitle">Quản lý và theo dõi các lớp học của bạn</p>
-        </section>
+        
             
         <!-- Class List Table - Full -->
         <section class="table-section full-table-wrapper" aria-label="Danh sách đầy đủ lớp học phần">
@@ -132,6 +141,7 @@
           <a href="lecturerDashboard.html" class="back-link">← Quay lại trang chủ</a>
         </section>
       </main>
+    </div>
     </div>
 
     <script src="../../js/lecturer/data.js"></script>
@@ -216,5 +226,7 @@
         });
       }
     </script>
+    <script src="../../js/lecturer/lecturer.js"></script>
+
   </body>
 </html>

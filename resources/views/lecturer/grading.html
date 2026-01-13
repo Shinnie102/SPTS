@@ -3,27 +3,36 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta charset="utf-8" />
-    <title>PointC - Điểm danh lớp học phần</title>
+    <title>PointC - Nhập điểm lớp học phần</title>
     <script src="../../js/lecturer/loadComponents.js"></script>
     <link rel="stylesheet" href="../../css/lecturer/globals.css" />
-    <link rel="stylesheet" href="../../css/lecturer/style.css" />
+    <link rel="stylesheet" href="../../css/lecturer/styleL.css">
+  <link rel="stylesheet" href="../../css/overall.css">
+    <!-- --------------------------------- -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/vendor/all.min.css">
     <link rel="stylesheet" href="../../css/lecturer/grading.css" />
     <link rel="stylesheet" href="../../css/lecturer/attendance.css"/>
   </head>
   <body>
-    <div class="lecturer">
-      <div id="header-placeholder"></div>
-      
-      <!-- Placeholder cho Sidebar -->
-      <div id="sidebar-placeholder"></div>
+    <div class="header"></div>
+    <div id="main">
+        <!-- Menu -->
+        <div class="menu_lecturer"></div>
+
+        <div id="content">
+            <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
+            <h1 id="tieudechinh">Danh sách lớp học phần</h1>
+            <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
+
+            <!-- ------------------------------------------------ -->
+            <!-- Nội dung riêng của từng trang sẽ được chèn vào đây -->>
 
       <!-- Main Content -->
       <main class="main-content">
-        <!-- Title Section -->
-        <section class="overview-section">
-          <h2 class="section-title">Danh sách lớp học phần</h2>
-          <p class="section-subtitle">Quản lý và theo dõi các lớp học của bạn</p>
-        </section>
+        
 
         <section id="lock-notification" class="lock-status-container" style="display: none;">
           <div class="lock-header-row">
@@ -98,13 +107,17 @@
           </div>
         </div>
       </main>
+            <!-- ------------------------------------------------ -->
+             </div>
     </div>
 
 
     <!-- JavaScript Files -->
     <script src="../../js/lecturer/dataGrading.js"></script>
     <script src="../../js/lecturer/grading.js"></script>
+    <script src="../../js/lecturer/lecturer.js"></script>
     <script src="../../js/lecturer/attendance.js"></script>
+
     <script>
       function checkClassLockStatus(classCode) {
     // 1. Tìm thông tin lớp trong mockData (giả sử dữ liệu nằm trong biến mockData)
@@ -155,5 +168,6 @@
 //    checkClassLockStatus(selectedClass);
 // });
     </script>
+
   </body>
 </html>
