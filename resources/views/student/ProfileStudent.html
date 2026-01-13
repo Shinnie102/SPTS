@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PointC - Báo cáo lớp học phần</title>
+  <link rel="stylesheet" href="../../css/student/profileStudent.css">
+  <link rel="stylesheet" href="../../css/overall.css">
+  <link rel="stylesheet" href="../../css/student/studentDashboard.css">
+
+    <!-- --------------------------------- -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../../public/vendor/all.min.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+</head>
+<body>
+    <div class="header"></div>
+
+    <div id="main">
+        <!-- Menu -->
+        <div class="menu_student"></div>
+        <div id="content">
+        <main class="main-content">
+        <section class="overview-section">
+            <div class="header-content">
+                <div class="title-group">
+                <h2 class="section-title">Hồ sơ cá nhân</h2>
+                <p class="section-subtitle">Xem thông tin cá nhân của bạn</p>
+                </div>
+                <button class="edit-btn">
+                Chỉnh sửa <img src="../lecturer/img/pencil-icon.svg" alt="edit">
+                </button>
+            </div>
+            </section>
+
+            <div class="profile-layout">
+            <aside class="profile-card-sidebar">
+                <div class="avatar-wrapper">
+                <div class="avatar-circle-large">VA</div>
+                </div>
+                
+                <div class="lecturer-info-header">
+                <h3 class="lecturer-name-display">Trần Thị B</h3>
+                <p class="lecturer-id-display">SV2023001</p>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="stats-container">
+                <div class="stat-row">
+                    <div class="stat-icon-box">
+                    <img src="../lecturer/img/book-open.png" alt="class icon">
+                    </div>
+                    <div class="stat-text">
+                    <span class="stat-label">Số môn đang học</span>
+                    <span class="stat-value">4 môn</span>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-icon-box">
+                    <img src="../lecturer/img/medal.png" alt="experience icon">
+                    </div>
+                    <div class="stat-text">
+                    <span class="stat-label">GPA</span>
+                    <span class="stat-value">3.65/4.0</span>
+                    </div>
+                </div>
+
+                <div class="stat-row">
+                    <div class="stat-icon-box">
+                    <img src="../lecturer/img/calendar-check.png" alt="start date icon">
+                    </div>
+                    <div class="stat-text">
+                    <span class="stat-label">Ngày bắt đầu</span>
+                    <span class="stat-value">01/09/2023</span>
+                    </div>
+                </div>
+                </div>
+            </aside>
+
+            <div class="profile-details-column">
+                <div class="detail-card">
+                <h4 class="detail-card-title">Thông tin cá nhân</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                    <label>Họ và tên</label>
+                    <p>Trần Thị B</p>
+                    </div>
+                    <div class="detail-item">
+                    <label>Ngày sinh</label>
+                    <div class="info-with-icon">
+                        <img src="../lecturer/img/calendar-small.png" class="small-icon"> 20/05/2005
+                    </div>
+                    </div>
+                    <div class="detail-item">
+                    <label>Email</label>
+                    <div class="info-with-icon">
+                        <img src="../lecturer/img/mail.png" class="small-icon"> tranthib@student.university.edu.vn
+                    </div>
+                    </div>
+                    <div class="detail-item">
+                    <label>Số điện thoại</label>
+                    <div class="info-with-icon">
+                        <img src="../lecturer/img/phone.png" class="small-icon"> 0987654321
+                    </div>
+                    </div>
+                    <div class="detail-item full-width">
+                    <label>Địa chỉ</label>
+                    <div class="info-with-icon">
+                        <img src="../lecturer/img/map-pin.png" class="small-icon"> 456 Đường Lê Lợi, Quận 1, TP. Hồ Chí Minh
+                    </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="detail-card">
+                <h4 class="detail-card-title">Thông tin học thuật</h4>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                    <label>Lớp học</label>
+                    <p>CNTT-K18</p>
+                    </div>
+                    <div class="detail-item">
+                    <label>Khoa</label>
+                    <p>Khoa Công nghệ Thông tin</p>
+                    </div>
+                    <div class="detail-item">
+                    <label>Chuyên ngành</label>
+                    <p>Công nghệ Thông tin</p>
+                    </div>
+                    <div class="detail-item">
+                    <label>GPA</label>
+                    <p>3.65/4.0</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+
+        <div class="back-link-container">
+            <a href="" class="back-link">← Quay lại trang chủ</a>
+        </div>
+        </main>
+        </div>
+    </div>
+    
+    <script src="../../js/student/student.js"></script>
+    <script src="../../js/student/studentAlertWarning.js"></script>
+    <script src="../../js/student/studentCharts.js"></script>
+</body>
+</html>
