@@ -1,70 +1,267 @@
+/* Style cho ô tìm kiếm */
+.search-section {
+  margin: 20px 0 30px 0;
+}
 
-      /* Style cho ô tìm kiếm */
-      .search-section {
-        margin: 20px 0 30px 0;
-      }
-      
-      .search-container {
-        position: relative;
-        width: 447px;
-        height: 42px;
-        margin-left: auto;
-        margin-right: 20px;
-      }
-      
-      .search-input {
-        width: 100%;
-        height: 100%;
-        padding: 0 20px;
-        border: 2px solid #e0e0e0;
-        border-radius: 21px; /* Bo tròn góc */
-        font-size: 14px;
-        outline: none;
-        transition: border-color 0.3s;
-        background-color: #f9f9f9;
-      }
-      
-      .search-input:focus {
-        border-color: #0088f0;
-        background-color: #fff;
-      }
-      
-      .search-input::placeholder {
-        color: #999;
-      }
-      
-      .search-icon {
-        position: absolute;
-        right: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 18px;
-        height: 18px;
-        color: #999;
-        pointer-events: none;
-      }
-      
-      /* Responsive cho mobile */
-      @media (max-width: 768px) {
-        .search-container {
-          width: 100%;
-          max-width: 447px;
-        }
-      }
-      
-      /* Style cho bảng đầy đủ */
-      .full-table-wrapper {
-        margin-top: 20px;
-      }
-      
-      .back-link {
-        display: inline-block;
-        margin-top: 20px;
-        color: #0088f0;
-        text-decoration: none;
-        font-weight: 500;
-      }
-      
-      .back-link:hover {
-        text-decoration: underline;
-      }
+.search-container {
+  position: relative;
+  width: 447px;
+  height: 42px;
+  margin-left: auto;
+  margin-right: 20px;
+}
+
+.search-form {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.search-input {
+  width: 100%;
+  height: 100%;
+  padding: 0 50px 0 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 21px;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+  background-color: #f9f9f9;
+  font-family: 'Roboto', sans-serif;
+}
+
+.search-input:focus {
+  border-color: #0088f0;
+  background-color: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 136, 240, 0.1);
+}
+
+.search-input::placeholder {
+  color: #999;
+}
+
+.search-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  transition: color 0.3s;
+}
+
+.search-btn:hover {
+  color: #0088f0;
+}
+
+.search-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* Badge trạng thái - THÊM VÀO */
+.status-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  min-width: 120px;
+  letter-spacing: 0.5px;
+  font-family: 'Roboto', sans-serif;
+}
+
+.status-active {
+  background-color: rgba(0, 131, 19, 0.15);
+  color: #008313;
+  border: 1px solid rgba(0, 131, 19, 0.3);
+}
+
+.status-inactive {
+  background-color: rgba(108, 117, 125, 0.15);
+  color: #6c757d;
+  border: 1px solid rgba(108, 117, 125, 0.3);
+}
+
+.status-completed {
+  background-color: rgba(0, 136, 240, 0.15);
+  color: #0088f0;
+  border: 1px solid rgba(0, 136, 240, 0.3);
+}
+
+.status-cancelled {
+  background-color: rgba(255, 56, 60, 0.15);
+  color: #ff5f57;
+  border: 1px solid rgba(255, 56, 60, 0.3);
+}
+
+.status-draft {
+  background-color: rgba(254, 188, 47, 0.15);
+  color: #febc2f;
+  border: 1px solid rgba(254, 188, 47, 0.3);
+}
+
+/* Nút thao tác */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.3s;
+  border: 1px solid transparent;
+}
+
+.view-btn {
+  background-color: #f0f7ff;
+  color: #0088f0;
+  border-color: #cce5ff;
+}
+
+.view-btn:hover {
+  background-color: #0088f0;
+  color: white;
+  border-color: #0088f0;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 136, 240, 0.2);
+}
+
+.grade-btn {
+  background-color: #f0fff4;
+  color: #00a86b;
+  border-color: #c3e6cb;
+}
+
+.grade-btn:hover {
+  background-color: #00a86b;
+  color: white;
+  border-color: #00a86b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 168, 107, 0.2);
+}
+
+/* Style cho bảng đầy đủ */
+.full-table-wrapper {
+  margin-top: 20px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  color: #0088f0;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  transition: all 0.3s;
+  background-color: white;
+  font-family: 'Roboto', sans-serif;
+}
+
+.back-link:hover {
+  text-decoration: none;
+  background-color: #f0f7ff;
+  border-color: #0088f0;
+  transform: translateX(-5px);
+}
+
+.pagination-container {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Thông báo */
+.alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-success {
+  background-color: rgba(0, 131, 19, 0.1);
+  color: #008313;
+  border: 1px solid rgba(0, 131, 19, 0.2);
+}
+
+.alert-error {
+  background-color: rgba(255, 56, 60, 0.1);
+  color: #ff5f57;
+  border: 1px solid rgba(255, 56, 60, 0.2);
+}
+
+/* Khi không có dữ liệu */
+.no-data {
+  padding: 40px 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.no-data i {
+  margin-bottom: 15px;
+  color: #dee2e6;
+}
+
+.no-data p {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.search-hint {
+  font-size: 14px;
+  color: #999;
+  margin-top: 5px !important;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 768px) {
+  .search-container {
+    width: 100%;
+    max-width: 447px;
+    margin: 0 auto;
+  }
+  
+  .search-form {
+    justify-content: center;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .action-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .status-badge {
+    min-width: 90px;
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+}

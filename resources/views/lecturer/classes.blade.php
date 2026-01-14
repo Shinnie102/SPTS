@@ -36,22 +36,41 @@
                 <section class="table-section full-table-wrapper" aria-label="Danh sách đầy đủ lớp học phần">
                     <!-- Search Section -->
                     <section class="search-section" aria-label="Tìm kiếm lớp học">
-                        <div class="search-container">
-                            <input 
-                                type="text" 
-                                id="search-class-input" 
-                                class="search-input" 
-                                placeholder="Nhập nội dung cần tìm (mã lớp, tên môn học...)" 
-                                aria-label="Nhập nội dung cần tìm"
-                            />
-                            <i class="fas fa-search search-icon"></i>
-                        </div>
+                        <form method="GET" action="{{ route('lecturer.classes') }}" class="search-form">
+                            <div class="search-container">
+                                <input 
+                                    type="text" 
+                                    name="search"
+                                    id="search-class-input" 
+                                    class="search-input" 
+                                    placeholder="Nhập nội dung cần tìm (mã lớp, tên môn học...)" 
+                                    aria-label="Nhập nội dung cần tìm"
+                                    value="{{ request('search') }}"
+                                />
+                                <button type="submit" class="search-btn" aria-label="Tìm kiếm">
+                                    <i class="fas fa-search search-icon"></i>
+                                </button>
+                            </div>
+                        </form>
                     </section>
+                    
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> {{ session('success') }}
+                        </div>
+                    @endif
+                    
+                    @if(session('error'))
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-circle"></i> {{ session('error') }}
+                        </div>
+                    @endif
                     
                     <div class="table-wrapper">
                         <table class="class-table" role="table">
                             <thead>
                                 <tr role="row">
+                                    <th role="columnheader">Mã lớp</th>
                                     <th role="columnheader">Mã môn học</th>
                                     <th role="columnheader">Tên môn học</th>
                                     <th role="columnheader">Tổng số sinh viên</th>
@@ -60,40 +79,53 @@
                                 </tr>
                             </thead>
                             <tbody id="full-class-table-body">
-                                <!-- Rows will be rendered by JavaScript -->
-                                @if(isset($classes) && count($classes) > 0)
-                                    @foreach($classes as $class)
-                                    <tr>
-                                        <td>{{ $class->course_code ?? 'N/A' }}</td>
-                                        <td>{{ $class->course_name ?? 'N/A' }}</td>
-                                        <td>{{ $class->total_students ?? 0 }}</td>
-                                        <td>
-                                            <span class="status-badge status-{{ $class->status ?? 'active' }}">
-                                                {{ $class->status_label ?? 'Đang giảng dạy' }}
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="{{ route('lecturer.class.detail', $class->id) }}" class="action-btn view-btn" title="Xem chi tiết">
+                                @forelse($classes as $class)
+                                <tr>
+                                    <td>{{ $class->class_code }}</td>
+                                    <td>{{ $class->course_code }}</td>
+                                    <td>{{ $class->course_name }}</td>
+                                    <td>{{ $class->valid_enrollments_count ?? $class->total_students }}</td>                                    <td>
+                                        <span class="status-badge {{ $class->status_class }}">
+                                            {{ $class->status_name }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <a href="{{ route('lecturer.class.detail', $class->class_section_id) }}" class="action-btn view-btn" title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('lecturer.grading', $class->id) }}" class="action-btn grade-btn" title="Nhập điểm">
+                                            <a href="{{ route('lecturer.grading', $class->class_section_id) }}" class="action-btn grade-btn" title="Nhập điểm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                @else
-                                    <tr>
-                                        <td colspan="5" class="text-center">Không có lớp học nào</td>
-                                    </tr>
-                                @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                                @empty
+                                <tr>
+                                    <td colspan="6" class="text-center no-data">
+                                        <i class="fas fa-inbox fa-2x"></i>
+                                        <p>Không có lớp học nào</p>
+                                        @if(request('search'))
+                                            <p class="search-hint">Thử với từ khóa tìm kiếm khác</p>
+                                        @endif
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
                     
-                    @if(isset($classes) && $classes->links())
+                    @if($classes->hasPages())
                     <div class="pagination-container">
-                        {{ $classes->links() }}
+                        <div class="pagination-info">
+                            Hiển thị lớp {{ ($classes->currentPage() - 1) * $classes->perPage() + 1 }} 
+                            đến {{ min($classes->currentPage() * $classes->perPage(), $classes->total()) }} 
+                            trong tổng số {{ $classes->total() }} lớp
+                        </div>
+                        
+                        <div class="pagination-links">
+                            {{ $classes->withQueryString()->links('pagination::bootstrap-4') }}
+                        </div>
                     </div>
                     @endif
                     
@@ -106,18 +138,15 @@
     </div>
 
     <!-- Javascript -->
-    <script src="{{ asset('js/lecturer/data.js') }}"></script>
     <script src="{{ asset('js/lecturer/styleClass.js') }}"></script>
     <script>
-        // Tìm kiếm lớp học
-        document.getElementById('search-class-input')?.addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#full-class-table-body tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
+        // Focus vào ô tìm kiếm nếu có tham số search
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-class-input');
+            if (searchInput && '{{ request('search') }}') {
+                searchInput.focus();
+                searchInput.select();
+            }
         });
     </script>
 </body>

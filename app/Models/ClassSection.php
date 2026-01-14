@@ -56,4 +56,81 @@ class ClassSection extends Model
     {
         return $this->hasMany(ClassGradingScheme::class, 'class_section_id', 'class_section_id');
     }
+    
+    // ======== ACCESSOR MỚI (SỬA LẠI) ========
+    
+    /**
+     * Lấy số sinh viên trong lớp (chỉ đếm enrollment hợp lệ)
+     * - Trạng thái 1: ACTIVE (Đã đăng ký)
+     * - Trạng thái 2: COMPLETED (Đã hoàn thành)
+     */
+    public function getTotalStudentsAttribute()
+    {
+        // Đếm số enrollment có trạng thái hợp lệ
+        return $this->enrollments()
+            ->whereIn('enrollment_status_id', [1, 2]) // ACTIVE hoặc COMPLETED
+            ->count();
+    }
+    
+    /**
+     * Scope để lấy lớp với số sinh viên (sử dụng subquery)
+     */
+    public function scopeWithStudentCount($query)
+    {
+        return $query->addSelect([
+            'student_count' => Enrollment::selectRaw('COUNT(*)')
+                ->whereColumn('class_section_id', 'class_section.class_section_id')
+                ->whereIn('enrollment_status_id', [1, 2])
+        ]);
+    }
+    
+    /**
+     * Lấy mã môn học
+     */
+    public function getCourseCodeAttribute()
+    {
+        return $this->courseVersion->course->course_code ?? 'N/A';
+    }
+    
+    /**
+     * Lấy tên môn học
+     */
+    public function getCourseNameAttribute()
+    {
+        return $this->courseVersion->course->course_name ?? 'N/A';
+    }
+    
+    /**
+     * Lấy mã trạng thái
+     */
+    public function getStatusCodeAttribute()
+    {
+        return $this->status->code ?? 'ACTIVE';
+    }
+    
+    /**
+     * Lấy tên trạng thái
+     */
+    public function getStatusNameAttribute()
+    {
+        return $this->status->name ?? 'Đang giảng dạy';
+    }
+    
+    /**
+     * Lấy CSS class cho trạng thái
+     */
+    public function getStatusClassAttribute()
+    {
+        $statusCode = strtolower($this->status_code);
+        
+        $statusMap = [
+            'active' => 'status-active',
+            'inactive' => 'status-inactive',
+            'completed' => 'status-completed',
+            'cancelled' => 'status-cancelled',
+            'draft' => 'status-draft',
+        ];
+        
+        return $statusMap[$statusCode] ?? 'status-active';
+    }
 }

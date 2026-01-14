@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
+use App\Http\Controllers\Lecturer\ClassController; // Thêm dòng này
 
 Route::get('/', function () {
     return view('welcome');
@@ -54,9 +55,15 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
-    Route::get('/classes', function () { return view('lecturer.classes'); })->name('classes');
-    Route::get('/classStatus', function () { return view('lecturer.classStatus'); })->name('classes.show');
+    
+    // Lớp học phần - Sử dụng Controller mới
+    Route::get('/classes', [ClassController::class, 'index'])->name('classes');
+    Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
+    Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
+    
+    // Các route cũ giữ nguyên cho compatibility
     Route::get('/grading', function () { return view('lecturer.grading'); })->name('grading.show');
+    Route::get('/classStatus', function () { return view('lecturer.classStatus'); })->name('classes.show');
     Route::get('/attendance', function () { return view('lecturer.attendance'); })->name('attendance.show');
     Route::get('/report', function () { return view('lecturer.report'); })->name('report.show');
 });
@@ -69,5 +76,3 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
 });
-
-
