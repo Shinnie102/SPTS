@@ -53,7 +53,8 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 // Lecturer Routes
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/classes', function () { return 'Classes list'; })->name('classes');
+    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
+    Route::get('/classes', [LecturerController::class, 'classes'])->name('classes');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
     Route::get('/assignments', function () { return 'Assignments list'; })->name('assignments');
     Route::get('/announcements', function () { return 'Announcements'; })->name('announcements');
@@ -62,6 +63,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
 // Student Routes
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [App\Http\Controllers\Student\Profile::class, 'index'])->name('profile');
     Route::get('/study', function () { return view('student.studentStudy'); })->name('study');
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
