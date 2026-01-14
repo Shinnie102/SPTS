@@ -4,14 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- hạn chế đụng vào file overall.css -->
-    <link rel="stylesheet" href="../../css/overall.css">
+    <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
     <!-- --------------------------------- -->
-    <link rel="stylesheet" href="../../css/admin/adminBuoc2Taolophoc.css">
+    <link rel="stylesheet" href="{{ asset('css/admin/adminBuoc2Taolophoc.css') }}">
     <link
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="../../../public/vendor/all.min.css">
+    <link rel="stylesheet" href="{{ asset('vendor/all.min.css') }}">
     <title>Bước 2: Thành viên lớp học</title>
 </head>
 
@@ -201,8 +202,8 @@
     </div>
 
     <!-- Javascript -->
-    <script src="../../js/admin/admin.js"></script>
-    <script src="../../js/admin/adminBuoc2Taolophoc.js"></script>
+    <script src="{{ asset('js/admin/admin.js') }}"></script>
+    <script src="{{ asset('js/admin/adminBuoc2Taolophoc.js') }}"></script>
 </body>
 
 </html>

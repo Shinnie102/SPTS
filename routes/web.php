@@ -32,6 +32,21 @@ Route::post('/password/reset', function() {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/users', function () { return view('admin.adminUsers'); })->name('users');
+    
+    // Quản lý lớp học phần
+    Route::get('/lop-hoc', function () { return view('admin.adminLophoc'); })->name('lophoc');
+    Route::get('/lop-hoc/tao-buoc-1', function () { return view('admin.adminBuoc1Taolophoc'); })->name('lophoc.create.step1');
+    Route::get('/lop-hoc/tao-buoc-2', function () { return view('admin.adminBuoc2Taolophoc'); })->name('lophoc.create.step2');
+    Route::get('/lop-hoc/{id}/chi-tiet', function ($id) { return view('admin.adminHocphandetail'); })->name('lophoc.detail');
+    
+    // Cấu trúc học thuật
+    Route::get('/hoc-thuat', function () { return view('admin.adminhocthuat'); })->name('hocthuat');
+    
+    // Quy tắc đánh giá
+    Route::get('/quy-tac', function () { return view('admin.adminQuytac'); })->name('quytac');
+    
+    // Thời gian học vụ
+    Route::get('/thoi-gian', function () { return view('admin.adminThoigian'); })->name('thoigian');
 });
 
 // Lecturer Routes
