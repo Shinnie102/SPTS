@@ -54,10 +54,11 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
-    Route::get('/classes', [LecturerController::class, 'classes'])->name('classes');
-    Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
-    Route::get('/assignments', function () { return 'Assignments list'; })->name('assignments');
-    Route::get('/announcements', function () { return 'Announcements'; })->name('announcements');
+    Route::get('/classes', function () { return view('lecturer.classes'); })->name('classes');
+    Route::get('/classStatus', function () { return view('lecturer.classStatus'); })->name('classes.show');
+    Route::get('/grading', function () { return view('lecturer.grading'); })->name('grading.show');
+    Route::get('/attendance', function () { return view('lecturer.attendance'); })->name('attendance.show');
+    Route::get('/report', function () { return view('lecturer.report'); })->name('report.show');
 });
 
 // Student Routes
