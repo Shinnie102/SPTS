@@ -14,6 +14,9 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('vendor/all.min.css') }}">
     <title>Lịch sử chuyên cần</title>
+    <script>
+        const attendanceData = @json($attendanceData);
+    </script>
 </head>
 
 <body>

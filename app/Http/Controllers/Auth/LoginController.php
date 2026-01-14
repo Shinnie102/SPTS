@@ -32,11 +32,11 @@ class LoginController extends Controller
             $user = Auth::user();
 
             // Redirect based on user role (using relationship)
-            if ($user->role && $user->role->role_code === 'admin') {
+            if ($user->role && $user->role->role_code === 'ADMIN') {
                 return redirect()->intended(route('admin.dashboard'));
-            } elseif ($user->role && $user->role->role_code === 'lecturer') {
+            } elseif ($user->role && $user->role->role_code === 'LECTURER') {
                 return redirect()->intended(route('lecturer.dashboard'));
-            } elseif ($user->role && $user->role->role_code === 'student') {
+            } elseif ($user->role && $user->role->role_code === 'STUDENT') {
                 return redirect()->intended(route('student.dashboard'));
             }
 

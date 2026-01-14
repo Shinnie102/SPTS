@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Student\studentHistoryController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -29,7 +30,7 @@ Route::post('/password/reset', function() {
 })->name('password.reset');
 
 // Admin Routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     Route::get('/users', function () { return view('admin.adminUsers'); })->name('users');
     
@@ -50,7 +51,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 });
 
 // Lecturer Routes
-Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->name('lecturer.')->group(function () {
+Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/classes', function () { return 'Classes list'; })->name('classes');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
@@ -59,10 +60,10 @@ Route::middleware(['auth', 'role:lecturer'])->prefix('lecturer')->name('lecturer
 });
 
 // Student Routes
-Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
+Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/study', function () { return view('student.studentStudy'); })->name('study');
-    Route::get('/history', function () { return view('student.studentHistory'); })->name('history');
+    Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () { return 'Class details'; })->name('classes.show');
 });
 

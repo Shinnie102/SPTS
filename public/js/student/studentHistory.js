@@ -1,89 +1,6 @@
-// ================= MOCK DATA =================
-const attendanceData = {
-    totalProgress: 93, // Tổng quan toàn khóa
-    semesters: {
-        '2025-2026': [
-            {
-                code: 'CS101',
-                name: 'Lập trình mạng',
-                totalSessions: 15,
-                present: 15,
-                absent: 0,
-                late: 0,
-                percentage: 100,
-                status: 'pass',
-                details: [
-                    { stt: 1, date: '07/06/2025', status: 'present' },
-                    { stt: 2, date: '14/06/2025', status: 'present' },
-                    { stt: 3, date: '21/06/2025', status: 'present' }
-                ]
-            },
-            {
-                code: 'CS101',
-                name: 'Lập trình mạng',
-                totalSessions: 30,
-                present: 20,
-                absent: 10,
-                late: 2,
-                percentage: 63.3,
-                status: 'fail',
-                details: [
-                    { stt: 1, date: '07/06/2025', status: 'present' },
-                    { stt: 2, date: '14/06/2025', status: 'absent' },
-                    { stt: 3, date: '21/06/2025', status: 'absent' },
-                    { stt: 4, date: '28/06/2025', status: 'present' },
-                    { stt: 5, date: '05/07/2025', status: 'late' },
-                    { stt: 6, date: '12/07/2025', status: 'absent' },
-                    { stt: 7, date: '19/07/2025', status: 'absent' },
-                    { stt: 8, date: '26/07/2025', status: 'present' },
-                    { stt: 9, date: '02/08/2025', status: 'present' },
-                    { stt: 10, date: '09/08/2025', status: 'absent' }
-                ]
-            },
-            {
-                code: 'CS101',
-                name: 'Lập trình mạng',
-                totalSessions: 15,
-                present: 6,
-                absent: 4,
-                late: 0,
-                percentage: null,
-                status: 'fail',
-                details: [
-                    { stt: 1, date: '07/06/2025', status: 'present' },
-                    { stt: 2, date: '14/06/2025', status: 'absent' }
-                ]
-            },
-            {
-                code: 'CS101',
-                name: 'Lập trình mạng',
-                totalSessions: 15,
-                present: 5,
-                absent: 0,
-                late: 0,
-                percentage: null,
-                status: 'learning',
-                details: []
-            }
-        ],
-        '2024-2025-2': [
-            {
-                code: 'CS102',
-                name: 'Cơ sở dữ liệu',
-                totalSessions: 20,
-                present: 18,
-                absent: 2,
-                late: 1,
-                percentage: 90,
-                status: 'pass',
-                details: [
-                    { stt: 1, date: '15/01/2025', status: 'present' },
-                    { stt: 2, date: '22/01/2025', status: 'absent' }
-                ]
-            }
-        ]
-    }
-};
+// ================= DATA FROM SERVER =================
+// attendanceData is passed from Laravel blade template via @json directive
+// Data is injected via <script> tag in studentHistory.blade.php
 
 // ================= RENDER PROGRESS BAR =================
 function renderProgressBar() {
@@ -240,6 +157,31 @@ function renderAttendanceTable(semesterKey) {
     });
 }
 
+// ================= POPULATE SEMESTER DROPDOWN =================
+function populateSemesterDropdown() {
+    const dropdown = document.getElementById('semester-dropdown');
+    dropdown.innerHTML = ''; // Clear existing options
+    
+    // Get all semester keys from data
+    const semesters = Object.keys(attendanceData.semesters);
+    
+    if (semesters.length === 0) {
+        dropdown.innerHTML = '<option value="">Không có dữ liệu</option>';
+        return null;
+    }
+    
+    // Add options for each semester
+    semesters.forEach((semester, index) => {
+        const option = document.createElement('option');
+        option.value = semester;
+        option.textContent = semester;
+        if (index === 0) option.selected = true; // Select first semester by default
+        dropdown.appendChild(option);
+    });
+    
+    return semesters[0]; // Return first semester key
+}
+
 // ================= SEMESTER DROPDOWN CHANGE =================
 document.getElementById('semester-dropdown').addEventListener('change', (e) => {
     renderAttendanceTable(e.target.value);
@@ -247,9 +189,17 @@ document.getElementById('semester-dropdown').addEventListener('change', (e) => {
 
 // ================= INITIALIZE =================
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('Initializing with data:', attendanceData);
+    
     // Render progress bar
     renderProgressBar();
     
-    // Render initial attendance table
-    renderAttendanceTable('2025-2026');
+    // Populate semester dropdown and render table for first semester
+    const firstSemester = populateSemesterDropdown();
+    if (firstSemester) {
+        renderAttendanceTable(firstSemester);
+    } else {
+        // No data available
+        document.querySelector('.table-body').innerHTML = '<p style="text-align: center; padding: 20px;">Không có dữ liệu chuyên cần</p>';
+    }
 });

@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/header.css') }}">
 <div id="header" class="header">
     <a href="{{ url('/') }}">
         <div id="frame_logo">
@@ -11,7 +12,7 @@
             <div id="infor_user">
                 <p id="fullName">{{ Auth::user()->full_name ?? 'User' }}</p>
                 <p id="frame_MSSV">
-                    @if(Auth::user()->role->role_code === 'student')
+                    @if(Auth::user()->role->role_code === 'STUDENT')
                         MSSV: <span id="MSSV">{{ Auth::user()->code_user }}</span>
                     @else
                         Mã: <span id="MSSV">{{ Auth::user()->code_user }}</span>

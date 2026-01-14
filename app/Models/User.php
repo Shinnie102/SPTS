@@ -112,16 +112,16 @@ class User extends Authenticatable
     // Helper methods
     public function isAdmin()
     {
-        return $this->role->role_code === 'admin';
+        return $this->role->role_code === 'ADMIN';
     }
 
     public function isLecturer()
     {
-        return $this->role->role_code === 'lecturer';
+        return $this->role->role_code === 'LECTURER';
     }
 
     public function isStudent()
     {
-        return $this->role->role_code === 'student';
+        return $this->role->role_code === 'STUDENT';
     }
 }
