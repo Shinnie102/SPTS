@@ -15,199 +15,9 @@
   gap: 0;
 }
 
-/* Sidebar - FULL-HEIGHT SIDEBAR */
-.sidebar {
-  grid-area: sidebar;
-  background-color: #e0eafa;
-  border-right: 1px solid #b1b5b6;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 40px 0;
-  width: 120px;
-  
-}
-
-.nav-menu {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  align-items: center;
-  padding: 0 10px;
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  width: 100px;
-  text-align: center;
-  background-color: #f6f9fd;
-  border-radius: 12px;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-  color: #0088f0;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.nav-item:hover,
-.nav-item:focus {
-  transform: scale(1.05);
-  background-color: #fff;
-}
-
-.nav-item.active {
-  background-color: #fff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.nav-icon {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-}
-
-.nav-label {
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.logout-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #ff0000;
-  opacity: 0.6;
-  transition: opacity 0.2s ease;
-}
-
-.logout-btn:hover {
-  opacity: 1;
-}
-
-.logout-icon {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-}
-
-.logout-label {
-  font-size: 12px;
-  font-weight: 300;
-  text-align: center;
-  white-space: nowrap;
-}
-
-/* Header */
-.header {
-  grid-area: header;
-  background-color: #f6f9fd;
-  display: flex;
-  align-items: center;
-  justify-content: space-between; /* THÊM DÒNG NÀY */
-  padding: 16px 40px;
-  height: 90px;
-  width: 100%;
-  z-index: 100;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  position: static;
-}
-
-/* Header Logout Button - Đặt sang bên phải */
-.header-logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  background-color: #f6f9fd;
-  border: 2px solid #ff0000;
-  border-radius: 12px;
-  cursor: pointer;
-  color: #ff0000;
-  opacity: 0.8;
-  transition: all 0.3s ease;
-  font-family: "Roboto", Helvetica, sans-serif;
-  font-size: 16px;
-  font-weight: 400;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.header-logout-btn:hover {
-  opacity: 1;
-  background-color: #fff;
-  box-shadow: 0px 4px 8px rgba(255, 0, 0, 0.15);
-  transform: translateY(-2px);
-}
-
-.header-logout-btn:active {
-  transform: translateY(0);
-}
-
-.header-logout-icon {
-  width: 24px;
-  height: 24px;
-  object-fit: contain;
-  transition: transform 0.2s ease;
-}
-
-.header-logout-btn:hover .header-logout-icon {
-  transform: scale(1.1);
-}
-
-.header-logout-label {
-  font-size: 16px;
-  font-weight: 500;
-  white-space: nowrap;
-  letter-spacing: 0.5px;
-}
-
-.logo-section {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.logo-icon {
-  width: 60px;
-  height: 60px;
-  background-color: #0088f0;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  border: 4px solid #0088f0;
-}
-
-.logo-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.logo-title {
-  font-size: 36px;
-  font-weight: 400;
-  color: #0088f0;
-  margin: 0;
-  letter-spacing: 0.72px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-}
-
 /* Main Content */
 .main-content {
   grid-area: main;
-  padding: 40px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -736,7 +546,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px; /* Tăng từ 4px lên 8px (gấp đôi) */
+  gap: 8px;
   flex: 1;
 }
 
@@ -772,37 +582,6 @@
       "header"
       "sidebar"
       "main";
-  }
-
-  .sidebar {
-    grid-area: sidebar;
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    padding: 12px 20px;
-    border-right: none;
-    border-bottom: 1px solid #b1b5b6;
-    height: auto; /* Trên mobile, chiều cao tự động */
-  }
-
-  .nav-menu {
-    flex-direction: row;
-    gap: 12px;
-  }
-
-  .header {
-    grid-area: header;
-    padding: 12px 20px;
-    height: 90px;
-  }
-  
-  .logo-icon {
-    width: 50px;
-    height: 50px;
-  }
-
-  .logo-title {
-    font-size: 28px;
   }
 
   .main-content {
@@ -880,4 +659,3 @@
     padding-right: 4px;
   }
 }
-
