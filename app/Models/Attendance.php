@@ -4,50 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Attendance extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'attendance';
     protected $primaryKey = 'attendance_id';
     
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
+    public $timestamps = false;
 
     protected $fillable = [
-        'user_id',
+        'enrollment_id',
         'class_meeting_id',
-        'class_section_id',
-        'status_id',
-        'recorded_by',
-        'note',
+        'attendance_status_id',
+        'marked_at',
     ];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
-    }
+    protected $casts = [
+        'marked_at' => 'datetime',
+    ];
 
-    public function classSection()
+    public function enrollment()
     {
-        return $this->belongsTo(ClassSection::class, 'class_section_id', 'class_section_id');
+        return $this->belongsTo(Enrollment::class, 'enrollment_id', 'enrollment_id');
     }
 
     public function classMeeting()
     {
-        return $this->belongsTo(ClassMeeting::class, 'class_meeting_id', 'meeting_id');
+        return $this->belongsTo(ClassMeeting::class, 'class_meeting_id', 'class_meeting_id');
     }
 
     public function status()
     {
-        return $this->belongsTo(AttendanceStatus::class, 'status_id', 'status_id');
-    }
-
-    public function recordedBy()
-    {
-        return $this->belongsTo(User::class, 'recorded_by', 'user_id');
+        return $this->belongsTo(AttendanceStatus::class, 'attendance_status_id', 'status_id');
     }
 }

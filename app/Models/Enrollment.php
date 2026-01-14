@@ -4,33 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Enrollment extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'enrollment';
     protected $primaryKey = 'enrollment_id';
     
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
+    public $timestamps = true;
 
     protected $fillable = [
-        'user_id',
+        'student_id',
         'class_section_id',
-        'enrollment_date',
-        'status_id',
+        'enrollment_status_id',
+        'enrolled_at',
     ];
 
     protected $casts = [
-        'enrollment_date' => 'date',
+        'enrolled_at' => 'datetime',
     ];
 
-    public function user()
+    public function student()
     {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
+        return $this->belongsTo(User::class, 'student_id', 'user_id');
     }
 
     public function classSection()
@@ -40,6 +37,11 @@ class Enrollment extends Model
 
     public function status()
     {
-        return $this->belongsTo(EnrollmentStatus::class, 'status_id', 'status_id');
+        return $this->belongsTo(EnrollmentStatus::class, 'enrollment_status_id', 'status_id');
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'enrollment_id', 'enrollment_id');
     }
 }

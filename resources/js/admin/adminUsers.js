@@ -4,7 +4,7 @@ const usersData = [
         id: 1,
         fullName: 'TS. Nguyễn Văn A',
         email: 'nguyenvana@university.edu.vn',
-        role: 'lecturer',
+        role: 'LECTURER',
         status: 'active',
         joinDate: '2015-09-01',
         phone: '0912 345 678',
@@ -18,7 +18,7 @@ const usersData = [
         id: 2,
         fullName: 'Trần Thị B',
         email: 'tranthib@student.university.edu.vn',
-        role: 'student',
+        role: 'STUDENT',
         status: 'active',
         joinDate: '2023-09-01',
         phone: '0987 654 321',
@@ -35,7 +35,7 @@ const usersData = [
         id: 3,
         fullName: 'Phạm Văn C',
         email: 'phamvanc@university.edu.vn',
-        role: 'admin',
+        role: 'ADMIN',
         status: 'active',
         joinDate: '2023-12-01',
         phone: '0909 123 456',
@@ -46,7 +46,7 @@ const usersData = [
         id: 4,
         fullName: 'Hoàng Thị D',
         email: 'hoangthid@student.university.edu.vn',
-        role: 'student',
+        role: 'STUDENT',
         status: 'inactive',
         joinDate: '2024-01-20',
         phone: '0918 222 333',
@@ -62,7 +62,7 @@ const usersData = [
         id: 5,
         fullName: 'Lê Văn E',
         email: 'levane@university.edu.vn',
-        role: 'lecturer',
+        role: 'LECTURER',
         status: 'active',
         joinDate: '2024-03-05',
         phone: '0933 444 555',
@@ -101,9 +101,9 @@ function initializeApp() {
             tab.classList.add('active');
 
             const label = tab.innerText.toLowerCase();
-            if (label.includes('quản trị')) currentRole = 'admin';
-            else if (label.includes('giáo viên') || label.includes('giảng viên')) currentRole = 'lecturer';
-            else if (label.includes('sinh viên')) currentRole = 'student';
+            if (label.includes('quản trị')) currentRole = 'ADMIN';
+            else if (label.includes('giáo viên') || label.includes('giảng viên')) currentRole = 'LECTURER';
+            else if (label.includes('sinh viên')) currentRole = 'STUDENT';
             else currentRole = 'all';
 
             currentPage = 1;
@@ -302,13 +302,13 @@ function updateTabCounts() {
     const tabs = document.querySelectorAll('.user-tabs .tab');
     const counts = {
         all: usersData.length,
-        admin: usersData.filter(u => u.role === 'admin').length,
-        lecturer: usersData.filter(u => u.role === 'lecturer').length,
-        student: usersData.filter(u => u.role === 'student').length
+        admin: usersData.filter(u => u.role === 'ADMIN').length,
+        lecturer: usersData.filter(u => u.role === 'LECTURER').length,
+        student: usersData.filter(u => u.role === 'STUDENT').length
     };
 
     const tabTexts = ['Tất cả', 'Quản trị viên', 'Giáo viên', 'Sinh viên'];
-    const tabValues = ['all', 'admin', 'lecturer', 'student'];
+    const tabValues = ['all', 'ADMIN', 'LECTURER', 'STUDENT'];
 
     tabs.forEach((tab, index) => {
         const count = counts[tabValues[index]];
@@ -342,7 +342,7 @@ function viewUserDetail(userId) {
     const academicSection = document.getElementById('academicInfoSection');
     const academicGrid = academicSection.querySelector('.info-grid');
     
-    if (user.role === 'student') {
+    if (user.role === 'STUDENT') {
         academicSection.querySelector('h4').innerHTML = '<i class="fa-solid fa-graduation-cap"></i> Thông tin học tập';
         academicGrid.innerHTML = `
             <div class="info-item">
@@ -367,7 +367,7 @@ function viewUserDetail(userId) {
             </div>
         `;
         academicSection.style.display = 'block';
-    } else if (user.role === 'lecturer') {
+    } else if (user.role === 'LECTURER') {
         academicSection.querySelector('h4').innerHTML = '<i class="fa-solid fa-chalkboard-user"></i> Thông tin giảng dạy';
         academicGrid.innerHTML = `
             <div class="info-item">
@@ -441,7 +441,7 @@ function openUserForm(userId = null, isEdit = false) {
 function renderAdditionalFields(role, userData = {}) {
     const container = document.getElementById('additionalFields');
     
-    if (role === 'student') {
+    if (role === 'STUDENT') {
         container.innerHTML = `
             <h4 style="margin: 24px 0 16px 0; font-size: 16px; color: #1e293b;">Thông tin sinh viên</h4>
             <div class="form-row">
@@ -465,7 +465,7 @@ function renderAdditionalFields(role, userData = {}) {
                 </div>
             </div>
         `;
-    } else if (role === 'lecturer') {
+    } else if (role === 'LECTURER') {
         container.innerHTML = `
             <h4 style="margin: 24px 0 16px 0; font-size: 16px; color: #1e293b;">Thông tin giảng viên</h4>
             <div class="form-row">

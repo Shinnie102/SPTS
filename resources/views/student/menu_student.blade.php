@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('css/menu_lecturer.css') }}">
 <div id="menu_lecturer" class="menu_lecturer">
     <div id="menu">
         <a href="{{ route('student.dashboard') }}">
