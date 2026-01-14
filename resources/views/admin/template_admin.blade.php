@@ -16,10 +16,10 @@
 
 <body>
     <!-- Header -->
-    <div class="header"></div>
+    @include('partials.header_admin')
     <div id="main">
         <!-- Menu -->
-        <div class="menu_admin"></div>
+        @include('admin.menu_admin')
 
         <div id="content">
             <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
