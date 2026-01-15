@@ -14,7 +14,6 @@
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
 
     <title>Trang tổng quan giảng viên</title>
 </head>
@@ -178,11 +177,12 @@
             </main>
         </div>
     </div>
-    
+
     <!-- Javascript -->
     <script src="{{ asset('js/lecturer/lecturer.js') }}"></script>
     <script src="{{ asset('js/lecturer/data.js') }}"></script>
     <script src="{{ asset('js/lecturer/render.js') }}"></script>
+
 </body>
 
 </html>
