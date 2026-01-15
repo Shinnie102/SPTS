@@ -3,22 +3,31 @@
 namespace App\Http\Controllers\Lecturer;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class Profile extends Controller
 {
-    // Hiển thị hồ sơ
     public function index()
     {
-        $lecturer = Auth::user(); // 👈 GIẢNG VIÊN ĐANG LOGIN
+        /** @var User $lecturer */
+        $lecturer = Auth::user();
 
         return view('lecturer.profileLecturer', compact('lecturer'));
     }
 
-    // Cập nhật hồ sơ
+    public function edit()
+    {
+        /** @var User $lecturer */
+        $lecturer = Auth::user();
+
+        return view('lecturer.editProfileLecturer', compact('lecturer'));
+    }
+
     public function update(Request $request)
     {
+        /** @var User $lecturer */
         $lecturer = Auth::user();
 
         $request->validate([
@@ -37,6 +46,8 @@ class Profile extends Controller
             'major',
         ]));
 
-        return back()->with('success', 'Cập nhật hồ sơ thành công');
+        return redirect()
+            ->route('lecturer.profile')
+            ->with('success', 'Cập nhật hồ sơ thành công');
     }
 }
