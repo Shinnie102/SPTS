@@ -35,7 +35,7 @@
             <div class="history-container">
                 <!-- ================= PROGRESS BAR SECTION ================= -->
                 <div class="progress-section">
-                    <h3 class="progress-header">Tổng quan chuyên cần toàn khóa</h3>
+                    <h3 class="progress-header">Chuyên cần học kì</h3>
                     <p class="progress-subtitle">Tỷ lệ trung bình khóa học</p>
                     <div class="progress-bar-container">
                         <div class="progress-bar-wrapper">

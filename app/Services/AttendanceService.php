@@ -36,8 +36,12 @@ class AttendanceService
 
         // Group by semester và tính progress cho từng semester
         $groupedSemesters = $this->groupBySemesterWithProgress($courseStats);
+        
+        // Tính tổng progress cho tất cả các môn
+        $totalProgress = $this->calculateTotalProgress($groupedSemesters);
 
         return [
+            'totalProgress' => $totalProgress,
             'semesters' => $groupedSemesters
         ];
     }
@@ -138,5 +142,32 @@ class AttendanceService
         }
         
         return $grouped;
+    }
+
+    /**
+     * Calculate total progress across all semesters
+     * 
+     * @param array $groupedSemesters
+     * @return float
+     */
+    protected function calculateTotalProgress(array $groupedSemesters): float
+    {
+        if (empty($groupedSemesters)) {
+            return 0;
+        }
+
+        $totalPresent = 0;
+        $totalSessions = 0;
+
+        foreach ($groupedSemesters as $semesterData) {
+            foreach ($semesterData['courses'] as $course) {
+                $totalPresent += $course['present'];
+                $totalSessions += $course['totalSessions'];
+            }
+        }
+
+        return $totalSessions > 0 
+            ? round(($totalPresent / $totalSessions) * 100, 1) 
+            : 0;
     }
 }
