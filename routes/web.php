@@ -86,6 +86,14 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
+Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
+    Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
+    Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
+
+
+});
 
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
