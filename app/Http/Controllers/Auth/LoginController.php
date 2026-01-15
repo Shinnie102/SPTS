@@ -31,6 +31,14 @@ class LoginController extends Controller
 
             $user = Auth::user();
 
+            // Check if user is locked (status_id = 2)
+            if ($user->status_id == 2) {
+                Auth::logout();
+                return back()->withErrors([
+                    'email' => 'Tài khoản của bạn đã bị khóa. Vui lòng liên hệ quản trị viên.',
+                ])->onlyInput('email');
+            }
+
             // Redirect based on user role (using relationship)
             if ($user->role && $user->role->role_code === 'ADMIN') {
                 return redirect()->intended(route('admin.dashboard'));

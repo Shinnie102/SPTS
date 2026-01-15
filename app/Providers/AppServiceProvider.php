@@ -10,6 +10,8 @@ use App\Models\Grade;
 use App\Policies\ClassPolicy;
 use App\Policies\AssignmentPolicy;
 use App\Policies\GradePolicy;
+use App\Contracts\UserRepositoryInterface;
+use App\Repositories\UserRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -29,7 +31,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Đăng ký Repository Pattern
+        // Tuân thủ Dependency Inversion Principle (D in SOLID)
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
     }
 
     /**

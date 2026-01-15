@@ -178,9 +178,9 @@
                         <label class="form-label">Vai trò <span class="required">*</span></label>
                         <select class="form-select" id="formRole" required>
                             <option value="">-- Chọn vai trò --</option>
-                            <option value="admin">Quản trị viên</option>
-                            <option value="lecturer">Giảng viên</option>
-                            <option value="student">Sinh viên</option>
+                            <option value="1">Quản trị viên</option>
+                            <option value="2">Giảng viên</option>
+                            <option value="3">Sinh viên</option>
                         </select>
                     </div>
 
@@ -260,11 +260,11 @@
                             <i class="fa-solid fa-cloud-arrow-up"></i>
                             <p><strong>Kéo thả file vào đây</strong> hoặc click để chọn</p>
                             <p>Hỗ trợ: .xlsx, .xls, .csv (Tối đa 5MB)</p>
-                            <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv">
                         </div>
+                        <input type="file" id="bulkFile" accept=".xlsx,.xls,.csv" style="display: none;">
                     </div>
                     <div class="form-group">
-                        <button type="button" class="btn btn-secondary">
+                        <button type="button" class="btn btn-secondary" id="btnDownloadTemplate">
                             <i class="fa-solid fa-download"></i>
                             Tải file mẫu
                         </button>
@@ -274,8 +274,12 @@
                 <!-- Tab: Paste List -->
                 <div class="tab-content" id="bulkTabPaste" style="display: none;">
                     <div class="form-group">
-                        <label class="form-label">Dán danh sách người dùng (Mỗi dòng: Tên, Email, Vai trò)</label>
-                        <textarea class="form-textarea" id="bulkPasteData" rows="10" placeholder="Nguyễn Văn A, nguyenvana@university.edu.vn, student&#10;Trần Thị B, tranthib@university.edu.vn, lecturer"></textarea>
+                        <label class="form-label">Dán danh sách người dùng</label>
+                        <small style="display: block; margin-bottom: 8px; color: #64748b;">
+                            Format: Họ tên; Email; Vai trò; SĐT; Địa chỉ; Mật khẩu<br>
+                            <strong>Lưu ý:</strong> Nếu không nhập mật khẩu, hệ thống sẽ đặt mặc định: <code>password123</code>
+                        </small>
+                        <textarea class="form-textarea" id="bulkPasteData" rows="10" placeholder="Nguyễn Văn A;nguyenvana@university.edu;STUDENT;0912345678;Hà Nội;myPassword123&#10;Trần Thị B;tranthib@university.edu;LECTURER;0987654321;TP.HCM;lecturer@2026"></textarea>
                     </div>
                 </div>
             </div>

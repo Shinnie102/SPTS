@@ -61,22 +61,8 @@ class User extends Authenticatable
         return 'password_hash';
     }
 
-    // Mutator to hash password when setting (only if not already hashed)
-    public function setPasswordHashAttribute($value)
-    {
-        // Only hash if value doesn't start with $2y$ or $2a$ (bcrypt prefix)
-        if (preg_match('/^\$2[ay]\$/', $value)) {
-            $this->attributes['password_hash'] = $value;
-        } else {
-            $this->attributes['password_hash'] = bcrypt($value);
-        }
-    }
-
-    // Accessor for compatibility (if needed)
-    public function getPasswordAttribute()
-    {
-        return $this->password_hash;
-    }
+    // Mutator removed - password hashing is handled in UserService layer
+    // This prevents double hashing which causes login failures
 
     // Relationships
     public function role()
@@ -112,16 +98,16 @@ class User extends Authenticatable
     // Helper methods
     public function isAdmin()
     {
-        return $this->role->role_code === 'ADMIN';
+        return $this->role && $this->role->role_code === 'ADMIN';
     }
 
     public function isLecturer()
     {
-        return $this->role->role_code === 'LECTURER';
+        return $this->role && $this->role->role_code === 'LECTURER';
     }
 
     public function isStudent()
     {
-        return $this->role->role_code === 'STUDENT';
+        return $this->role && $this->role->role_code === 'STUDENT';
     }
 }

@@ -13,7 +13,7 @@
                 <p>Trang chủ</p>
             </div>
         </a>
-        <a href="{{ route('admin.users') }}">
+        <a href="{{ route('admin.users.index') }}">
             <div class="frame_menu">
                 <i class="fa-regular fa-user"></i>
                 <p>Người dùng</p>
