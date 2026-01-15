@@ -34,29 +34,7 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
-                <div class="attendance-container">
-                    <div class="class-row">
-                        <div class="filter-group">
-                            <label for="class-select">Lớp học phần</label>
-                            <div class="select-wrapper">
-                                <select id="class-select">
-                                    <option value="LTM101">LTM101 - Lập trình mạng</option>
-                                    <option value="CS101">CS101 - Cơ sở dữ liệu</option>
-                                    <option value="WEB101">WEB101 - Lập trình Web</option>
-                                </select>
-                                <div class="select-arrow">▼</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-navigation-row">
-                        <nav class="tab-navigation">
-                            <a href="{{ route('lecturer.attendance.show') }}" class="tab-item">Điểm danh</a>
-                            <a href="{{ route('lecturer.grading.show') }}" class="tab-item">Nhập điểm</a>
-                            <a href="{{ route('lecturer.classes.show') }}" class="tab-item">Trạng thái lớp</a>
-                            <a href="{{ route('lecturer.report.show') }}" class="tab-item active">Báo cáo</a>
-                        </nav>
-                    </div>
+                @include('lecturer.attendance_header')
 
                     <section class="charts-container">
                         <section class="chart-section">
@@ -174,7 +152,7 @@
                             <i class="fas fa-arrow-left"></i> Quay lại trang chủ
                         </a>
                     </div>
-                </div>
+                
             </main>
         </div>
     </div>
