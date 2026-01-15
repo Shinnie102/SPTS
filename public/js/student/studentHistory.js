@@ -3,22 +3,75 @@
 // Data is injected via <script> tag in studentHistory.blade.php
 
 // ================= RENDER PROGRESS BAR =================
-function renderProgressBar() {
+function renderProgressBar(semesterKey = null) {
     const progressFill = document.querySelector('.progress-bar-fill');
     const progressText = document.querySelector('.progress-percentage');
     
-    if (progressFill && progressText) {
-        progressFill.style.width = attendanceData.totalProgress + '%';
-        progressText.textContent = attendanceData.totalProgress + '%';
+    if (!progressFill || !progressText) {
+        console.error('Progress bar elements not found');
+        return;
+    }
+
+    let progressValue = 0;
+
+    // Nếu có semesterKey, hiển thị progress của semester đó
+    if (semesterKey && attendanceData.semesters && attendanceData.semesters[semesterKey]) {
+        progressValue = attendanceData.semesters[semesterKey].progress || 0;
+    } 
+    // Nếu không, hiển thị totalProgress (tổng thể)
+    else if (attendanceData.totalProgress !== undefined) {
+        progressValue = attendanceData.totalProgress;
+    }
+    else {
+        progressValue = 0;
+    }
+
+    // Cập nhật UI
+    progressFill.style.width = progressValue + '%';
+    progressText.textContent = progressValue + '%';
+    
+    // Thêm class cho màu sắc theo tỉ lệ
+    progressFill.className = 'progress-bar-fill';
+    if (progressValue >= 80) {
+        progressFill.classList.add('progress-high');
+    } else if (progressValue >= 60) {
+        progressFill.classList.add('progress-medium');
+    } else {
+        progressFill.classList.add('progress-low');
     }
 }
 
 // ================= RENDER ATTENDANCE TABLE =================
 function renderAttendanceTable(semesterKey) {
     const tbody = document.getElementById('attendance-tbody');
+    
+    if (!tbody) {
+        console.error('Table tbody not found');
+        return;
+    }
+    
     tbody.innerHTML = '';
 
-    const courses = attendanceData.semesters[semesterKey] || [];
+    // Xử lý data structure từ backend: semesters[key] = { progress, courses: [...] }
+    let courses = [];
+    
+    if (attendanceData.semesters && attendanceData.semesters[semesterKey]) {
+        const semesterData = attendanceData.semesters[semesterKey];
+        
+        // Nếu có property 'courses', dùng nó
+        if (semesterData.courses && Array.isArray(semesterData.courses)) {
+            courses = semesterData.courses;
+        }
+        // Fallback: nếu semesterData là array trực tiếp
+        else if (Array.isArray(semesterData)) {
+            courses = semesterData;
+        }
+    }
+
+    if (courses.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px; color: #94a3b8;">Không có dữ liệu chuyên cần cho học kỳ này</td></tr>';
+        return;
+    }
     
     courses.forEach((course, index) => {
         // Main course row
@@ -184,22 +237,38 @@ function populateSemesterDropdown() {
 
 // ================= SEMESTER DROPDOWN CHANGE =================
 document.getElementById('semester-dropdown').addEventListener('change', (e) => {
-    renderAttendanceTable(e.target.value);
+    const selectedSemester = e.target.value;
+    // Cập nhật bảng dữ liệu
+    renderAttendanceTable(selectedSemester);
+    // Cập nhật progress bar theo học kỳ đã chọn
+    renderProgressBar(selectedSemester);
 });
 
 // ================= INITIALIZE =================
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Initializing with data:', attendanceData);
     
-    // Render progress bar
-    renderProgressBar();
+    // Kiểm tra data hợp lệ
+    if (!attendanceData || !attendanceData.semesters) {
+        console.error('Invalid attendance data structure');
+        return;
+    }
     
-    // Populate semester dropdown and render table for first semester
+    // Populate semester dropdown và render table cho first semester
     const firstSemester = populateSemesterDropdown();
+    
     if (firstSemester) {
+        // Render progress bar cho first semester
+        renderProgressBar(firstSemester);
+        // Render table
         renderAttendanceTable(firstSemester);
     } else {
-        // No data available
-        document.querySelector('.table-body').innerHTML = '<p style="text-align: center; padding: 20px;">Không có dữ liệu chuyên cần</p>';
+        // Không có dữ liệu
+        const tbody = document.getElementById('attendance-tbody');
+        if (tbody) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">⚠️ Chưa có dữ liệu chuyên cần</td></tr>';
+        }
+        // Set progress bar = 0
+        renderProgressBar();
     }
 });
