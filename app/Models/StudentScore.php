@@ -4,31 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StudentScore extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'student_score';
-    protected $primaryKey = 'score_id';
+    protected $primaryKey = 'student_score_id';
     
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
+    public $timestamps = false;
 
     protected $fillable = [
         'enrollment_id',
-        'user_id',
-        'grading_component_id',
-        'score',
-        'recorded_by',
-        'recorded_at',
+        'component_id',
+        'score_value',
+        'last_updated_at',
     ];
 
     protected $casts = [
-        'score' => 'decimal:2',
-        'recorded_at' => 'datetime',
+        'score_value' => 'decimal:2',
+        'last_updated_at' => 'datetime',
     ];
 
     public function enrollment()
@@ -36,18 +31,8 @@ class StudentScore extends Model
         return $this->belongsTo(Enrollment::class, 'enrollment_id', 'enrollment_id');
     }
 
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'user_id', 'user_id');
-    }
-
     public function gradingComponent()
     {
-        return $this->belongsTo(GradingComponent::class, 'grading_component_id', 'component_id');
-    }
-
-    public function recordedBy()
-    {
-        return $this->belongsTo(User::class, 'recorded_by', 'user_id');
+        return $this->belongsTo(GradingComponent::class, 'component_id', 'component_id');
     }
 }

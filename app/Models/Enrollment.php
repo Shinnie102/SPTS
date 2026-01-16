@@ -44,4 +44,9 @@ class Enrollment extends Model
     {
         return $this->hasMany(Attendance::class, 'enrollment_id', 'enrollment_id');
     }
+
+    public function scores()
+    {
+        return $this->hasMany(StudentScore::class, 'enrollment_id', 'enrollment_id');
+    }
 }

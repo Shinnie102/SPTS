@@ -4,18 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class GradingScheme extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'grading_scheme';
-    protected $primaryKey = 'scheme_id';
+    protected $primaryKey = 'grading_scheme_id';
     
-    const CREATED_AT = 'created_at';
-    const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
+    public $timestamps = false;
 
     protected $fillable = [
         'scheme_code',
@@ -29,13 +26,13 @@ class GradingScheme extends Model
         return $this->belongsTo(GradingSchemeStatus::class, 'status_id', 'status_id');
     }
 
-    public function components()
+    public function gradingComponents()
     {
-        return $this->hasMany(GradingComponent::class, 'scheme_id', 'scheme_id');
+        return $this->hasMany(GradingComponent::class, 'grading_scheme_id', 'grading_scheme_id');
     }
 
     public function classGradingSchemes()
     {
-        return $this->hasMany(ClassGradingScheme::class, 'scheme_id', 'scheme_id');
+        return $this->hasMany(ClassGradingScheme::class, 'grading_scheme_id', 'grading_scheme_id');
     }
 }

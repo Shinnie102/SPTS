@@ -1,3 +1,33 @@
+// ================= CHECK DATA FROM BACKEND =================
+console.log('Score Data from Backend:', scoreData);
+
+// ================= POPULATE SEMESTER DROPDOWN =================
+function populateSemesterDropdown() {
+    const dropdown = document.getElementById('semester-dropdown');
+    dropdown.innerHTML = ''; // Clear existing options
+    
+    if (!scoreData || !scoreData.semesters) {
+        console.error('No semester data available for dropdown');
+        dropdown.innerHTML = '<option value="">Không có dữ liệu</option>';
+        return;
+    }
+    
+    // Get semester keys and sort descending (newest first)
+    const semesterKeys = Object.keys(scoreData.semesters).sort().reverse();
+    
+    console.log('Populating dropdown with semesters:', semesterKeys);
+    
+    semesterKeys.forEach(key => {
+        const semester = scoreData.semesters[key];
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = semester.semester_name || key;
+        dropdown.appendChild(option);
+    });
+    
+    return semesterKeys[0]; // Return first semester key
+}
+
 // ================= TAB SWITCHING =================
 document.querySelectorAll('.tab-btn').forEach(tab => {
     tab.addEventListener('click', () => {
@@ -13,98 +43,89 @@ document.querySelectorAll('.tab-btn').forEach(tab => {
     });
 });
 
-// ================= MOCK DATA - CHI TIẾT HỌC KÌ =================
-const semesterDetailData = {
-    '2025-2026': [
-        { code: 'CS101', name: 'Lập trình mạng', credit: 3, attendance: 10, midterm: 10, regular: 10, final: 10, total: 10, status: 'pass' },
-        { code: 'CS101', name: 'Lập trình mạng', credit: 3, attendance: 10, midterm: 10, regular: 10, final: 10, total: 10, status: 'pass' },
-        { code: 'CS101', name: 'Lập trình mạng', credit: 3, attendance: 7, midterm: 10, regular: 10, final: 0, total: 0, status: 'fail' },
-        { code: 'CS101', name: 'Lập trình mạng', credit: 3, attendance: 10, midterm: 10, regular: 10, final: 1, total: 3.9, status: 'fail' }
-    ],
-    '2024-2025-2': [
-        { code: 'CS102', name: 'Cơ sở dữ liệu', credit: 3, attendance: 9, midterm: 8, regular: 9, final: 8, total: 8.2, status: 'pass' },
-        { code: 'CS103', name: 'Mạng máy tính', credit: 3, attendance: 10, midterm: 9, regular: 10, final: 9, total: 9.1, status: 'pass' }
-    ],
-    '2024-2025-1': [
-        { code: 'CS104', name: 'Lập trình Web', credit: 3, attendance: 8, midterm: 7, regular: 8, final: 7, total: 7.3, status: 'pass' }
-    ]
-};
-
-// ================= MOCK DATA - TOÀN KHÓA =================
-const semesterSummaryData = [
-    {
-        name: 'Học kỳ 2 - Năm 2021-2022',
-        gpa: 2.85,
-        totalCredits: 13,
-        courses: [
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 4, grade: 'A', rating: 'Giỏi' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 3, grade: 'B', rating: 'Khá' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 2.1, grade: 'C', rating: 'Trung bình' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 3.9, grade: 'A', rating: 'Giỏi' }
-        ]
-    },
-    {
-        name: 'Học kỳ 1 - Năm 2021-2022',
-        gpa: 2.85,
-        totalCredits: 13,
-        courses: [
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 4, grade: 'A', rating: 'Giỏi' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 3, grade: 'B', rating: 'Khá' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 2.1, grade: 'C', rating: 'Trung bình' },
-            { code: 'CS101', name: 'Lập trình mạng', credit: 3, totalScore: 3.9, grade: 'A', rating: 'Giỏi' }
-        ]
-    }
-];
-
 // ================= RENDER CHI TIẾT HỌC KÌ =================
 function renderDetailTable(semesterKey) {
     const tbody = document.getElementById('detail-tbody');
+    const thead = document.querySelector('.detail-table thead tr');
     tbody.innerHTML = ''; // Clear existing data
 
-    const courses = semesterDetailData[semesterKey] || [];
+    console.log('Rendering detail table for semester:', semesterKey);
+    
+    // Get semester data from backend
+    const semesterData = scoreData?.semesters?.[semesterKey];
+    
+    if (!semesterData || !Array.isArray(semesterData.courses)) {
+        console.error('No courses found for semester:', semesterKey);
+        tbody.innerHTML = '<tr><td colspan="20" style="text-align:center;">Không có dữ liệu</td></tr>';
+        return;
+    }
+    
+    // Lấy danh sách components ĐỘNG từ semester data
+    const components = semesterData.components || [];
+    console.log('Components for semester:', components);
+    
+    // Render THEAD động
+    thead.innerHTML = `
+        <th>Mã môn học</th>
+        <th>Tên môn học</th>
+        <th>Số tín chỉ</th>
+        ${components.map(comp => `<th>${comp.name} (${comp.weight}%)</th>`).join('')}
+        <th>Tổng kết</th>
+        <th>Trạng thái</th>
+    `;
+    
+    const courses = semesterData.courses;
+    console.log('Courses to render:', courses);
     
     courses.forEach(course => {
         const row = tbody.insertRow();
         
         // Mã môn học
-        row.insertCell().innerHTML = `<span class="course-code">${course.code}</span>`;
+        row.insertCell().innerHTML = `<span class="course-code">${course.course_code || 'N/A'}</span>`;
         
         // Tên môn học
-        row.insertCell().textContent = course.name;
+        row.insertCell().textContent = course.course_name || 'N/A';
         
         // Số tín chỉ
-        row.insertCell().textContent = course.credit;
+        row.insertCell().textContent = course.credits || 0;
         
-        // Chuyên cần
-        const attendanceCell = row.insertCell();
-        attendanceCell.textContent = course.attendance;
-        attendanceCell.className = 'score-cell';
-        if (course.attendance < 8) attendanceCell.classList.add('score-red');
-        
-        // Giữa kì
-        row.insertCell().textContent = course.midterm;
-        
-        // Thường xuyên
-        row.insertCell().textContent = course.regular;
-        
-        // Cuối kì
-        const finalCell = row.insertCell();
-        finalCell.textContent = course.final;
-        finalCell.className = 'score-cell';
-        if (course.final < 5) finalCell.classList.add('score-red');
+        // Render component scores ĐỘNG
+        components.forEach(comp => {
+            const cell = row.insertCell();
+            const score = course.components?.[comp.name] ?? '-';
+            cell.textContent = score;
+            cell.className = 'score-cell';
+            
+            // Highlight điểm thấp
+            if (typeof score === 'number') {
+                if (score < 5) cell.classList.add('score-red');
+                else if (score < 7) cell.classList.add('score-orange');
+            }
+        });
         
         // Tổng kết
         const totalCell = row.insertCell();
-        totalCell.textContent = course.total;
+        const totalScore = course.final_score ?? '-';
+        totalCell.textContent = typeof totalScore === 'number' ? totalScore.toFixed(2) : totalScore;
         totalCell.className = 'score-cell';
-        if (course.total < 5) totalCell.classList.add('score-red');
-        else if (course.total < 7) totalCell.classList.add('score-orange');
+        if (typeof totalScore === 'number') {
+            if (totalScore < 5) totalCell.classList.add('score-red');
+            else if (totalScore < 7) totalCell.classList.add('score-orange');
+        }
         
         // Trạng thái
         const statusCell = row.insertCell();
         const statusBadge = document.createElement('span');
-        statusBadge.className = `status-badge ${course.status === 'pass' ? 'status-pass' : 'status-fail'}`;
-        statusBadge.textContent = course.status === 'pass' ? 'Đạt' : 'Không đạt';
+        const status = course.status || 'N/A';
+        statusBadge.className = `status-badge ${
+            status === 'Đạt' ? 'status-pass' : 
+            status === 'Không đạt' ? 'status-fail' : 
+            'status-pending'
+        }`;
+        // Hiển thị text phù hợp
+        statusBadge.textContent = status === 'Đạt' ? 'Đạt' : 
+                                   status === 'Không đạt' ? 'Không đạt' : 
+                                   'Đang học';
         statusCell.appendChild(statusBadge);
     });
 }
@@ -119,14 +140,28 @@ function renderSemesterCards() {
     const container = document.getElementById('semester-list');
     container.innerHTML = '';
 
-    semesterSummaryData.forEach(semester => {
+    console.log('Rendering semester cards from scoreData:', scoreData);
+    
+    if (!scoreData || !scoreData.semesters) {
+        console.error('No semester data available');
+        container.innerHTML = '<p style="text-align:center;">Không có dữ liệu</p>';
+        return;
+    }
+
+    // Convert semesters object to array and sort by sort_key (numeric)
+    const semestersArray = Object.entries(scoreData.semesters).map(([key, data]) => ({
+        key: key,
+        ...data
+    })).sort((a, b) => (b.sort_key || 0) - (a.sort_key || 0)); // Sort descending (newest first)
+
+    semestersArray.forEach(semester => {
         const section = document.createElement('div');
         section.className = 'semester-section';
         
         section.innerHTML = `
             <div class="semester-header">
-                <h3 class="semester-name">${semester.name}</h3>
-                <p class="semester-info">GPA: ${semester.gpa.toFixed(2)} | Tín chỉ: ${semester.totalCredits}</p>
+                <h3 class="semester-name">${semester.semester_name || semester.key}</h3>
+                <p class="semester-info">GPA: ${(semester.gpa ?? 0).toFixed(2)} | Tín chỉ: ${semester.credits || 0}</p>
             </div>
             
             <table class="semester-table">
@@ -135,28 +170,56 @@ function renderSemesterCards() {
                         <th>Mã môn học</th>
                         <th>Tên môn học</th>
                         <th>Số tín chỉ</th>
-                        <th>Tổng kết (hệ 10)</th>
-                        <th>Tổng kết (hệ 4)</th>
+                        <th>Điểm tổng kết (Hệ 10)</th>
                         <th>Điểm chữ</th>
-                        <th>Xếp loại</th>
+                        <th>Điểm hệ 4</th>
+                        <th>Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${semester.courses.map(course => `
+                    ${(semester.courses || []).map(course => {
+                        const finalScore = course.final_score;
+                        const letterGrade = course.letter_grade || '-';
+                        const status = course.status || 'N/A';
+                        
+                        // Chỉ hiển thị điểm khi có
+                        if (finalScore === null || finalScore === undefined) {
+                            return `
+                            <tr>
+                                <td><span class="course-code">${course.course_code || 'N/A'}</span></td>
+                                <td>${course.course_name || 'N/A'}</td>
+                                <td>${course.credits || 0}</td>
+                                <td class="score-cell">-</td>
+                                <td class="score-cell">-</td>
+                                <td class="score-cell">-</td>
+                                <td>
+                                    <span class="status-badge status-pending">Đang học</span>
+                                </td>
+                            </tr>
+                            `;
+                        }
+                        
+                        const scoreClass = finalScore < 5 ? 'score-red' : finalScore < 7 ? 'score-orange' : '';
+                        const grade4 = course.grade4 ?? 0;
+                        
+                        return `
                         <tr>
-                            <td><span class="course-code">${course.code}</span></td>
-                            <td>${course.name}</td>
-                            <td>${course.credit}</td>
-                            <td>${course.totalScore}</td>
-                            <td>${course.totalScore}</td>
-                            <td><span class="grade-badge grade-${course.grade.toLowerCase()}">${course.grade}</span></td>
-                            <td class="${
-                                course.rating === 'Giỏi' ? 'rating-good' : 
-                                course.rating === 'Khá' ? 'rating-average' : 
-                                'rating-poor'
-                            }">${course.rating}</td>
+                            <td><span class="course-code">${course.course_code || 'N/A'}</span></td>
+                            <td>${course.course_name || 'N/A'}</td>
+                            <td>${course.credits || 0}</td>
+                            <td class="score-cell ${scoreClass}">${finalScore.toFixed(2)}</td>
+                            <td class="score-cell">${letterGrade}</td>
+                            <td class="score-cell">${grade4.toFixed(1)}</td>
+                            <td>
+                                <span class="status-badge ${
+                                    status === 'Đạt' ? 'status-pass' : 
+                                    status === 'Không đạt' ? 'status-fail' : 
+                                    'status-pending'
+                                }">${status === 'Đạt' ? 'Đạt' : status === 'Không đạt' ? 'Không đạt' : 'Đang học'}</span>
+                            </td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
         `;
@@ -167,9 +230,23 @@ function renderSemesterCards() {
 
 // ================= INITIALIZE =================
 document.addEventListener('DOMContentLoaded', () => {
-    // Render initial detail table
-    renderDetailTable('2025-2026');
+    console.log('Page loaded, initializing with scoreData:', scoreData);
     
-    // Render semester cards
+    // Populate semester dropdown first
+    const firstSemester = populateSemesterDropdown();
+    
+    if (firstSemester) {
+        console.log('Rendering initial semester:', firstSemester);
+        
+        // Render initial detail table with the first (newest) semester
+        renderDetailTable(firstSemester);
+    } else {
+        console.error('No semesters found in scoreData');
+    }
+    
+    // Render semester cards for summary tab
     renderSemesterCards();
+    
+    // Summary statistics are already rendered by Blade template
+    console.log('Summary data already rendered in HTML by Blade:', scoreData.summary);
 });

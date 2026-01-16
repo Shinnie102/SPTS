@@ -15,25 +15,23 @@ class GradingComponent extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'scheme_id',
+        'grading_scheme_id',
         'component_name',
-        'weight',
-        'max_score',
-        'description',
+        'weight_percent',
+        'order_no',
     ];
 
     protected $casts = [
-        'weight' => 'decimal:2',
-        'max_score' => 'decimal:2',
+        'weight_percent' => 'decimal:2',
     ];
 
     public function gradingScheme()
     {
-        return $this->belongsTo(GradingScheme::class, 'scheme_id', 'scheme_id');
+        return $this->belongsTo(GradingScheme::class, 'grading_scheme_id', 'grading_scheme_id');
     }
 
     public function studentScores()
     {
-        return $this->hasMany(StudentScore::class, 'grading_component_id', 'component_id');
+        return $this->hasMany(StudentScore::class, 'component_id', 'component_id');
     }
 }

@@ -9,12 +9,18 @@ class ClassGradingScheme extends Model
 {
     use HasFactory;
     protected $table = 'class_grading_scheme';
-    protected $primaryKey = 'class_scheme_id';
+    protected $primaryKey = 'class_grading_scheme_id';
     public $timestamps = false;
 
     protected $fillable = [
         'class_section_id',
-        'scheme_id',
+        'grading_scheme_id',
+        'applied_at',
+        'status_id',
+    ];
+
+    protected $casts = [
+        'applied_at' => 'datetime',
     ];
 
     public function classSection()
@@ -24,6 +30,6 @@ class ClassGradingScheme extends Model
 
     public function gradingScheme()
     {
-        return $this->belongsTo(GradingScheme::class, 'scheme_id', 'scheme_id');
+        return $this->belongsTo(GradingScheme::class, 'grading_scheme_id', 'grading_scheme_id');
     }
 }

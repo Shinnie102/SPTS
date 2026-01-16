@@ -14,6 +14,12 @@
         rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('vendor/all.min.css') }}">
     <title>Học tập</title>
+    <script>
+        // Inject data từ backend vào JavaScript
+        const scoreData = @json($scoreData);
+        console.log('=== SCORE DATA FROM BACKEND ===');
+        console.log('scoreData:', scoreData);
+    </script>
 </head>
 
 <body>
@@ -51,9 +57,7 @@
                             </div>
                             <div class="header-right">
                                 <select id="semester-dropdown" class="semester-dropdown">
-                                    <option value="2025-2026">HK hè 2025-2026</option>
-                                    <option value="2024-2025-2">HK 2 - 2024-2025</option>
-                                    <option value="2024-2025-1">HK 1 - 2024-2025</option>
+                                    <!-- JavaScript sẽ populate options từ backend data -->
                                 </select>
                             </div>
                         </div>
@@ -63,15 +67,7 @@
                             <table class="detail-table">
                                 <thead>
                                     <tr>
-                                        <th>Mã môn học</th>
-                                        <th>Tên môn học</th>
-                                        <th>Số tín chỉ</th>
-                                        <th>Chuyên cần</th>
-                                        <th>Giữa kì</th>
-                                        <th>Thường xuyên</th>
-                                        <th>Cuối kì</th>
-                                        <th>Tổng kết</th>
-                                        <th>Trạng thái</th>
+                                        <!-- JavaScript sẽ render header động dựa trên grading components -->
                                     </tr>
                                 </thead>
                                 <tbody id="detail-tbody">
@@ -89,20 +85,20 @@
                         <div class="card">
                             <div class="card-icon"><i class="fa-solid fa-graduation-cap"></i></div>
                             <p class="label">GPA tích lũy</p>
-                            <h2 id="total-gpa">3.25</h2>
+                            <h2 id="total-gpa" class="stat-value">{{ number_format($scoreData['summary']['gpa'] ?? 0, 2) }}</h2>
                             <p class="description">Điểm trung bình tích lũy toàn khóa</p>
                         </div>
                         <div class="card">
                             <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
                             <p class="label">Tín chỉ tích lũy</p>
-                            <h2 id="total-credits">78</h2>
-                            <p class="description">Gồm 72 tín chỉ đã tốt nghiệp</p>
+                            <h2 id="total-credits" class="stat-value">{{ $scoreData['summary']['total_credits'] ?? 0 }}</h2>
+                            <p class="description">Gồm {{ $scoreData['summary']['passed_credits'] ?? 0 }} tín chỉ đã đạt</p>
                         </div>
                         <div class="card">
                             <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
                             <p class="label">Tiến độ</p>
-                            <h2 id="total-progress">70%</h2>
-                            <p class="description">Còn 30% để tốt nghiệp</p>
+                            <h2 id="total-progress" class="stat-value">{{ number_format($scoreData['summary']['progress'] ?? 0, 1) }}%</h2>
+                            <p class="description">Còn {{ number_format(100 - ($scoreData['summary']['progress'] ?? 0), 1) }}% để tốt nghiệp</p>
                         </div>
                     </div>
 

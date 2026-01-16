@@ -52,9 +52,9 @@ class ClassSection extends Model
         return $this->hasMany(Attendance::class, 'class_section_id', 'class_section_id');
     }
 
-    public function gradingSchemes()
+    public function classGradingScheme()
     {
-        return $this->hasMany(ClassGradingScheme::class, 'class_section_id', 'class_section_id');
+        return $this->hasOne(ClassGradingScheme::class, 'class_section_id', 'class_section_id');
     }
     
     // ======== ACCESSOR MỚI (SỬA LẠI) ========

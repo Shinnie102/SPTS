@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
-use App\Http\Controllers\Lecturer\ClassController; // Thêm dòng này
+use App\Http\Controllers\Student\StudentStudyController;
+use App\Http\Controllers\Lecturer\ClassController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -86,33 +87,38 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
-Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
-    Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
     Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
 
-
-});
-
-    // Lớp học phần - Sử dụng Controller mới
+    // Lớp học phần management
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
     
-    // Các route cho từng chức năng của lớp học phần
+    // Các route cho từng chức năng của lớp học phần 
     Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
     Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
     Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
+
+    // Các route cũ giữ nguyên cho compatibility 
+    Route::get('/grading', function () {
+        return view('lecturer.grading');
+    })->name('grading.show');
+    Route::get('/classStatus', function () {
+        return view('lecturer.classStatus');
+    })->name('classes.show');
+    Route::get('/attendance', function () {
+        return view('lecturer.attendance');
+    })->name('attendance.show');
+    Route::get('/report', function () {
+        return view('lecturer.report');
+    })->name('report.show');
 });
 
 // Student Routes
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Student\Profile::class, 'index'])->name('profile');
-    Route::get('/study', function () {
-        return view('student.studentStudy');
-    })->name('study');
+    Route::get('/study', [StudentStudyController::class, 'index'])->name('study');
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () {
         return 'Class details';

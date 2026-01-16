@@ -13,14 +13,13 @@ return new class extends Migration
     {
         Schema::create('enrollment', function (Blueprint $table) {
             $table->id('enrollment_id');
-            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('class_section_id');
-            $table->date('enrollment_date');
-            $table->unsignedBigInteger('status_id');
+            $table->unsignedBigInteger('enrollment_status_id');
+            $table->dateTime('enrolled_at')->nullable();
             $table->timestamps();
-            $table->softDeletes();
             
-            $table->foreign('user_id')
+            $table->foreign('student_id')
                 ->references('user_id')
                 ->on('user')
                 ->onDelete('cascade');
@@ -30,13 +29,13 @@ return new class extends Migration
                 ->on('class_section')
                 ->onDelete('cascade');
             
-            $table->foreign('status_id')
+            $table->foreign('enrollment_status_id')
                 ->references('status_id')
                 ->on('enrollment_status')
                 ->onDelete('restrict');
             
             // Prevent duplicate enrollment
-            $table->unique(['user_id', 'class_section_id']);
+            $table->unique(['student_id', 'class_section_id']);
         });
     }
 
