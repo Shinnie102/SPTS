@@ -98,21 +98,12 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
+    
+    // Các route cho từng chức năng của lớp học phần
+    Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
-
-    // Các route cũ giữ nguyên cho compatibility
-    Route::get('/grading', function () {
-        return view('lecturer.grading');
-    })->name('grading.show');
-    Route::get('/classStatus', function () {
-        return view('lecturer.classStatus');
-    })->name('classes.show');
-    Route::get('/attendance', function () {
-        return view('lecturer.attendance');
-    })->name('attendance.show');
-    Route::get('/report', function () {
-        return view('lecturer.report');
-    })->name('report.show');
+    Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
+    Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
 });
 
 // Student Routes

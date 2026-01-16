@@ -1,6 +1,6 @@
-// Trang3.js - Hiển thị danh sách sinh viên đơn giản
+// attendance.js - Hiển thị danh sách sinh viên và quản lý dropdown
+
 function renderStudentList() {
-    // Lấy dữ liệu từ data3.js
     const students = window.mockStudents || [];
     const tableBody = document.getElementById('attendance-table-body');
     
@@ -9,30 +9,9 @@ function renderStudentList() {
         return;
     }
     
-    // Xóa nội dung cũ
     tableBody.innerHTML = '';
     
-    // Render từng sinh viên
     students.forEach((student, index) => {
-        // Tạo HTML cho mỗi hàng
-        let statusBtnClass = '';
-        let statusText = '';
-        
-        switch(student.status) {
-            case 'present':
-                statusBtnClass = 'active';
-                statusText = 'Có mặt';
-                break;
-            case 'excused':
-                statusBtnClass = 'active';
-                statusText = 'Vắng có phép';
-                break;
-            case 'absent':
-                statusBtnClass = 'active';
-                statusText = 'Vắng';
-                break;
-        }
-        
         const rowHTML = `
             <div class="table-row">
                 <div>${index + 1}</div>
@@ -58,7 +37,6 @@ function renderStudentList() {
         tableBody.innerHTML += rowHTML;
     });
     
-    // Tính toán thống kê
     updateStats(students);
 }
 
@@ -70,35 +48,26 @@ function updateStats(students) {
         total: students.length
     };
     
-    // Cập nhật thống kê
     document.querySelector('[data-count="present"]').textContent = stats.present;
     document.querySelector('[data-count="absent"]').textContent = stats.absent;
     document.querySelector('[data-count="excused"]').textContent = stats.excused;
     document.querySelector('[data-count="total"]').textContent = stats.total;
 }
 
-// Thêm event listeners đơn giản
 function setupEventListeners() {
-    // Xử lý khi click vào nút trạng thái
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('status-btn')) {
-            // Lấy hàng chứa nút được click
             const row = e.target.closest('.table-row');
             const statusButtons = row.querySelectorAll('.status-btn');
             
-            // Xóa class active từ tất cả các nút trong hàng
             statusButtons.forEach(btn => {
                 btn.classList.remove('active');
             });
             
-            // Thêm class active cho nút được click
             e.target.classList.add('active');
-            
-            // Cập nhật thống kê
             updateAllStats();
         }
         
-        // Xử lý nút lưu
         if (e.target.id === 'save-attendance-btn' || e.target.closest('#save-attendance-btn')) {
             saveAttendance();
         }
@@ -106,7 +75,6 @@ function setupEventListeners() {
 }
 
 function updateAllStats() {
-    // Đếm lại từ danh sách hiển thị
     const rows = document.querySelectorAll('.table-row');
     let present = 0, absent = 0, excused = 0;
     
@@ -122,7 +90,6 @@ function updateAllStats() {
         });
     });
     
-    // Cập nhật thống kê
     document.querySelector('[data-count="present"]').textContent = present;
     document.querySelector('[data-count="absent"]').textContent = absent;
     document.querySelector('[data-count="excused"]').textContent = excused;
@@ -130,7 +97,6 @@ function updateAllStats() {
 }
 
 function saveAttendance() {
-    // Thu thập dữ liệu điểm danh
     const rows = document.querySelectorAll('.table-row');
     const attendanceData = [];
     
@@ -148,47 +114,31 @@ function saveAttendance() {
         });
     });
     
-    // Hiển thị dữ liệu đã thu thập (sau này sẽ gửi lên server)
     console.log('Dữ liệu điểm danh:', attendanceData);
     alert(`Đã lưu điểm danh cho ${attendanceData.length} sinh viên!\nCó mặt: ${document.querySelector('[data-count="present"]').textContent}\nVắng: ${document.querySelector('[data-count="absent"]').textContent}\nVắng có phép: ${document.querySelector('[data-count="excused"]').textContent}`);
-    
-    // Sau này có API thì thay bằng:
-    // fetch('/api/save-attendance', {
-    //     method: 'POST',
-    //     body: JSON.stringify(attendanceData)
-    // })
 }
 
-// Khởi chạy khi trang tải xong
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Đang tải danh sách sinh viên...');
-    console.log('Số lượng sinh viên:', window.mockStudents ? window.mockStudents.length : 0);
-    
-    renderStudentList();
-    setupEventListeners();
-    
-    // Log để debug
-    console.log('Danh sách sinh viên đã được render');
-});
+// CUSTOM DROPDOWN FUNCTIONS
 
-
-
-
-     document.addEventListener('DOMContentLoaded', function() {
+function initializeCustomDropdowns() {
     const selectWrappers = document.querySelectorAll('.select-wrapper');
 
     selectWrappers.forEach(wrapper => {
         const originalSelect = wrapper.querySelector('select');
         const options = originalSelect.querySelectorAll('option');
-        const labelText = wrapper.previousElementSibling.textContent; // Lấy chữ "Lớp học phần" hoặc "Buổi"
+        const labelText = wrapper.previousElementSibling.textContent;
 
-        // 1. Tạo giao diện Trigger (nút bấm hiện tại)
+        // TÌM OPTION ĐANG ĐƯỢC CHỌN (SELECTED)
+        const selectedOption = Array.from(options).find(opt => opt.selected) || options[0];
+        const selectedIndex = Array.from(options).findIndex(opt => opt.selected);
+
+        // 1. Tạo giao diện Trigger với option đang được chọn
         const trigger = document.createElement('div');
         trigger.className = 'select-trigger';
-        trigger.innerHTML = `<span class="current-text">${options[0].text}</span><div class="select-arrow">▼</div>`;
+        trigger.innerHTML = `<span class="current-text">${selectedOption.text}</span><div class="select-arrow">▼</div>`;
         wrapper.appendChild(trigger);
 
-        // 2. Tạo giao diện Menu Danh sách theo mẫu của bạn
+        // 2. Tạo giao diện Menu Danh sách
         const menuHTML = `
             <div class="session-menu">
                 <h3 class="menu-title">${labelText}</h3>
@@ -200,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
                 <ul class="menu-list">
                     ${Array.from(options).map((opt, index) => `
-                        <li class="menu-item ${index === 0 ? 'active' : ''}" data-value="${opt.value}">
+                        <li class="menu-item ${index === selectedIndex ? 'active' : ''}" data-value="${opt.value}">
                             ${opt.text}
                         </li>
                     `).join('')}
@@ -222,14 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // 4. Sự kiện chọn item trong danh sách
         menuItems.forEach(item => {
             item.addEventListener('click', () => {
-                // Cập nhật giao diện
                 menu.querySelector('.menu-item.active').classList.remove('active');
                 item.classList.add('active');
                 trigger.querySelector('.current-text').textContent = item.textContent;
                 
-                // Cập nhật giá trị vào select thật để các logic JS khác không bị hỏng
                 originalSelect.value = item.getAttribute('data-value');
-                originalSelect.dispatchEvent(new Event('change')); // Kích hoạt sự kiện change nếu có
+                originalSelect.dispatchEvent(new Event('change'));
                 
                 wrapper.classList.remove('active-menu');
             });
@@ -249,4 +197,61 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', () => {
         selectWrappers.forEach(w => w.classList.remove('active-menu'));
     });
+}
+
+// CLASS CHANGE HANDLER
+
+function setupClassChangeHandler() {
+    const classSelect = document.getElementById('class-select');
+    
+    if (classSelect) {
+        classSelect.addEventListener('change', function() {
+            const selectedClassId = this.value;
+            if (!selectedClassId) return;
+            
+            // Xác định URL hiện tại
+            const currentUrl = window.location.pathname;
+            
+            // Tạo URL mới dựa trên route pattern hiện tại
+            // Thay thế ID lớp trong URL hiện tại
+            const urlParts = currentUrl.split('/');
+            
+            // Tìm vị trí của ID trong URL (thường là phần tử cuối hoặc gần cuối)
+            for (let i = urlParts.length - 1; i >= 0; i--) {
+                if (urlParts[i] && !isNaN(urlParts[i]) && urlParts[i] !== '') {
+                    // Đây có thể là ID lớp
+                    urlParts[i] = selectedClassId;
+                    break;
+                }
+            }
+            
+            // Ghép lại URL
+            const newUrl = urlParts.join('/');
+            
+            // Chuyển hướng
+            window.location.href = newUrl;
+        });
+    }
+}
+
+// INITIALIZATION
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Đang tải danh sách sinh viên...');
+    console.log('Số lượng sinh viên:', window.mockStudents ? window.mockStudents.length : 0);
+    
+    renderStudentList();
+    setupEventListeners();
+    initializeCustomDropdowns();
+    setupClassChangeHandler();
+    
+    console.log('Danh sách sinh viên đã được render');
+    
+    // Debug: Kiểm tra select
+    const classSelect = document.getElementById('class-select');
+    if (classSelect) {
+        console.log('Class select value:', classSelect.value);
+        console.log('Selected option index:', classSelect.selectedIndex);
+        console.log('Selected option text:', classSelect.options[classSelect.selectedIndex]?.text);
+    }
 });

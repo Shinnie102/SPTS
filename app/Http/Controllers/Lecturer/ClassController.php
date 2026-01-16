@@ -23,7 +23,10 @@ class ClassController extends Controller
             abort(403, 'Bạn không có quyền truy cập trang này');
         }
         
-        // Query để lấy lớp học phần với số sinh viên (sử dụng withCount để tối ưu)
+        // Lấy lớp được chọn từ session hoặc request
+        $selectedClassId = $request->input('selected_class') ?? session('selected_class_id');
+        
+        // Query để lấy lớp học phần với số sinh viên
         $query = ClassSection::with([
                 'courseVersion.course',
                 'status',
@@ -31,7 +34,6 @@ class ClassController extends Controller
             ])
             ->withCount([
                 'enrollments as valid_enrollments_count' => function($query) {
-                    // Chỉ đếm enrollment có trạng thái hợp lệ
                     $query->whereIn('enrollment_status_id', [1, 2]);
                 }
             ])
@@ -52,35 +54,51 @@ class ClassController extends Controller
         // Phân trang 15 lớp mỗi trang
         $classes = $query->orderBy('class_section_id', 'desc')->paginate(15);
         
-        return view('lecturer.classes', compact('classes'));
+        // Lấy lớp hiện tại nếu có
+        $currentClass = null;
+        if ($selectedClassId) {
+            $currentClass = ClassSection::with(['courseVersion.course'])
+                ->where('class_section_id', $selectedClassId)
+                ->where('lecturer_id', $lecturerId)
+                ->first();
+        }
+        
+        // Nếu không có lớp nào được chọn, lấy lớp đầu tiên
+        if (!$currentClass && $classes->count() > 0) {
+            $currentClass = $classes->first();
+            if ($currentClass) {
+                session(['selected_class_id' => $currentClass->class_section_id]);
+            }
+        }
+        
+        return view('lecturer.classes', compact('classes', 'currentClass'));
     }
     
     /**
-     * Hiển thị chi tiết lớp học phần
+     * Hiển thị trang điểm danh
      */
-    public function show($id)
+    public function attendance($id)
     {
         $lecturerId = Auth::id();
+
+        logger("Attendance requested for class ID: {$id}, Lecturer ID: {$lecturerId}");
         
-        $class = ClassSection::with([
-                'courseVersion.course',
-                'status',
-                'semester.academicYear',
-                'enrollments' => function($query) {
-                    $query->whereIn('enrollment_status_id', [1, 2])
-                          ->with(['student', 'attendances']);
-                }
-            ])
-            ->withCount([
-                'enrollments as valid_enrollments_count' => function($query) {
-                    $query->whereIn('enrollment_status_id', [1, 2]);
-                }
-            ])
+        // Lưu lớp đã chọn vào session
+        session(['selected_class_id' => $id]);
+        
+        // Lấy lớp hiện tại
+        $currentClass = ClassSection::with(['courseVersion.course'])
             ->where('class_section_id', $id)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
         
-        return view('lecturer.classDetail', compact('class'));
+        // Lấy tất cả lớp của giảng viên cho dropdown
+        $classes = ClassSection::with(['courseVersion.course'])
+            ->where('lecturer_id', $lecturerId)
+            ->orderBy('class_section_id', 'desc')
+            ->get();
+        
+        return view('lecturer.attendance', compact('currentClass', 'classes'));
     }
     
     /**
@@ -90,18 +108,65 @@ class ClassController extends Controller
     {
         $lecturerId = Auth::id();
         
-        $class = ClassSection::with([
-                'courseVersion.course',
-                'enrollments' => function($query) {
-                    $query->whereIn('enrollment_status_id', [1, 2])
-                          ->with(['student', 'studentScores.gradingComponent']);
-                },
-                'gradingSchemes.gradingScheme.components'
-            ])
+        // Lưu lớp đã chọn vào session
+        session(['selected_class_id' => $id]);
+        
+        $currentClass = ClassSection::with(['courseVersion.course'])
             ->where('class_section_id', $id)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
         
-        return view('lecturer.grading', compact('class'));
+        $classes = ClassSection::with(['courseVersion.course'])
+            ->where('lecturer_id', $lecturerId)
+            ->orderBy('class_section_id', 'desc')
+            ->get();
+        
+        return view('lecturer.grading', compact('currentClass', 'classes'));
+    }
+    
+    /**
+     * Hiển thị trang trạng thái lớp
+     */
+    public function status($id)
+    {
+        $lecturerId = Auth::id();
+        
+        // Lưu lớp đã chọn vào session
+        session(['selected_class_id' => $id]);
+        
+        $currentClass = ClassSection::with(['courseVersion.course'])
+            ->where('class_section_id', $id)
+            ->where('lecturer_id', $lecturerId)
+            ->firstOrFail();
+        
+        $classes = ClassSection::with(['courseVersion.course'])
+            ->where('lecturer_id', $lecturerId)
+            ->orderBy('class_section_id', 'desc')
+            ->get();
+        
+        return view('lecturer.classStatus', compact('currentClass', 'classes'));
+    }
+    
+    /**
+     * Hiển thị trang báo cáo
+     */
+    public function report($id)
+    {
+        $lecturerId = Auth::id();
+        
+        // Lưu lớp đã chọn vào session
+        session(['selected_class_id' => $id]);
+        
+        $currentClass = ClassSection::with(['courseVersion.course'])
+            ->where('class_section_id', $id)
+            ->where('lecturer_id', $lecturerId)
+            ->firstOrFail();
+        
+        $classes = ClassSection::with(['courseVersion.course'])
+            ->where('lecturer_id', $lecturerId)
+            ->orderBy('class_section_id', 'desc')
+            ->get();
+        
+        return view('lecturer.report', compact('currentClass', 'classes'));
     }
 }

@@ -57,8 +57,11 @@
                 </section>
 
                 
-                    @include('lecturer.attendance_header')
-
+@include('lecturer.attendance_header', [
+    'currentClass' => $currentClass,
+    'classes' => $classes,
+    'currentTab' => 'grading'
+])
 
                     <div class="filter-group">
                         <label>Cấu trúc điểm</label>

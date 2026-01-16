@@ -34,8 +34,11 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
-                @include('lecturer.attendance_header')
-
+@include('lecturer.attendance_header', [
+    'currentClass' => $currentClass,
+    'classes' => $classes,
+    'currentTab' => 'report'
+])
                     <section class="charts-container">
                         <section class="chart-section">
                             <h3 class="chart-title">Biểu đồ phân bổ điểm</h3>

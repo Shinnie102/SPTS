@@ -265,3 +265,32 @@
     font-size: 11px;
   }
 }
+
+
+/* Thêm vào file attendance.css hoặc styleClass.css */
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select {
+    width: 100%;
+    padding: 8px 35px 8px 10px;
+    border: 2px solid #3498db;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;
+}
+
+.select-arrow {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+/* Highlight class option đang chọn */
+.select-wrapper option[selected] {
+    background-color: #3498db;
+    color: white;
+}
