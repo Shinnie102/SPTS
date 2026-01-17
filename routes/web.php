@@ -68,9 +68,42 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     })->name('lophoc.detail');
 
     // Cấu trúc học thuật
-    Route::get('/hoc-thuat', function () {
-        return view('admin.adminhocthuat');
-    })->name('hocthuat');
+    Route::get('/hoc-thuat', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'index'])->name('hocthuat');
+    
+    // Faculty APIs
+    Route::prefix('hoc-thuat/faculty')->name('hocthuat.faculty.')->group(function () {
+        Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getFaculties'])->name('api.index');
+        Route::get('/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveFaculties'])->name('api.active');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeFaculty'])->name('api.store');
+        Route::get('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showFaculty'])->name('api.show');
+        Route::put('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateFaculty'])->name('api.update');
+        Route::delete('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteFaculty'])->name('api.delete');
+        Route::patch('/api/{facultyId}/toggle-status', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'toggleFacultyStatus'])->name('api.toggleStatus');
+    });
+    
+    // Major APIs
+    Route::prefix('hoc-thuat/major')->name('hocthuat.major.')->group(function () {
+        Route::get('/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveMajors'])->name('api.active');
+        Route::get('/api/by-faculty/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getMajorsByFaculty'])->name('api.byFaculty');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeMajor'])->name('api.store');
+        Route::get('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showMajor'])->name('api.show');
+        Route::put('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateMajor'])->name('api.update');
+        Route::delete('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteMajor'])->name('api.delete');
+    });
+    
+    // Course APIs
+    Route::prefix('hoc-thuat/course')->name('hocthuat.course.')->group(function () {
+        Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getCourses'])->name('api.index');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeCourse'])->name('api.store');
+        Route::get('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showCourse'])->name('api.show');
+        Route::put('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateCourse'])->name('api.update');
+        Route::delete('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteCourse'])->name('api.delete');
+        Route::patch('/api/{courseId}/toggle-lock', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'toggleCourseLock'])->name('api.toggleLock');
+    });
+
+    // Helper APIs
+    Route::get('/hoc-thuat/grading-schemes/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveGradingSchemes'])->name('hocthuat.gradingSchemes.api.active');
+    Route::get('/hoc-thuat/course/api/check-code/{code}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'checkCourseCode'])->name('hocthuat.course.api.checkCode');
 
     // Quy tắc đánh giá
     Route::get('/quy-tac', function () {

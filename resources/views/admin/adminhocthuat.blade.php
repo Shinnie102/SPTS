@@ -300,6 +300,16 @@
                             </tbody>
                         </table>
                     </div>
+                    
+                    <!-- Pagination -->
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            <span id="pagination-info-text"></span>
+                        </div>
+                        <div class="pagination-controls" id="pagination-controls">
+                            <!-- Pagination buttons will be rendered here -->
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- ------------------------------------------------ -->
@@ -311,11 +321,11 @@
                         <i class="fa-solid fa-xmark"></i>
                     </div>
                     <p class="infor">Tên Khoa/Viện <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập tên Khoa/Viện">
+                    <input type="text" id="faculty-name-input" placeholder="Nhập tên Khoa/Viện">
                     <p class="infor">Mã Khoa/Viện <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập mã Khoa/Viện">
+                    <input type="text" id="faculty-code-input" placeholder="Nhập mã Khoa/Viện">
                     <div class="thaotac">
-                        <button class="them">Thêm</button>
+                        <button class="them" id="submit-faculty-btn">Thêm</button>
                         <button class="Huy">Hủy</button>
                     </div>
                 </div>
@@ -325,10 +335,11 @@
                         <p class="title">Thêm chuyên ngành</p>
                         <i class="fa-solid fa-xmark"></i>
                     </div>
+                    <input type="hidden" id="major-faculty-id">
                     <p class="infor">Tên chuyên ngành <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập tên chuyên ngành">
+                    <input type="text" id="major-name-input" placeholder="Nhập tên chuyên ngành">
                     <p class="infor">Mã chuyên ngành <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập mã chuyên ngành">
+                    <input type="text" id="major-code-input" placeholder="Nhập mã chuyên ngành">
                     <div class="thaotac">
                         <button class="them">Thêm</button>
                         <button class="Huy">Hủy</button>
@@ -337,82 +348,73 @@
 
                 <div class="frame-new themhocphan">
                     <div class="title-new">
-                        <p class="title">Thêm Khoa/Viện mới</p>
+                        <p class="title">Thêm học phần mới</p>
                         <i class="fa-solid fa-xmark"></i>
                     </div>
                     <p class="infor">Mã học phần <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập mã học phần">
+                    <input type="text" id="course-code-input" placeholder="Nhập mã học phần (VD: CS101)">
+                    <div id="course-code-validation" style="margin-top: 5px; font-size: 13px;"></div>
 
                     <p class="infor">Tên học phần <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập tên học phần">
+                    <input type="text" id="course-name-input" placeholder="Nhập tên học phần">
 
                     <p class="infor">Tín chỉ <span>(*)</span></p>
-                    <input type="text" placeholder="Nhập tín chỉ">
+                    <input type="number" id="course-credit-input" placeholder="Nhập tín chỉ (1-6)" min="1" max="6">
 
                     <p class="infor">Khoa/Viện <span>(*)</span></p>
-                    <select name="khoavien" id="khoavien">
-                        <option value="-- CHọn Khoa Viện --">-- Chọn khoa viện --</option>
-                        <option value="CNTT">CNTT</option>
-                        <option value="CNPM">CNPM</option>
+                    <select id="course-faculty-select">
+                        <option value="">-- Chọn Khoa/Viện --</option>
                     </select>
 
                     <p class="infor">Chuyên ngành <span>(*)</span></p>
-                    <select name="chuyennganh" id="chuyennganh">
-                        <option value="-- Chọn chuyên ngành --">-- Chọn chuyên ngành --</option>
-                        <option value="CNTT">CNTT</option>
-                        <option value="CNPM">CNPM</option>
+                    <select id="course-major-select">
+                        <option value="">-- Chọn Khoa/Viện trước --</option>
                     </select>
 
-                    <p class="infor">Cấu trúc điểm <span>(*)</span></p>
-                    <select name="cautrucdiem" id="cautrucdiem">
-                        <option value="-- Chọn cấu trúc điểm --">-- Chọn cấu trúc điểm --</option>
-                        <option value="Tieuchuankythuat">Tiêu chuẩn kỹ thuật</option>
-                        <option value="Tieuchuanthuchanh">Tiêu chuẩn thực hành</option>
+                    <p class="infor">Cấu trúc điểm</p>
+                    <select id="course-grading-scheme-select">
+                        <option value="">-- Chọn cấu trúc điểm --</option>
                     </select>
 
                     <div class="thaotac">
-                        <button class="Chinhsua them">Thêm</button>
+                        <button class="them" id="submit-course-btn">Thêm</button>
                         <button class="Huy">Hủy</button>
                     </div>
                 </div>
 
                 <div class="frame-new chitiethocphan">
                     <div class="title-new">
-                        <p class="title">Thêm Khoa/Viện mới</p>
+                        <p class="title">Chi tiết học phần</p>
                         <i class="fa-solid fa-xmark"></i>
                     </div>
+                    <input type="hidden" id="edit-course-id">
+                    
                     <p class="infor">Mã học phần <span>(*)</span></p>
-                    <input type="text" value="CN0001232025">
+                    <input type="text" id="edit-course-code" disabled style="background-color: #f0f0f0; cursor: not-allowed;">
 
                     <p class="infor">Tên học phần <span>(*)</span></p>
-                    <input type="text" value="Lập trình mạng">
+                    <input type="text" id="edit-course-name" placeholder="Nhập tên học phần">
 
                     <p class="infor">Tín chỉ <span>(*)</span></p>
-                    <input type="text" value="3">
+                    <input type="number" id="edit-course-credit" placeholder="Nhập tín chỉ (1-6)" min="1" max="6">
 
                     <p class="infor">Khoa/Viện <span>(*)</span></p>
-                    <select name="khoavien" id="khoavien">
-                        <option value="-- CHọn Khoa Viện --">-- CHọn Khoa Viện --</option>
-                        <option value="CNTT" selected>CNTT</option>
-                        <option value="CNPM">CNPM</option>
+                    <select id="edit-course-faculty-select">
+                        <option value="">-- Chọn Khoa/Viện --</option>
                     </select>
 
                     <p class="infor">Chuyên ngành <span>(*)</span></p>
-                    <select name="chuyennganh" id="chuyennganh">
-                        <option value="-- Chọn chuyên ngành --">-- Chọn chuyên ngành --</option>
-                        <option value="CNTT" selected>CNTT</option>
-                        <option value="CNPM">CNPM</option>
+                    <select id="edit-course-major-select">
+                        <option value="">-- Chọn Khoa/Viện trước --</option>
                     </select>
 
-                    <p class="infor">Cấu trúc điểm <span>(*)</span></p>
-                    <select name="cautrucdiem" id="cautrucdiem">
-                        <option value="-- Chọn cấu trúc điểm --">-- Chọn cấu trúc điểm --</option>
-                        <option value="Tieuchuankythuat" selected>Tiêu chuẩn kỹ thuật</option>
-                        <option value="Tieuchuanthuchanh">Tiêu chuẩn thực hành</option>
+                    <p class="infor">Cấu trúc điểm</p>
+                    <select id="edit-course-grading-scheme-select">
+                        <option value="">-- Chọn cấu trúc điểm --</option>
                     </select>
 
                     <div class="thaotac">
-                        <button class="Chinhsua">Chỉnh sửa</button>
+                        <button class="Chinhsua" id="update-course-btn">Cập nhật</button>
                         <button class="Huy">Hủy</button>
                     </div>
                 </div>

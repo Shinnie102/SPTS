@@ -17,23 +17,29 @@ class Course extends Model
     protected $fillable = [
         'course_code',
         'course_name',
-        'credits',
-        'description',
-        'status_id',
-    ];
-
-    protected $casts = [
-        'credits' => 'integer',
+        'course_status_id',
     ];
 
     public function status()
     {
-        return $this->belongsTo(CourseStatus::class, 'status_id', 'status_id');
+        return $this->belongsTo(CourseStatus::class, 'course_status_id', 'course_status_id');
     }
 
     public function majors()
     {
         return $this->belongsToMany(Major::class, 'major_course', 'course_id', 'major_id');
+    }
+
+    public function courseVersions()
+    {
+        return $this->hasMany(CourseVersion::class, 'course_id', 'course_id');
+    }
+    
+    public function latestVersion()
+    {
+        return $this->hasOne(CourseVersion::class, 'course_id', 'course_id')
+                    ->where('status_id', 1)
+                    ->latest('effective_from');
     }
 
     public function classSections()
