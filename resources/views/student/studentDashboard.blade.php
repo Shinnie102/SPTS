@@ -23,7 +23,7 @@
 
 <body>
     <!-- Header -->
-    <div class="header"></div>
+     @include('partials.header_student')
     <div id="main">
         <!-- Menu -->
         <div class="menu_student"></div>
