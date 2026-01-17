@@ -33,7 +33,10 @@ class AppServiceProvider extends ServiceProvider
     {
         // Đăng ký Repository Pattern
         // Tuân thủ Dependency Inversion Principle (D in SOLID)
-        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(\App\Contracts\UserRepositoryInterface::class, \App\Repositories\UserRepository::class);
+        $this->app->bind(\App\Contracts\FacultyRepositoryInterface::class, \App\Repositories\FacultyRepository::class);
+        $this->app->bind(\App\Contracts\MajorRepositoryInterface::class, \App\Repositories\MajorRepository::class);
+        $this->app->bind(\App\Contracts\CourseRepositoryInterface::class, \App\Repositories\CourseRepository::class);
     }
 
     /**

@@ -4,29 +4,27 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Major extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'major';
     protected $primaryKey = 'major_id';
     
     const CREATED_AT = 'created_at';
     const UPDATED_AT = 'updated_at';
-    const DELETED_AT = 'deleted_at';
 
     protected $fillable = [
         'major_code',
         'major_name',
         'description',
-        'status_id',
+        'major_status_id',
     ];
 
     public function status()
     {
-        return $this->belongsTo(MajorStatus::class, 'status_id', 'status_id');
+        return $this->belongsTo(MajorStatus::class, 'major_status_id', 'major_status_id');
     }
 
     public function faculties()

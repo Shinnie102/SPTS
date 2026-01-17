@@ -34,7 +34,12 @@
 
             <main class="main-content">
                 <!-- Attendance Container -->
-                    @include('lecturer.attendance_header')
+@include('lecturer.attendance_header', [
+    'currentClass' => $currentClass,
+    'classes' => $classes,
+    'currentTab' => 'attendance'  // Xác định tab đang active
+])
+
 
                     <!-- Hàng 3: Buổi điểm danh + Stats + Nút Lưu -->
                     <div class="action-row">

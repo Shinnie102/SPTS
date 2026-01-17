@@ -1,0 +1,362 @@
+/**
+ * ========================================
+ * ADMIN - CẤU TRÚC HỌC THUẬT - API STYLES
+ * File: adminhocthuat-api.css
+ * Styles cho các components động
+ * ========================================
+ */
+
+/* ========== FACULTY CARD STYLES ========== */
+.khung-khoanganh {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.khung-khoanganh:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+}
+
+.title-nganh {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.khoa-nganh {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 4px;
+}
+
+.code {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+.add-nganh {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.add-nganh:hover {
+    background: #45a049;
+    transform: scale(1.05);
+}
+
+/* Status Badge */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.status-badge.active {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-badge.inactive {
+    background: #ffebee;
+    color: #c62828;
+}
+
+/* Khung Majors */
+.khung-nganh {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 12px;
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.empty-majors {
+    color: #999;
+    font-size: 13px;
+    font-style: italic;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.nganh-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    transition: all 0.2s ease;
+}
+
+.nganh-item:hover {
+    background: #e3f2fd;
+}
+
+.nganh-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+}
+
+.nganh-code {
+    font-size: 12px;
+    color: #666;
+    margin-left: 8px;
+}
+
+.nganh-actions {
+    display: flex;
+    gap: 4px;
+    margin-left: 8px;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn-edit,
+.btn-toggle,
+.btn-delete,
+.btn-view,
+.btn-sm-edit,
+.btn-sm-delete {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.btn-edit,
+.btn-sm-edit {
+    background: #2196F3;
+    color: white;
+}
+
+.btn-edit:hover,
+.btn-sm-edit:hover {
+    background: #1976D2;
+}
+
+.btn-toggle {
+    background: #FF9800;
+    color: white;
+}
+
+.btn-toggle:hover {
+    background: #F57C00;
+}
+
+.btn-delete,
+.btn-sm-delete {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete:hover,
+.btn-sm-delete:hover {
+    background: #d32f2f;
+}
+
+.btn-view {
+    background: #9C27B0;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #7B1FA2;
+}
+
+/* Small buttons */
+.btn-sm-edit,
+.btn-sm-delete {
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+/* ========== COURSE TABLE STYLES ========== */
+#frame-hocphan {
+    display: none;
+}
+
+.table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container thead {
+    background: #f5f5f5;
+}
+
+.table-container th {
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.table-container td {
+    padding: 12px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.table-container tr:hover {
+    background: #f9f9f9;
+}
+
+.table-container td.actions {
+    text-align: right;
+}
+
+.text-center {
+    text-align: center !important;
+}
+
+/* Badge */
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: #e3f2fd;
+    color: #1976D2;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    margin: 2px;
+}
+
+/* ========== FILTER STYLES ========== */
+#fillter {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding: 16px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+#fillter select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    min-width: 200px;
+    cursor: pointer;
+}
+
+#fillter select:focus {
+    outline: none;
+    border-color: #2196F3;
+}
+
+/* ========== EMPTY MESSAGE ========== */
+.empty-message {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+    font-size: 14px;
+    background: white;
+    border-radius: 8px;
+    border: 2px dashed #ddd;
+}
+
+/* ========== LOADING SPINNER ========== */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: #2196F3;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========== ADD BUTTON ========== */
+.add,
+#add-khoavien {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.add:hover,
+#add-khoavien:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .khung-khoanganh {
+        padding: 16px;
+    }
+    
+    .title-nganh {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .actions {
+        flex-wrap: wrap;
+    }
+    
+    #fillter {
+        flex-direction: column;
+    }
+    
+    #fillter select {
+        width: 100%;
+    }
+}

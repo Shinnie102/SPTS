@@ -175,6 +175,11 @@
     color: #dc2626;
 }
 
+.status-pending {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
 /* ================= BẢNG ĐIỂM TOÀN KHÓA ================= */
 
 /* Overview Cards */

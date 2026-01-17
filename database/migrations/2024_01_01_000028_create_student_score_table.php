@@ -12,38 +12,24 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('student_score', function (Blueprint $table) {
-            $table->id('score_id');
+            $table->id('student_score_id');
             $table->unsignedBigInteger('enrollment_id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('grading_component_id');
-            $table->decimal('score', 5, 2)->nullable();
-            $table->unsignedBigInteger('recorded_by')->nullable();
-            $table->timestamp('recorded_at')->nullable();
-            $table->timestamps();
-            $table->softDeletes();
+            $table->unsignedBigInteger('component_id');
+            $table->decimal('score_value', 5, 2);
+            $table->dateTime('last_updated_at')->nullable();
             
             $table->foreign('enrollment_id')
                 ->references('enrollment_id')
                 ->on('enrollment')
                 ->onDelete('cascade');
             
-            $table->foreign('user_id')
-                ->references('user_id')
-                ->on('user')
-                ->onDelete('cascade');
-            
-            $table->foreign('grading_component_id')
+            $table->foreign('component_id')
                 ->references('component_id')
                 ->on('grading_component')
                 ->onDelete('cascade');
             
-            $table->foreign('recorded_by')
-                ->references('user_id')
-                ->on('user')
-                ->onDelete('set null');
-            
             // Prevent duplicate scores for same enrollment and component
-            $table->unique(['enrollment_id', 'grading_component_id']);
+            $table->unique(['enrollment_id', 'component_id']);
         });
     }
 

@@ -34,8 +34,11 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
-                @include('lecturer.attendance_header')
-
+@include('lecturer.attendance_header', [
+    'currentClass' => $currentClass,
+    'classes' => $classes,
+    'currentTab' => 'status'
+])
 
                     <div class="dashboard-container">
                         <div class="row-top">

@@ -6,7 +6,8 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
-use App\Http\Controllers\Lecturer\ClassController; // Thêm dòng này
+use App\Http\Controllers\Student\StudentStudyController;
+use App\Http\Controllers\Lecturer\ClassController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -67,9 +68,42 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     })->name('lophoc.detail');
 
     // Cấu trúc học thuật
-    Route::get('/hoc-thuat', function () {
-        return view('admin.adminhocthuat');
-    })->name('hocthuat');
+    Route::get('/hoc-thuat', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'index'])->name('hocthuat');
+    
+    // Faculty APIs
+    Route::prefix('hoc-thuat/faculty')->name('hocthuat.faculty.')->group(function () {
+        Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getFaculties'])->name('api.index');
+        Route::get('/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveFaculties'])->name('api.active');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeFaculty'])->name('api.store');
+        Route::get('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showFaculty'])->name('api.show');
+        Route::put('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateFaculty'])->name('api.update');
+        Route::delete('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteFaculty'])->name('api.delete');
+        Route::patch('/api/{facultyId}/toggle-status', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'toggleFacultyStatus'])->name('api.toggleStatus');
+    });
+    
+    // Major APIs
+    Route::prefix('hoc-thuat/major')->name('hocthuat.major.')->group(function () {
+        Route::get('/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveMajors'])->name('api.active');
+        Route::get('/api/by-faculty/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getMajorsByFaculty'])->name('api.byFaculty');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeMajor'])->name('api.store');
+        Route::get('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showMajor'])->name('api.show');
+        Route::put('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateMajor'])->name('api.update');
+        Route::delete('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteMajor'])->name('api.delete');
+    });
+    
+    // Course APIs
+    Route::prefix('hoc-thuat/course')->name('hocthuat.course.')->group(function () {
+        Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getCourses'])->name('api.index');
+        Route::post('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'storeCourse'])->name('api.store');
+        Route::get('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'showCourse'])->name('api.show');
+        Route::put('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateCourse'])->name('api.update');
+        Route::delete('/api/{courseId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteCourse'])->name('api.delete');
+        Route::patch('/api/{courseId}/toggle-lock', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'toggleCourseLock'])->name('api.toggleLock');
+    });
+
+    // Helper APIs
+    Route::get('/hoc-thuat/grading-schemes/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveGradingSchemes'])->name('hocthuat.gradingSchemes.api.active');
+    Route::get('/hoc-thuat/course/api/check-code/{code}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'checkCourseCode'])->name('hocthuat.course.api.checkCode');
 
     // Quy tắc đánh giá
     Route::get('/quy-tac', function () {
@@ -86,21 +120,19 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
-Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
-    Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
-
-    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
     Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
 
-
-});
-
-    // Lớp học phần - Sử dụng Controller mới
+    // Lớp học phần management
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
+    
+    // Các route cho từng chức năng của lớp học phần 
+    Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
+    Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
+    Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
 
-    // Các route cũ giữ nguyên cho compatibility
+    // Các route cũ giữ nguyên cho compatibility 
     Route::get('/grading', function () {
         return view('lecturer.grading');
     })->name('grading.show');
@@ -119,9 +151,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [App\Http\Controllers\Student\Profile::class, 'index'])->name('profile');
-    Route::get('/study', function () {
-        return view('student.studentStudy');
-    })->name('study');
+    Route::get('/study', [StudentStudyController::class, 'index'])->name('study');
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () {
         return 'Class details';

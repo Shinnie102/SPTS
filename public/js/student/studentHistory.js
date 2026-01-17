@@ -139,10 +139,6 @@ function renderAttendanceTable(semesterKey) {
                 statusBadge.classList.add('status-warning');
                 statusBadge.textContent = 'Cảnh báo';
                 break;
-            case 'learning':
-                statusBadge.classList.add('status-learning');
-                statusBadge.textContent = 'Đang học';
-                break;
         }
         statusCell.appendChild(statusBadge);
         
@@ -184,7 +180,11 @@ function renderAttendanceTable(semesterKey) {
                                     break;
                                 case 'excused':
                                     statusClass = 'detail-excused';
-                                    statusText = 'Đi muộn';
+                                    statusText = 'Có phép';
+                                    break;
+                                default:
+                                    statusClass = 'detail-absent';
+                                    statusText = detail.status;
                                     break;
                             }
                             
@@ -215,24 +215,36 @@ function populateSemesterDropdown() {
     const dropdown = document.getElementById('semester-dropdown');
     dropdown.innerHTML = ''; // Clear existing options
     
-    // Get all semester keys from data
-    const semesters = Object.keys(attendanceData.semesters);
-    
-    if (semesters.length === 0) {
+    if (!attendanceData || !attendanceData.semesters) {
+        console.error('No semester data available for dropdown');
         dropdown.innerHTML = '<option value="">Không có dữ liệu</option>';
         return null;
     }
     
+    // Convert semesters object to array and sort by sort_key (newest first)
+    const semestersArray = Object.entries(attendanceData.semesters).map(([key, data]) => ({
+        key: key,
+        sort_key: data.sort_key || 0,
+        semester_name: data.semester_name || key
+    })).sort((a, b) => (b.sort_key || 0) - (a.sort_key || 0));
+    
+    if (semestersArray.length === 0) {
+        dropdown.innerHTML = '<option value="">Không có dữ liệu</option>';
+        return null;
+    }
+    
+    console.log('Populating dropdown with semesters:', semestersArray);
+    
     // Add options for each semester
-    semesters.forEach((semester, index) => {
+    semestersArray.forEach((semester, index) => {
         const option = document.createElement('option');
-        option.value = semester;
-        option.textContent = semester;
+        option.value = semester.key;
+        option.textContent = semester.semester_name;
         if (index === 0) option.selected = true; // Select first semester by default
         dropdown.appendChild(option);
     });
     
-    return semesters[0]; // Return first semester key
+    return semestersArray[0].key; // Return first semester key
 }
 
 // ================= SEMESTER DROPDOWN CHANGE =================

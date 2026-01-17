@@ -69,6 +69,15 @@ class AttendanceService
         $late = $attendances->filter(fn($a) => $a->status->code === 'LATE')->count();
 
         $percentage = ($present / $totalSessions) * 100;
+        
+        // Xác định trạng thái: 100% = Đạt, 80% = Cảnh báo, <80% = Không đạt
+        if ($percentage == 100) {
+            $status = 'pass';
+        } elseif ($percentage >= 80) {
+            $status = 'warning';
+        } else {
+            $status = 'fail';
+        }
 
         $classSection = $enrollment->classSection;
         $course = $classSection->courseVersion->course;
@@ -98,7 +107,7 @@ class AttendanceService
             'absent' => $absent,
             'late' => $late,
             'percentage' => round($percentage, 1),
-            'status' => $percentage >= 80 ? 'pass' : 'fail',
+            'status' => $status,
             'details' => $details
         ];
     }
@@ -117,7 +126,13 @@ class AttendanceService
             $semesterKey = $stat['semesterName'];
             
             if (!isset($grouped[$semesterKey])) {
+                // Format semester name and create sort key
+                $semesterName = $this->formatSemesterName($semesterKey);
+                $sortKey = $this->createSortKey($semesterKey);
+                
                 $grouped[$semesterKey] = [
+                    'semester_name' => $semesterName,
+                    'sort_key' => $sortKey,
                     'progress' => 0,
                     'courses' => []
                 ];
@@ -169,5 +184,34 @@ class AttendanceService
         return $totalSessions > 0 
             ? round(($totalPresent / $totalSessions) * 100, 1) 
             : 0;
+    }
+
+    /**
+     * Create sort key from semester code for proper sorting
+     * e.g., "HK1-2024" -> 202401, "HK2-2023" -> 202302
+     */
+    protected function createSortKey(string $semesterCode): int
+    {
+        if (preg_match('/HK(\d+)-(\d+)/', $semesterCode, $matches)) {
+            $semesterNumber = $matches[1];
+            $year = $matches[2];
+            return (int)($year . str_pad($semesterNumber, 2, '0', STR_PAD_LEFT));
+        }
+        return 0;
+    }
+
+    /**
+     * Format semester name for display
+     * e.g., "HK1-2024" -> "Học kỳ 1 - Năm 2024-2025"
+     */
+    protected function formatSemesterName(string $semesterCode): string
+    {
+        if (preg_match('/HK(\d+)-(\d+)/', $semesterCode, $matches)) {
+            $semesterNumber = $matches[1];
+            $year = $matches[2];
+            $nextYear = (int)$year + 1;
+            return "Học kỳ {$semesterNumber} - Năm {$year}-{$nextYear}";
+        }
+        return $semesterCode;
     }
 }
