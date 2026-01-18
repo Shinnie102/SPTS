@@ -62,12 +62,12 @@
                     <h3 style="margin: 0 0 15px 0;">Thông báo</h3>
 
                     <div style="padding: 15px; background: #e7f3ff; border-radius: 8px; margin-bottom: 10px;">
-                        <strong>Có điểm mới được công bố</strong><br>
-                        <small>Môn Lập trình Web đã có điểm thi giữa kỳ</small>
+                        <strong>Điểm mới được công bố</strong><br>
+                        <small>Môn Mạng máy tính đã có điểm thi giữa kỳ</small>
                     </div>
 
                     <div style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 10px;">
-                        <strong>Có cảnh báo học vụ</strong><br>
+                        <strong>Cảnh báo học vụ</strong><br>
                         <small>GPA dưới 2.0</small>
                     </div>
 
@@ -116,6 +116,23 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
             dropdown.style.display = 'none';
         }
+    });
+     // Mark as read
+    items.forEach(item => {
+        item.addEventListener('click', function () {
+            if (this.dataset.read === "false") {
+                this.dataset.read = "true";
+                this.style.opacity = "0.5";
+
+                let count = parseInt(badge.innerText);
+                count = count > 0 ? count - 1 : 0;
+                badge.innerText = count;
+
+                if (count === 0) {
+                    badge.style.display = "none";
+                }
+            }
+        });
     });
 });
 </script>
