@@ -260,12 +260,12 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateDashboardData(newData) {
     // Merge dữ liệu mới với dữ liệu hiện tại
     Object.assign(dashboardData, newData);
-    
+
     // Re-render các phần đã thay đổi
     renderOverviewCards();
     renderSystemAlerts();
     renderProblemClassesTable();
-    
+
     console.log('Dashboard data đã được cập nhật');
 }
 
@@ -274,3 +274,17 @@ window.AdminDashboard = {
     updateData: updateDashboardData,
     data: dashboardData
 };
+
+// ================= LOAD DATA FROM API =================
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetch('/admin/dashboard/api/data')
+        .then(res => res.json())
+        .then(data => {
+            updateDashboardData(data);
+        })
+        .catch(err => {
+            console.error('Lỗi tải dữ liệu dashboard:', err);
+        });
+});
+

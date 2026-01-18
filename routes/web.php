@@ -34,7 +34,9 @@ Route::post('/password/reset', function () {
 // Admin Routes
 Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-
+ //route get api admin
+    Route::get('/dashboard/api/data', [AdminDashboardController::class, 'getDashboardData'])
+    ->name('dashboard.api.data');
     // User Management
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('index');
@@ -136,7 +138,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-    
+
     // Các route cho từng chức năng của lớp học phần
     Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/attendance-data/{meetingId}', [ClassController::class, 'getAttendanceData'])->name('attendance.data');
@@ -158,4 +160,5 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
     Route::get('/classes/{class}', function () {
         return 'Class details';
     })->name('classes.show');
+
 });
