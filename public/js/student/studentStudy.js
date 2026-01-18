@@ -12,20 +12,23 @@ function populateSemesterDropdown() {
         return;
     }
     
-    // Get semester keys and sort descending (newest first)
-    const semesterKeys = Object.keys(scoreData.semesters).sort().reverse();
+    // Convert to array and sort by sort_key (numeric) descending (newest first)
+    const semestersArray = Object.entries(scoreData.semesters).map(([key, data]) => ({
+        key: key,
+        sort_key: data.sort_key || 0,
+        semester_name: data.semester_name || key
+    })).sort((a, b) => b.sort_key - a.sort_key); // Descending order
     
-    console.log('Populating dropdown with semesters:', semesterKeys);
+    console.log('Populating dropdown with semesters:', semestersArray);
     
-    semesterKeys.forEach(key => {
-        const semester = scoreData.semesters[key];
+    semestersArray.forEach(semester => {
         const option = document.createElement('option');
-        option.value = key;
-        option.textContent = semester.semester_name || key;
+        option.value = semester.key;
+        option.textContent = semester.semester_name;
         dropdown.appendChild(option);
     });
     
-    return semesterKeys[0]; // Return first semester key
+    return semestersArray[0]?.key; // Return first semester key
 }
 
 // ================= TAB SWITCHING =================
@@ -66,6 +69,7 @@ function renderDetailTable(semesterKey) {
     
     // Render THEAD động
     thead.innerHTML = `
+        <th>Mã lớp học</th>
         <th>Mã môn học</th>
         <th>Tên môn học</th>
         <th>Số tín chỉ</th>
@@ -79,6 +83,9 @@ function renderDetailTable(semesterKey) {
     
     courses.forEach(course => {
         const row = tbody.insertRow();
+        
+        // Mã lớp học
+        row.insertCell().innerHTML = `<span class="course-code">${course.class_code || 'N/A'}</span>`;
         
         // Mã môn học
         row.insertCell().innerHTML = `<span class="course-code">${course.course_code || 'N/A'}</span>`;
@@ -167,6 +174,7 @@ function renderSemesterCards() {
             <table class="semester-table">
                 <thead>
                     <tr>
+                        <th>Mã lớp học</th>
                         <th>Mã môn học</th>
                         <th>Tên môn học</th>
                         <th>Số tín chỉ</th>
@@ -186,6 +194,7 @@ function renderSemesterCards() {
                         if (finalScore === null || finalScore === undefined) {
                             return `
                             <tr>
+                                <td><span class="course-code">${course.class_code || 'N/A'}</span></td>
                                 <td><span class="course-code">${course.course_code || 'N/A'}</span></td>
                                 <td>${course.course_name || 'N/A'}</td>
                                 <td>${course.credits || 0}</td>
@@ -204,6 +213,7 @@ function renderSemesterCards() {
                         
                         return `
                         <tr>
+                            <td><span class="course-code">${course.class_code || 'N/A'}</span></td>
                             <td><span class="course-code">${course.course_code || 'N/A'}</span></td>
                             <td>${course.course_name || 'N/A'}</td>
                             <td>${course.credits || 0}</td>

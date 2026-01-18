@@ -67,6 +67,7 @@
                         <table class="attendance-table">
                             <thead>
                                 <tr>
+                                    <th>Mã lớp học</th>
                                     <th>Mã môn học</th>
                                     <th>Tên môn học</th>
                                     <th>Tổng số buổi</th>

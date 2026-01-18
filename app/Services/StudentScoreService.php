@@ -155,6 +155,7 @@ class StudentScoreService
         $status = $this->determineStatus($finalScore);
 
         return [
+            'class_code' => $classSection->class_code ?? 'N/A',
             'course_code' => $course->course_code ?? 'N/A',
             'course_name' => $course->course_name ?? 'N/A',
             'credits' => $classSection->courseVersion->credit ?? 0,

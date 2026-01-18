@@ -97,6 +97,7 @@ class AttendanceService
         }
 
         return [
+            'class_code' => $classSection->class_code ?? 'N/A',
             'code' => $course->course_code,
             'name' => $course->course_name,
             'semester' => $semester->semester_code,
