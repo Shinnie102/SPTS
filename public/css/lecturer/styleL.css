@@ -21,7 +21,7 @@
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  
   background-color: #f6f9fd;
   min-height: calc(100vh - 90px);
 }

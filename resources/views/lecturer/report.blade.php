@@ -48,7 +48,7 @@
                                     <section class="chart-axis">
                                         <div class="main-chart">
                                             <aside class="y-axis-left">
-                                                <span>100</span><span>80</span><span>60</span><span>40</span><span>20</span><span>0</span>
+                                                <span></span><span></span><span></span><span></span><span></span><span></span>
                                             </aside>
                                             <div class="graphi-grid">
                                                 <div class="x-lines"><span class="grid-line"></span><span class="grid-line"></span><span class="grid-line"></span><span class="grid-line"></span><span class="grid-line"></span><span class="grid-line"></span></div>
@@ -75,8 +75,8 @@
                                 <div class="pie-chart-container">
                                     <svg class="donut-chart" viewBox="0 0 42 42">
                                         <circle class="donut-ring" cx="21" cy="21" r="15.915" fill="transparent" stroke="#FF9B8E" stroke-width="6"></circle>
-                                        <circle class="donut-segment" cx="21" cy="21" r="15.915" fill="transparent" stroke="#8B79FF" stroke-width="6" stroke-dasharray="96 4" stroke-dashoffset="25"></circle>
-                                        <text x="21" y="21" class="chart-number">62</text>
+                                        <circle class="donut-segment" cx="21" cy="21" r="15.915" fill="transparent" stroke="#8B79FF" stroke-width="6" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                                        <text x="21" y="21" class="chart-number"></text>
                                     </svg>
                                 </div>
                                 <div class="pie-legend">
@@ -105,46 +105,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td class="bold-text">SV001</td>
-                                        <td>Nguyễn Văn A</td>
-                                        <td>CS101_01</td>
-                                        <td class="score-danger">4.5</td>
-                                        <td class="status-danger">Nguy cơ cao</td>
-                                        <td><a href="#" class="view-detail"><i class="fas fa-eye"></i> Xem chi tiết</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold-text">SV002</td>
-                                        <td>Trần Thị B</td>
-                                        <td>CS102_02</td>
-                                        <td class="score-danger">4.8</td>
-                                        <td class="status-danger">Nguy cơ cao</td>
-                                        <td><a href="#" class="view-detail"><i class="fas fa-eye"></i> Xem chi tiết</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold-text">SV003</td>
-                                        <td>Lê Văn C</td>
-                                        <td>CS201_01</td>
-                                        <td class="score-warning">5.2</td>
-                                        <td class="status-warning">Cần theo dõi</td>
-                                        <td><a href="#" class="view-detail"><i class="fas fa-eye"></i> Xem chi tiết</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold-text">SV004</td>
-                                        <td>Phạm Thị D</td>
-                                        <td>CS101_01</td>
-                                        <td class="score-warning">5.4</td>
-                                        <td class="status-warning">Cần theo dõi</td>
-                                        <td><a href="#" class="view-detail"><i class="fas fa-eye"></i> Xem chi tiết</a></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bold-text">SV005</td>
-                                        <td>Hoàng Văn E</td>
-                                        <td>CS202_03</td>
-                                        <td class="score-danger">4.2</td>
-                                        <td class="status-danger">Nguy cơ cao</td>
-                                        <td><a href="#" class="view-detail"><i class="fas fa-eye"></i> Xem chi tiết</a></td>
-                                    </tr>
+                                    
                                 </tbody>
                             </table>
                         </div>
@@ -161,8 +122,6 @@
     </div>
 
     <!-- Javascript -->
-    <script src="{{ asset('js/lecturer/data.js') }}"></script>
-    <script src="{{ asset('js/lecturer/render.js') }}"></script>
-    <script src="{{ asset('js/lecturer/attendance.js') }}"></script>
+    <script src="{{ asset('js/lecturer/report.js') }}"></script>
 </body>
 </html>

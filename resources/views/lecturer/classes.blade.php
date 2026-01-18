@@ -91,7 +91,7 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="{{ route('lecturer.class.detail', $class->class_section_id) }}" class="action-btn view-btn" title="Xem chi tiết">
+                                            <a href="{{ route('lecturer.attendance', $class->class_section_id) }}" class="action-btn view-btn" title="Xem chi tiết">
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             <a href="{{ route('lecturer.grading', $class->class_section_id) }}" class="action-btn grade-btn" title="Nhập điểm">

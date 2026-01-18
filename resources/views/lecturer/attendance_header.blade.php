@@ -1,3 +1,8 @@
+<script>
+    window.ASSETS = {
+        searchIcon: "{{ asset('lecturer/img/search-icon.svg') }}"
+    };
+</script>
 <!-- attendance_header.blade.php -->
 <!-- Attendance Container -->
 <div class="attendance-container">

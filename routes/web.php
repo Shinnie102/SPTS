@@ -133,29 +133,20 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
     Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
 
-    // Lớp học phần management
+    // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-
-    // Các route cho từng chức năng của lớp học phần 
+    
+    // Các route cho từng chức năng của lớp học phần
     Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
+    Route::get('/class/{id}/attendance-data/{meetingId}', [ClassController::class, 'getAttendanceData'])->name('attendance.data');
+    Route::post('/class/{id}/attendance/save', [ClassController::class, 'saveAttendance'])->name('attendance.save');
     Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
+    Route::get('/class/{id}/grading-data', [ClassController::class, 'getGradingData'])->name('grading.data');
+    Route::post('/class/{id}/grading/save', [ClassController::class, 'saveGrading'])->name('grading.save');
     Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
     Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
-
-    // Các route cũ giữ nguyên cho compatibility 
-    Route::get('/grading', function () {
-        return view('lecturer.grading');
-    })->name('grading.show');
-    Route::get('/classStatus', function () {
-        return view('lecturer.classStatus');
-    })->name('classes.show');
-    Route::get('/attendance', function () {
-        return view('lecturer.attendance');
-    })->name('attendance.show');
-    Route::get('/report', function () {
-        return view('lecturer.report');
-    })->name('report.show');
+    Route::get('/class/{id}/report-data', [ClassController::class, 'getReportData'])->name('report.data');
 });
 
 // Student Routes
