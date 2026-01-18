@@ -24,7 +24,7 @@
         @include('admin.menu_admin')
 
         <div id="content">
-            <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
+            <!-- Vui lòng điều chỉnh tiêu đề, không thay đổi tên id có sẵn -->
             <div id="head">
                 <div class="left">
                     <h1 id="tieudechinh">Thời gian Học vụ</h1>
@@ -40,127 +40,69 @@
                 <div id="noidung-quytac">Không thể xóa năm học nếu đã có kỳ học hoạt động. Không thể xóa kỳ học nếu đã
                     có lớp mở.</div>
             </div>
-            <div class="frame-noidung">
-                <div class="frame-nam">
-                    <div class="nam">
-                        <div class="frame-left">
-                            <div>
-                                <i class="fa-solid fa-chevron-right"></i>
-                                <p class="tennamhoc">2024-2025</p>
-                            </div>
-                            <p class="thoigianhocki"><span class="batdau">01/01/2024</span> - <span
-                                    class="ketthuc">01/01/2025</span> - <span class="sohocki">3 </span>học kì</p>
-                        </div>
-                        <div class="frame-right">
-                            <div class="trangthai-hocki dangdienra">
-                                <p class="trangthai">Đang diễn ra</p>
-                            </div>
-                            <i class="fa-solid fa-trash"></i>
-                        </div>
-                    </div>
-                    <div class="frame-ky">
-                        <div class="ky">
-                            <div class="frame-left">
-                                <p class="tenkyhoc">Học kì 1</p>
-                                <p class="thoigianhocki"><span class="batdau">01/01/2024</span> - <span
-                                        class="ketthuc">01/05/2024</span> - <span class="solop">48 </span>học kì</p>
-                            </div>
-                            <div class="frame-right">
-                                <div class="trangthai-hocki dangdienra">
-                                    <p class="trangthai" id="">Đang diễn ra</p>
-                                </div>
-                                <i class="fa-solid fa-pen-to-square edit"></i>
-                                <i class="fa-solid fa-trash"></i>
-                            </div>
-                        </div>
-                        <button id="themhocky"><i class="fa-solid fa-plus"></i> Thêm học kì vào <span
-                                class="namhoc">2024-2025</span></button>
-                    </div>
-                </div>
-                <!-- --------------------------------------------- -->
-                <div class="frame-nam">
-                    <div class="nam">
-                        <div class="frame-left">
-                            <div>
-                                <i class="fa-solid fa-chevron-right"></i>
-                                <p class="tennamhoc">2024-2025</p>
-                            </div>
-                            <p class="thoigianhocki"><span class="batdau">01/01/2024</span> - <span
-                                    class="ketthuc">01/01/2025</span> - <span class="sohocki">3 </span>học kì</p>
-                        </div>
-                        <div class="frame-right">
-                            <div class="trangthai-hocki daketthuc">
-                                <p class="trangthai">Đã kết thúc</p>
-                            </div>
-                            <i class="fa-solid fa-trash"></i>
-                        </div>
-                    </div>
-                    <div class="frame-ky">
-                        <div class="ky">
-                            <div class="frame-left">
-                                <p class="tenkyhoc">Học kì 1</p>
-                                <p class="thoigianhocki"><span class="batdau">01/01/2024</span> - <span
-                                        class="ketthuc">01/05/2024</span> - <span class="solop">48 </span>học kì</p>
-                            </div>
-                            <div class="frame-right">
-                                <div class="trangthai-hocki daketthuc">
-                                    <p class="trangthai" id="">Đã kết thúc</p>
-                                </div>
-                                <i class="fa-solid fa-pen-to-square edit"></i>
-                                <i class="fa-solid fa-trash"></i>
-                            </div>
-                        </div>
-                        <button id="themhocky"><i class="fa-solid fa-plus"></i> Thêm học kì vào <span class="namhoc">2024-2025</span></button>
-                    </div>
+            
+            <!-- Container để render danh sách năm học -->
+            <div class="frame-noidung" id="academic-years-container">
+                <!-- Loading indicator -->
+                <div class="loading-indicator" style="text-align: center; padding: 2rem;">
+                    <i class="fa-solid fa-spinner fa-spin" style="font-size: 2rem; color: #0088F0;"></i>
+                    <p style="margin-top: 1rem; color: #615F5F;">Đang tải dữ liệu...</p>
                 </div>
             </div>
 
+            <!-- Modal thêm năm học -->
             <div class="frame-noi themnamhoc">
                 <div class="title-noi">
                     <p>Thêm năm học</p>
-                    <i class="fa-solid fa-x"></i>
+                    <i class="fa-solid fa-x close-modal"></i>
                 </div>
                 <p class="tieude">Tên năm học<span> (*)</span></p>
-                <input type="text" class="input-noi" placeholder="Nhập tên năm học">
+                <input type="text" class="input-noi" id="year-code-input" placeholder="Nhập tên năm học (VD: 2024-2025)">
                 <p class="tieude">Ngày bắt đầu<span> (*)</span></p>
-                <input type="date" name="ngaybatdau" id="ngaybatdayu" class="input-noi">
+                <input type="date" name="ngaybatdau" id="year-start-date" class="input-noi">
                 <p class="tieude">Ngày kết thúc<span> (*)</span></p>
-                <input type="date" name="ngayketthuc" id="ngayketthuc" class="input-noi">
+                <input type="date" name="ngayketthuc" id="year-end-date" class="input-noi">
                 <div class="thaotac">
-                    <button class="btn them">Thêm</button>
-                    <button class="btn huy">Hủy</button>
+                    <button class="btn them" id="btn-add-year">Thêm</button>
+                    <button class="btn huy close-modal">Hủy</button>
                 </div>
             </div>
+
+            <!-- Modal thêm học kỳ -->
             <div class="frame-noi themkihoc">
                 <div class="title-noi">
-                    <p>Thêm kỳ học</p>
-                    <i class="fa-solid fa-x"></i>
+                    <p>Thêm học kỳ vào <span id="target-year-name"></span></p>
+                    <i class="fa-solid fa-x close-modal"></i>
                 </div>
+                <input type="hidden" id="target-academic-year-id">
                 <p class="tieude">Tên kỳ<span> (*)</span></p>
-                <input type="text" class="input-noi" placeholder="Nhập tên kỳ học">
+                <input type="text" class="input-noi" id="semester-code-input" placeholder="Nhập tên kỳ học (VD: Học kỳ 1)">
                 <p class="tieude">Ngày bắt đầu<span> (*)</span></p>
-                <input type="date" name="ngaybatdau" id="ngaybatdayu" class="input-noi">
+                <input type="date" name="ngaybatdau" id="semester-start-date" class="input-noi">
                 <p class="tieude">Ngày kết thúc<span> (*)</span></p>
-                <input type="date" name="ngayketthuc" id="ngayketthuc" class="input-noi">
+                <input type="date" name="ngayketthuc" id="semester-end-date" class="input-noi">
                 <div class="thaotac">
-                    <button class="btn them">Thêm</button>
-                    <button class="btn huy">Hủy</button>
+                    <button class="btn them" id="btn-add-semester">Thêm</button>
+                    <button class="btn huy close-modal">Hủy</button>
                 </div>
             </div>
+
+            <!-- Modal sửa học kỳ -->
             <div class="frame-noi editkyhoc">
                 <div class="title-noi">
-                    <p>Kỳ học</p>
-                    <i class="fa-solid fa-x"></i>
+                    <p>Chỉnh sửa học kỳ</p>
+                    <i class="fa-solid fa-x close-modal"></i>
                 </div>
+                <input type="hidden" id="edit-semester-id">
                 <p class="tieude">Tên kỳ<span> (*)</span></p>
-                <input type="text" class="input-noi" placeholder="Nhập tên kỳ học" value="Kỳ 1">
+                <input type="text" class="input-noi" id="edit-semester-code" placeholder="Nhập tên kỳ học">
                 <p class="tieude">Ngày bắt đầu<span> (*)</span></p>
-                <input type="date" name="ngaybatdau" id="ngaybatdayu" class="input-noi" value="2023-09-01">
+                <input type="date" name="ngaybatdau" id="edit-semester-start-date" class="input-noi">
                 <p class="tieude">Ngày kết thúc<span> (*)</span></p>
-                <input type="date" name="ngayketthuc" id="ngayketthuc" class="input-noi" value="2023-12-31">
+                <input type="date" name="ngayketthuc" id="edit-semester-end-date" class="input-noi">
                 <div class="thaotac">
-                    <button class="btn chinhsua">Chỉnh sửa</button>
-                    <button class="btn huy">Hủy</button>
+                    <button class="btn chinhsua" id="btn-update-semester">Chỉnh sửa</button>
+                    <button class="btn huy close-modal">Hủy</button>
                 </div>
             </div>
         </div>
