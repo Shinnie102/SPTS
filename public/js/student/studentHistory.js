@@ -79,6 +79,10 @@ function renderAttendanceTable(semesterKey) {
         row.className = 'course-row';
         row.dataset.courseIndex = index;
         
+        // Mã lớp học
+        const classCodeCell = row.insertCell();
+        classCodeCell.innerHTML = `<span class="course-code">${course.class_code || 'N/A'}</span>`;
+        
         // Mã môn học (with expand icon)
         const codeCell = row.insertCell();
         codeCell.innerHTML = `
@@ -146,7 +150,7 @@ function renderAttendanceTable(semesterKey) {
         const detailRow = tbody.insertRow();
         detailRow.className = 'detail-row';
         const detailCell = detailRow.insertCell();
-        detailCell.colSpan = 8;
+        detailCell.colSpan = 9;
         detailCell.className = 'detail-cell';
         
         detailCell.innerHTML = `

@@ -158,4 +158,11 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
     Route::get('/classes/{class}', function () {
         return 'Class details';
     })->name('classes.show');
+
+    // Student Warning APIs
+    Route::prefix('warnings')->name('warnings.')->group(function () {
+        Route::get('/api', [\App\Http\Controllers\Student\StudentWarningController::class, 'getWarnings'])->name('api.index');
+        Route::get('/api/statistics', [\App\Http\Controllers\Student\StudentWarningController::class, 'getStatistics'])->name('api.statistics');
+        Route::get('/api/subject/{classSectionId}', [\App\Http\Controllers\Student\StudentWarningController::class, 'getSubjectDetail'])->name('api.subject');
+    });
 });
