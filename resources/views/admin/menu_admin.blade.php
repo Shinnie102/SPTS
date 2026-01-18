@@ -26,7 +26,7 @@
                 <p>Học thuật</p>
             </div>
         </a>
-        <a href="{{ route('admin.thoigian') }}">
+        <a href="{{ route('admin.thoigian.index') }}">
             <div class="frame_menu">
                 <i class="fa-regular fa-calendar"></i>
                 <p>Thời gian</p>

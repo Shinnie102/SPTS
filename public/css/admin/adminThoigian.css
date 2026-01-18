@@ -317,3 +317,96 @@ button:hover {
         display: block;
     }
 }
+
+/* ==================== NOTIFICATION TOAST ==================== */
+.notification-toast {
+    position: fixed;
+    top: 5rem;
+    right: 2rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    z-index: 2000;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s ease;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+.notification-toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.notification-toast i {
+    font-size: 1.5rem;
+}
+
+.notification-success {
+    border-left: 4px solid #00B103;
+}
+
+.notification-success i {
+    color: #00B103;
+}
+
+.notification-error {
+    border-left: 4px solid #ff4444;
+}
+
+.notification-error i {
+    color: #ff4444;
+}
+
+.notification-info {
+    border-left: 4px solid #0088F0;
+}
+
+.notification-info i {
+    color: #0088F0;
+}
+
+.notification-toast span {
+    font-size: 1rem;
+    color: #333;
+}
+
+/* ==================== BUTTON STYLES ==================== */
+.btn-themhocky {
+    border: none;
+    background-color: transparent;
+    color: #0004FF;
+    font-size: 1.25rem;
+    cursor: pointer;
+    margin-bottom: 1.25rem;
+    padding: 0.5rem;
+    transition: all 0.25s ease;
+}
+
+.btn-themhocky:hover {
+    transform: translateY(-2px);
+}
+
+/* ==================== TOGGLE ICON ==================== */
+.toggle-icon {
+    transition: transform 0.3s ease;
+    margin-right: 0.5rem;
+}
+
+.fa-angle-down {
+    transform: rotate(0deg);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 768px) {
+    .notification-toast {
+        right: 1rem;
+        left: 1rem;
+        min-width: auto;
+    }
+}

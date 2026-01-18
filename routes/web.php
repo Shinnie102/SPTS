@@ -69,7 +69,7 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 
     // Cấu trúc học thuật
     Route::get('/hoc-thuat', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'index'])->name('hocthuat');
-    
+
     // Faculty APIs
     Route::prefix('hoc-thuat/faculty')->name('hocthuat.faculty.')->group(function () {
         Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getFaculties'])->name('api.index');
@@ -80,7 +80,7 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
         Route::delete('/api/{facultyId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteFaculty'])->name('api.delete');
         Route::patch('/api/{facultyId}/toggle-status', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'toggleFacultyStatus'])->name('api.toggleStatus');
     });
-    
+
     // Major APIs
     Route::prefix('hoc-thuat/major')->name('hocthuat.major.')->group(function () {
         Route::get('/api/active', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getActiveMajors'])->name('api.active');
@@ -90,7 +90,7 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
         Route::put('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'updateMajor'])->name('api.update');
         Route::delete('/api/{majorId}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'deleteMajor'])->name('api.delete');
     });
-    
+
     // Course APIs
     Route::prefix('hoc-thuat/course')->name('hocthuat.course.')->group(function () {
         Route::get('/api', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'getCourses'])->name('api.index');
@@ -111,9 +111,20 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     })->name('quytac');
 
     // Thời gian học vụ
-    Route::get('/thoi-gian', function () {
-        return view('admin.adminThoigian');
-    })->name('thoigian');
+    Route::prefix('thoi-gian')->name('thoigian.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'index'])->name('index');
+
+        // Academic Year APIs
+        Route::get('/api/academic-years', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'getAcademicYears'])->name('api.academicYears');
+        Route::post('/api/academic-years', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'storeAcademicYear'])->name('api.storeAcademicYear');
+        Route::delete('/api/academic-years/{academicYearId}', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'deleteAcademicYear'])->name('api.deleteAcademicYear');
+
+        // Semester APIs
+        Route::get('/api/semesters/{semesterId}', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'showSemester'])->name('api.showSemester');
+        Route::post('/api/semesters', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'storeSemester'])->name('api.storeSemester');
+        Route::put('/api/semesters/{semesterId}', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'updateSemester'])->name('api.updateSemester');
+        Route::delete('/api/semesters/{semesterId}', [\App\Http\Controllers\Admin\AcademicTimeController::class, 'deleteSemester'])->name('api.deleteSemester');
+    });
 });
 
 // Lecturer Routes
@@ -125,7 +136,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần management
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-    
+
     // Các route cho từng chức năng của lớp học phần 
     Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
