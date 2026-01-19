@@ -224,6 +224,7 @@ function rebuildSessionSelect(meetings, selectedMeetingId) {
         if (trigger) trigger.remove();
         if (menu) menu.remove();
         wrapper.classList.remove('active-menu');
+        wrapper.classList.remove('dropdown-enhanced');
     }
 
     initializeCustomDropdowns();
@@ -419,6 +420,9 @@ function initializeCustomDropdowns() {
         const originalSelect = wrapper.querySelector('select');
         if (!originalSelect) return;
 
+        // Class dropdown is handled by dropdown-header.js (shared across pages)
+        if (originalSelect.id === 'class-select') return;
+
         // Đã được khởi tạo rồi thì bỏ qua
         if (wrapper.querySelector('.select-trigger') || wrapper.querySelector('.session-menu')) {
             return;
@@ -436,6 +440,9 @@ function initializeCustomDropdowns() {
         trigger.className = 'select-trigger';
         trigger.innerHTML = `<span class="current-text">${selectedOption ? selectedOption.text : 'Chưa có lựa chọn'}</span><div class="select-arrow">▼</div>`;
         wrapper.appendChild(trigger);
+
+        // Enable enhanced-mode styling (hide native select, show trigger/menu)
+        wrapper.classList.add('dropdown-enhanced');
         
         // Tạo giao diện Menu
         const menuHTML = `
@@ -584,7 +591,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // nhưng không có bảng điểm danh. Guard để không throw lỗi.
     const hasAttendanceUI = !!document.getElementById('attendance-table-body');
 
-    console.log('Đang tải trang lớp học phần...');
+    
 
     // Shared (header)
     initializeCustomDropdowns();
@@ -618,8 +625,5 @@ document.addEventListener('DOMContentLoaded', function() {
         setSaveButtonEnabled(false);
     }
     
-    console.log('Trang điểm danh đã được khởi tạo');
-    console.log('Số lượng sinh viên:', students.length);
-    console.log('Buổi học hiện tại:', currentMeetingId);
-    console.log('Trạng thái khóa:', isLocked);
+    
 });

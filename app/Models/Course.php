@@ -44,6 +44,13 @@ class Course extends Model
 
     public function classSections()
     {
-        return $this->hasMany(ClassSection::class, 'course_id', 'course_id');
+        return $this->hasManyThrough(
+            ClassSection::class,
+            CourseVersion::class,
+            'course_id',
+            'course_version_id',
+            'course_id',
+            'course_version_id'
+        );
     }
 }

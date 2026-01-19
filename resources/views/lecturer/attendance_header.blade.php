@@ -5,7 +5,6 @@
 </script>
 <!-- attendance_header.blade.php -->
 <!-- Attendance Container -->
-<div class="attendance-container">
     <!-- Hàng 1: Chọn lớp học phần -->
     <div class="class-row">
         <div class="filter-group">
@@ -56,7 +55,7 @@
             @endif
         </nav>
     </div>
-</div>
+
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

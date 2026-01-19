@@ -80,6 +80,6 @@ class ClassMeeting extends Model
      */
     public function meetingStatus()
     {
-        return $this->belongsTo(MeetingStatus::class, 'meeting_status_id', 'meeting_status_id');
+        return $this->belongsTo(MeetingStatus::class, 'meeting_status_id', 'status_id');
     }
 }

@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
         // Đăng ký Repository cho Academic Time
         $this->app->bind(\App\Contracts\AcademicYearRepositoryInterface::class, \App\Repositories\AcademicYearRepository::class);
         $this->app->bind(\App\Contracts\SemesterRepositoryInterface::class, \App\Repositories\SemesterRepository::class);
+        
+        // Đăng ký Repository cho Grading Scheme và Academic Rule
+        $this->app->bind(\App\Contracts\GradingSchemeRepositoryInterface::class, \App\Repositories\GradingSchemeRepository::class);
+        $this->app->bind(\App\Contracts\AcademicRuleRepositoryInterface::class, \App\Repositories\AcademicRuleRepository::class);
     }
 
     /**

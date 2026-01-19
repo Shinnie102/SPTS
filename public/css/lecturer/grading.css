@@ -392,6 +392,31 @@
   color: #646464;
 }
 
+/* Total score highlighting */
+.grade-total {
+  font-weight: 700;
+}
+
+.grade-total--passed {
+  background-color: rgba(0, 131, 19, 0.08);
+  color: #008313;
+}
+
+.grade-total--warning {
+  background-color: rgba(254, 188, 47, 0.12);
+  color: #9a3412;
+}
+
+.grade-total--failed {
+  background-color: rgba(255, 0, 12, 0.08);
+  color: #ff000c;
+}
+
+.grade-total--empty {
+  background-color: rgba(100, 100, 100, 0.06);
+  color: #646464;
+}
+
 /* Responsive */
 @media (max-width: 1200px) {
   .structure-frame,

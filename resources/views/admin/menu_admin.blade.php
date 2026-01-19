@@ -32,7 +32,7 @@
                 <p>Thời gian</p>
             </div>
         </a>
-        <a href="{{ route('admin.lophoc') }}">
+        <a href="{{ route('admin.lophoc.index') }}">
             <div class="frame_menu">
                 <i class="fa-regular fa-building"></i>
                 <p>Lớp học</p>

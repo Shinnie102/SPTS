@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleL.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleClass.css') }}">
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lecturer/attendance.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lecturer/dropdown-header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/report.css') }}">
     <!-- --------------------------------- -->
     <link
@@ -34,6 +34,8 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
+                <div class="attendance-container">
+
 @include('lecturer.attendance_header', [
     'currentClass' => $currentClass,
     'classes' => $classes,
@@ -116,12 +118,17 @@
                             <i class="fas fa-arrow-left"></i> Quay lại trang chủ
                         </a>
                     </div>
-                
+                </div>
             </main>
         </div>
     </div>
 
     <!-- Javascript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/lecturer/dropdown-header.js') }}"></script>
     <script src="{{ asset('js/lecturer/report.js') }}"></script>
+    <script src="{{ asset('js/lecturer/student_detail.js') }}"></script>
+
+    @include('lecturer.modals.student_detail')
 </body>
 </html>

@@ -406,8 +406,8 @@ function renderAcademicYears(years) {
  * Render một năm học
  */
 function renderAcademicYear(year) {
-	const statusClass = year.status_code === 'ACTIVE' ? 'dangdienra' : 'daketthuc';
-	const statusText = year.status_name;
+	const statusClass = year.status_code === 'ACTIVE' ? 'dangdienra' : (year.status_code === 'PLANNED' ? 'dangdienra' : 'daketthuc');
+	const statusText = year.status_code === 'PLANNED' ? 'Đang lên kế hoạch' : year.status_name;
 	
 	return `
 		<div class="frame-nam" data-year-id="${year.academic_year_id}">
@@ -444,8 +444,8 @@ function renderAcademicYear(year) {
  * Render một học kỳ
  */
 function renderSemester(semester) {
-	const statusClass = semester.status_code === 'ONGOING' ? 'dangdienra' : 'daketthuc';
-	const statusText = semester.status_name;
+	const statusClass = semester.status_code === 'ONGOING' ? 'dangdienra' : (semester.status_code === 'PLANNED' ? 'dangdienra' : 'daketthuc');
+	const statusText = semester.status_code === 'PLANNED' ? 'Đang lên kế hoạch' : semester.status_name;
 	
 	return `
 		<div class="ky">

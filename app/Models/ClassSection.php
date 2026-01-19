@@ -49,7 +49,14 @@ class ClassSection extends Model
 
     public function attendances()
     {
-        return $this->hasMany(Attendance::class, 'class_section_id', 'class_section_id');
+        return $this->hasManyThrough(
+            Attendance::class,
+            Enrollment::class,
+            'class_section_id',
+            'enrollment_id',
+            'class_section_id',
+            'enrollment_id'
+        );
     }
 
     public function classGradingScheme()

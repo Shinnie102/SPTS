@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
+use App\Http\Controllers\Lecturer\AttendanceController;
+use App\Http\Controllers\Lecturer\GradingController;
+use App\Http\Controllers\Lecturer\ReportController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
 use App\Http\Controllers\Student\StudentStudyController;
@@ -56,18 +59,30 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     });
 
     // Quản lý lớp học phần
-    Route::get('/lop-hoc', function () {
-        return view('admin.adminLophoc');
-    })->name('lophoc');
-    Route::get('/lop-hoc/tao-buoc-1', function () {
-        return view('admin.adminBuoc1Taolophoc');
-    })->name('lophoc.create.step1');
-    Route::get('/lop-hoc/tao-buoc-2', function () {
-        return view('admin.adminBuoc2Taolophoc');
-    })->name('lophoc.create.step2');
-    Route::get('/lop-hoc/{id}/chi-tiet', function ($id) {
-        return view('admin.adminHocphandetail');
-    })->name('lophoc.detail');
+    Route::prefix('lop-hoc')->name('lophoc.')->group(function () {
+        // View page
+        Route::get('/', [\App\Http\Controllers\Admin\ClassSectionController::class, 'index'])->name('index');
+
+        // API Routes
+        Route::get('/api', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getClassSections'])->name('api.index');
+        Route::get('/api/filters', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getFilterOptions'])->name('api.filters');
+        Route::get('/api/majors', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getMajorsByFaculty'])->name('api.majors');
+        Route::get('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'show'])->name('api.show');
+        Route::delete('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'destroy'])->name('api.destroy');
+
+        // Create steps (keep old routes)
+        Route::get('/tao-buoc-1', function () {
+            return view('admin.adminBuoc1Taolophoc');
+        })->name('create.step1');
+        Route::get('/tao-buoc-2', function () {
+            return view('admin.adminBuoc2Taolophoc');
+        })->name('create.step2');
+
+        // Detail (keep old route)
+        Route::get('/{id}/chi-tiet', function ($id) {
+            return view('admin.adminHocphandetail');
+        })->name('detail');
+    });
 
     // Cấu trúc học thuật
     Route::get('/hoc-thuat', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'index'])->name('hocthuat');
@@ -108,9 +123,22 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     Route::get('/hoc-thuat/course/api/check-code/{code}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'checkCourseCode'])->name('hocthuat.course.api.checkCode');
 
     // Quy tắc đánh giá
-    Route::get('/quy-tac', function () {
-        return view('admin.adminQuytac');
-    })->name('quytac');
+    Route::get('/quy-tac', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'index'])->name('quytac');
+    
+    Route::prefix('quy-tac')->name('quytac.')->group(function () {
+        // API: Lấy tất cả dữ liệu (quy tắc + sơ đồ điểm)
+        Route::get('/api/data', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getData'])->name('api.data');
+        
+        // API: Quy tắc học vụ
+        Route::get('/api/academic-rules', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getAcademicRules'])->name('api.academicRules');
+        
+        // API: Sơ đồ điểm
+        Route::get('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getGradingSchemes'])->name('api.gradingSchemes');
+        Route::post('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'store'])->name('api.store');
+        Route::get('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'show'])->name('api.show');
+        Route::put('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'update'])->name('api.update');
+        Route::delete('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'destroy'])->name('api.destroy');
+    });
 
     // Thời gian học vụ
     Route::prefix('thoi-gian')->name('thoigian.')->group(function () {
@@ -138,27 +166,39 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-
+    
     // Các route cho từng chức năng của lớp học phần
-    Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
-    Route::get('/class/{id}/attendance-data/{meetingId}', [ClassController::class, 'getAttendanceData'])->name('attendance.data');
-    Route::post('/class/{id}/attendance/save', [ClassController::class, 'saveAttendance'])->name('attendance.save');
-    Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
-    Route::get('/class/{id}/grading-data', [ClassController::class, 'getGradingData'])->name('grading.data');
-    Route::post('/class/{id}/grading/save', [ClassController::class, 'saveGrading'])->name('grading.save');
+    Route::get('/class/{id}/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
+    Route::get('/class/{id}/attendance-data/{meetingId}', [AttendanceController::class, 'getAttendanceData'])->name('attendance.data');
+    Route::post('/class/{id}/attendance/save', [AttendanceController::class, 'saveAttendance'])->name('attendance.save');
+    Route::get('/class/{id}/grading', [GradingController::class, 'grading'])->name('grading');
+    Route::get('/class/{id}/grading-data', [GradingController::class, 'getGradingData'])->name('grading.data');
+    Route::post('/class/{id}/grading/save', [GradingController::class, 'saveGrading'])->name('grading.save');
+    Route::post('/class/{id}/grading/lock', [GradingController::class, 'lockGrades'])->name('grading.lock');
     Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
-    Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
-    Route::get('/class/{id}/report-data', [ClassController::class, 'getReportData'])->name('report.data');
+    Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
+    Route::get('/class/{id}/report', [ReportController::class, 'report'])->name('report');
+    Route::get('/class/{id}/report-data', [ReportController::class, 'getReportData'])->name('report.data');
+    Route::get('/class/{id}/report-export', [ReportController::class, 'exportReport'])->name('report.export');
+
+    // API: Student detail in a class (for Report modal)
+    Route::get('/class/{classId}/student/{studentId}/detail', [ReportController::class, 'getStudentDetail'])->name('report.student.detail');
 });
 
 // Student Routes
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/api/data',
+    [StudentDashboardController::class, 'getDashboardData']
+)->name('dashboard.api.data');
     Route::get('/profile', [App\Http\Controllers\Student\Profile::class, 'index'])->name('profile');
     Route::get('/study', [StudentStudyController::class, 'index'])->name('study');
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () {
         return 'Class details';
     })->name('classes.show');
+     Route::get('/dashboard/api/gpa-chart',
+            [StudentDashboardController::class, 'getGpaChartData']
+        )->name('dashboard.api.gpaChart');
 
 });

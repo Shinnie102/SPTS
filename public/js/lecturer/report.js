@@ -4,85 +4,6 @@
 (() => {
   const REPORT_PATH_RE = /^\/lecturer\/class\/(\d+)\/report\/?$/;
 
-  const initializeHeaderClassDropdown = () => {
-    const classSelect = document.getElementById('class-select');
-    if (!classSelect) return;
-
-    const wrapper = classSelect.closest('.select-wrapper');
-    if (!wrapper) return;
-
-    // If native select is visible/usable or already initialized elsewhere, do nothing.
-    if (wrapper.querySelector('.select-trigger') || wrapper.querySelector('.session-menu')) {
-      return;
-    }
-
-    const options = Array.from(classSelect.querySelectorAll('option'));
-    const selectedIndex = Math.max(0, options.findIndex(o => o.selected));
-    const selectedOption = options[selectedIndex] || options[0] || null;
-
-    const labelEl = document.querySelector('label[for="class-select"]');
-    const labelText = labelEl ? (labelEl.textContent || '').trim() : 'Lớp học phần';
-
-    const trigger = document.createElement('div');
-    trigger.className = 'select-trigger';
-    trigger.innerHTML = `<span class="current-text">${selectedOption ? selectedOption.text : 'Chưa có lựa chọn'}</span><div class="select-arrow">▼</div>`;
-    wrapper.appendChild(trigger);
-
-    const menu = document.createElement('div');
-    menu.className = 'session-menu';
-    menu.innerHTML = `
-      <h3 class="menu-title">${labelText}</h3>
-      <div class="search-box-container">
-        <input type="text" class="search-field" placeholder="Nhập nội dung cần tìm....">
-      </div>
-      <ul class="menu-list">
-        ${options.map((opt, index) => `
-          <li class="menu-item ${index === selectedIndex ? 'active' : ''}" data-value="${String(opt.value)}">${opt.text}</li>
-        `).join('')}
-      </ul>
-    `;
-    wrapper.appendChild(menu);
-
-    const searchField = menu.querySelector('.search-field');
-    const menuItems = Array.from(menu.querySelectorAll('.menu-item'));
-
-    trigger.addEventListener('click', (e) => {
-      e.stopPropagation();
-      wrapper.classList.toggle('active-menu');
-    });
-
-    menuItems.forEach((item) => {
-      item.addEventListener('click', () => {
-        const currentActive = menu.querySelector('.menu-item.active');
-        if (currentActive) currentActive.classList.remove('active');
-        item.classList.add('active');
-
-        trigger.querySelector('.current-text').textContent = item.textContent;
-        classSelect.value = item.getAttribute('data-value') || '';
-        classSelect.dispatchEvent(new Event('change'));
-
-        wrapper.classList.remove('active-menu');
-      });
-    });
-
-    if (searchField) {
-      searchField.addEventListener('input', (e) => {
-        const filter = (e.target.value || '').toLowerCase();
-        menuItems.forEach((item) => {
-          const text = (item.textContent || '').toLowerCase();
-          item.style.display = text.includes(filter) ? 'block' : 'none';
-        });
-      });
-    }
-
-    if (!document.body.dataset.reportDropdownCloseWired) {
-      document.body.dataset.reportDropdownCloseWired = '1';
-      document.addEventListener('click', () => {
-        wrapper.classList.remove('active-menu');
-      });
-    }
-  };
-
   const getClassIdFromUrl = () => {
     const path = window.location.pathname || '';
     const match = path.match(REPORT_PATH_RE);
@@ -280,53 +201,22 @@
     }
   };
 
-  const wireInlineDetailToggle = (tbody) => {
-    if (!tbody || tbody.dataset.detailsWired === '1') return;
-    tbody.dataset.detailsWired = '1';
+  const wireStudentDetailModalTrigger = (tbody) => {
+    if (!tbody || tbody.dataset.studentDetailWired) return;
+    tbody.dataset.studentDetailWired = '1';
 
-    tbody.addEventListener('click', async (e) => {
-      const link = e.target && e.target.closest ? e.target.closest('a.view-detail') : null;
+    tbody.addEventListener('click', (e) => {
+      const link = e.target.closest('.view-detail, .student-detail-link');
       if (!link) return;
       e.preventDefault();
 
-      const row = link.closest('tr');
-      if (!row) return;
+      const classId = getClassIdFromUrl();
+      const studentId = link.getAttribute('data-student-id');
+      if (!classId || !studentId) return;
 
-      const next = row.nextElementSibling;
-      const hasDetailRow = next && next.classList && next.classList.contains('inline-detail-row');
-
-      if (hasDetailRow) {
-        const isHidden = next.style.display === 'none' || next.hasAttribute('hidden');
-        if (isHidden) {
-          next.style.display = '';
-          next.removeAttribute('hidden');
-          link.setAttribute('aria-expanded', 'true');
-        } else {
-          next.style.display = 'none';
-          next.setAttribute('hidden', 'hidden');
-          link.setAttribute('aria-expanded', 'false');
-        }
-        return;
-      }
-
-      // Placeholder only (detail view not implemented)
-      link.setAttribute('aria-busy', 'true');
-      link.style.pointerEvents = 'none';
-
-      try {
-        const detailTr = document.createElement('tr');
-        detailTr.className = 'inline-detail-row';
-        detailTr.innerHTML = `
-          <td colspan="6" style="padding: 12px 16px; background: rgba(0,0,0,0.02);">
-            <div class="inline-detail-content">Chưa có dữ liệu chi tiết</div>
-          </td>
-        `;
-        row.insertAdjacentElement('afterend', detailTr);
-        link.setAttribute('aria-expanded', 'true');
-      } finally {
-        link.setAttribute('aria-busy', 'false');
-        link.style.pointerEvents = '';
-      }
+      document.dispatchEvent(new CustomEvent('lecturer:student-detail', {
+        detail: { classId, studentId }
+      }));
     });
   };
 
@@ -357,7 +247,7 @@
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td class="bold-text">${w.student_code || ''}</td>
-        <td>${w.full_name || ''}</td>
+        <td><a href="#" class="student-detail-link" data-student-id="${w.student_id || ''}" style="color:#0088f0; font-weight:600; text-decoration:none;">${w.full_name || ''}</a></td>
         <td>${w.class_code || ''}</td>
         <td class="${scoreClass}">${total}</td>
         <td class="${statusClass}">${w.status || ''}</td>
@@ -366,7 +256,7 @@
       tbody.appendChild(tr);
     });
 
-    wireInlineDetailToggle(tbody);
+    wireStudentDetailModalTrigger(tbody);
   };
 
   const renderEmptyState = (message) => {
@@ -394,9 +284,6 @@
   document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname || '';
     if (!REPORT_PATH_RE.test(path)) return;
-
-    // Header dropdown on Report page (Report uses only report.js)
-    initializeHeaderClassDropdown();
     loadAndRenderReport();
   });
 })();

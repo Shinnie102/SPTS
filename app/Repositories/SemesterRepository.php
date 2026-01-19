@@ -111,6 +111,16 @@ class SemesterRepository implements SemesterRepositoryInterface
     {
         $now = Carbon::now()->toDateString();
 
+        // Học kỳ của năm học đang PLANNED hoặc chưa bắt đầu -> PLANNED (status_id = 3)
+        DB::table('semester as s')
+            ->join('academic_year as ay', 'ay.academic_year_id', '=', 's.academic_year_id')
+            ->where('ay.status_id', 3)
+            ->update(['s.status_id' => 3]);
+
+        DB::table('semester')
+            ->where('start_date', '>', $now)
+            ->update(['status_id' => 3]);
+
         // Cập nhật status_id = 1 (ONGOING) cho học kỳ đang diễn ra
         DB::table('semester')
             ->where('start_date', '<=', $now)
