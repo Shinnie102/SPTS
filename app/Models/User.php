@@ -33,12 +33,10 @@ class User extends Authenticatable
         'major',
         'orientation_day',
         'status_id',
-        'remember_token',
     ];
 
     protected $hidden = [
         'password_hash',
-        'remember_token',
     ];
 
     protected $casts = [
@@ -59,6 +57,25 @@ class User extends Authenticatable
     public function getAuthPasswordName()
     {
         return 'password_hash';
+    }
+
+    /**
+     * Disable Laravel "remember me" token persistence because the SQL schema
+     * (academic_management (2).sql) does not contain a remember_token column.
+     */
+    public function getRememberToken()
+    {
+        return null;
+    }
+
+    public function setRememberToken($value)
+    {
+        // no-op
+    }
+
+    public function getRememberTokenName()
+    {
+        return null;
     }
 
     // Mutator removed - password hashing is handled in UserService layer
@@ -82,7 +99,7 @@ class User extends Authenticatable
 
     public function enrollments()
     {
-        return $this->hasMany(Enrollment::class, 'user_id', 'user_id');
+        return $this->hasMany(Enrollment::class, 'student_id', 'user_id');
     }
 
     public function studentScores()

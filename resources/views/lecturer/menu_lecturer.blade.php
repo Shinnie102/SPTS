@@ -25,8 +25,8 @@
             @csrf
         </form>
         <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <p>Đăng xuất</p>
+            <i class="fa-solid fa-arrow-right-from-bracket" style="color: #FF0000;"></i>
+            <p style="color: #FF0000;">Đăng xuất</p>
         </a>
     </div>
 </div>

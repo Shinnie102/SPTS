@@ -32,14 +32,7 @@
             <!-- Nội dung riêng của từng trang sẽ được chèn vào đây -->
             <div id="frame-quytac">
                 <p id="quytachocvu">Quy tắc Học vụ</p>
-                <div class="quytac">
-                    <p class="tenquytac">Điểm dự thi >= 4.0</p>
-                    <p class="noidungquytac">Sinh viên có điểm tích lũy >= 4.0 được dự thi cuối kỳ</p>
-                </div>
-                <div class="quytac">
-                    <p class="tenquytac">Rớt môn < 4.0</p>
-                            <p class="noidungquytac">Sinh viên có điểm cuối cùng < 4.0 là rớt môn</p>
-                </div>
+                <!-- Dữ liệu sẽ được load bằng JavaScript -->
             </div>
 
             <div id="frame-sododiem">
@@ -47,72 +40,7 @@
                     <p>Sơ đồ điểm </p>
                     <button id="add-sododiem"><i class="fa-solid fa-plus"></i> Thêm sơ đồ điểm</button>
                 </div>
-
-                <div class="sododiem">
-                    <div class="frame-hien">
-                        <div class="left">
-                            <div class="title-sodo">
-                                <p class="tensodo">Sơ đồ tiêu chuẩn kỹ thuật</p>
-                                <i class="fa-solid fa-lock"></i>
-                            </div>
-                            <p class="masodo">Mã: STD-ENG</p>
-                            <p class="dangdung">Đang dùng: <span>5 lớp</span></p>
-                        </div>
-                        <div class="right">
-                            <div class="status" id="hoatdong">Hoạt động</div>
-                            <i class="fa-regular fa-pen-to-square"></i>
-                            <i class="fa-solid fa-trash"></i>
-                        </div>
-                    </div>
-                    <div class="frame-an">
-                        <p class="thanhphandiem">Thanh phần điểm:</p>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Tham gia lớp</p>
-                            <p class="trongso">20%</p>
-                        </div>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Báo cáo nhóm</p>
-                            <p class="trongso">40%</p>
-                        </div>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Thi cuối kì</p>
-                            <p class="trongso">40%</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="sododiem">
-                    <div class="frame-hien">
-                        <div class="left">
-                            <div class="title-sodo">
-                                <p class="tensodo">Sơ đồ tiêu chuẩn kỹ thuật</p>
-                                <i class="fa-solid fa-lock"></i>
-                            </div>
-                            <p class="masodo">Mã: STD-ENG</p>
-                            <p class="dangdung">Đang dùng: <span>0 lớp</span></p>
-                        </div>
-                        <div class="right">
-                            <div class="status" id="hoatdong">Hoạt động</div>
-                            <i class="fa-regular fa-pen-to-square"></i>
-                            <i class="fa-solid fa-trash"></i>
-                        </div>
-                    </div>
-                    <div class="frame-an">
-                        <p class="thanhphandiem">Thanh phần điểm:</p>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Tham gia lớp</p>
-                            <p class="trongso">20%</p>
-                        </div>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Báo cáo nhóm</p>
-                            <p class="trongso">40%</p>
-                        </div>
-                        <div class="frame-thanhphan">
-                            <p class="tenthanhphan">Thi cuối kì</p>
-                            <p class="trongso">40%</p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Dữ liệu sẽ được load bằng JavaScript -->
             </div>
 
             

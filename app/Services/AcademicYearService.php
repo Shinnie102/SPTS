@@ -41,28 +41,41 @@ class AcademicYearService
 
         $result = [];
 
+        $today = now()->startOfDay();
+
         foreach ($academicYears as $year) {
+            $isPlannedYear = $year->start_date->greaterThan($today);
             $semesters = [];
             
             foreach ($year->semesters as $semester) {
+                // Nếu năm học Planned thì ép học kỳ Planned cho hiển thị
+                $semStatusCode = $semester->status->code;
+                if ($isPlannedYear) {
+                    $semStatusCode = 'PLANNED';
+                }
+                $semStatusName = $semStatusCode === 'PLANNED' ? 'Đang lên kế hoạch' : $semester->status->name;
+
                 $semesters[] = [
                     'semester_id' => $semester->semester_id,
                     'semester_code' => $semester->semester_code,
                     'start_date' => $semester->start_date->format('d/m/Y'),
                     'end_date' => $semester->end_date->format('d/m/Y'),
-                    'status_code' => $semester->status->code,
-                    'status_name' => $semester->status->name,
+                    'status_code' => $semStatusCode,
+                    'status_name' => $semStatusName,
                     'class_count' => $this->semesterRepository->countClassSections($semester->semester_id),
                 ];
             }
+
+            $yearStatusCode = $isPlannedYear ? 'PLANNED' : $year->status->code;
+            $yearStatusName = $yearStatusCode === 'PLANNED' ? 'Đang lên kế hoạch' : $year->status->name;
 
             $result[] = [
                 'academic_year_id' => $year->academic_year_id,
                 'year_code' => $year->year_code,
                 'start_date' => $year->start_date->format('d/m/Y'),
                 'end_date' => $year->end_date->format('d/m/Y'),
-                'status_code' => $year->status->code,
-                'status_name' => $year->status->name,
+                'status_code' => $yearStatusCode,
+                'status_name' => $yearStatusName,
                 'semester_count' => count($semesters),
                 'semesters' => $semesters,
             ];

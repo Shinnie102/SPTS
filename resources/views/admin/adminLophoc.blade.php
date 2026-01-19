@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="route-admin-lophoc-api-index" content="{{ route('admin.lophoc.api.index') }}">
+    <meta name="route-admin-lophoc-api-filters" content="{{ route('admin.lophoc.api.filters') }}">
+    <meta name="route-admin-lophoc-api-majors" content="{{ route('admin.lophoc.api.majors') }}">
+    <meta name="route-admin-lophoc-detail-prefix" content="{{ url('/admin/lop-hoc') }}">
     <!-- hạn chế đụng vào file overall.css -->
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
     <!-- --------------------------------- -->
@@ -27,6 +31,7 @@
             <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->
             <h1 id="tieudechinh">Phân công Lớp học</h1>
             <p id="tieudephu">Quản lý Lớp học phần và Phân công Giảng viên</p>
+            <div id="toast" style="display:none; position:fixed; top:20px; right:20px; padding:12px 16px; border-radius:6px; color:#fff; z-index:9999; box-shadow:0 4px 12px rgba(0,0,0,0.15); font-weight:500;"></div>
 
             <!-- ------------------------------------------------ -->
             <!-- Nội dung riêng của từng trang sẽ được chèn vào đây -->
@@ -36,7 +41,7 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
                 <div id="add-hocphan">
-                    <a href="!"><i class="fa-solid fa-plus" style="color: white;"></i> <span style="color:white">Thêm
+                    <a href="{{ route('admin.lophoc.create.step1') }}"><i class="fa-solid fa-plus" style="color: white;"></i> <span style="color:white">Thêm
                             Lớp học phần</span></a>
                 </div>
             </div>
@@ -47,39 +52,27 @@
                     <div class="fake-select">
                         <div class="selected">Tất cả khoa<i class="fa-solid fa-angle-down"></i></div>
                         <div class="options">
-                            <div class="option" data-value="Tất cả khoa">Tất cả khoa</div>
-                            <div class="option" data-value="Công nghệ thông tin">Công nghệ thông tin</div>
-                            <div class="option" data-value="Kinh tế">Kinh tế</div>
-                            <div class="option" data-value="Quản trị kinh doanh">Quản trị kinh doanh</div>
-                            <div class="option" data-value="Ngoại ngữ">Ngoại ngữ</div>
+                            <div class="option" data-value="">Tất cả khoa</div>
                         </div>
-                        <input type="hidden" name="khoa" value="Tất cả khoa">
+                        <input type="hidden" name="khoa" id="khoa-filter" value="">
                     </div>
 
                     <!-- CHUYÊN NGÀNH -->
                     <div class="fake-select">
                         <div class="selected">Tất cả chuyên ngành<i class="fa-solid fa-angle-down"></i></div>
                         <div class="options">
-                            <div class="option" data-value="Tất cả chuyên ngành">Tất cả chuyên ngành</div>
-                            <div class="option" data-value="Mạng máy tính và truyền thông dữ liệu">Mạng máy tính và
-                                truyền thông dữ liệu</div>
-                            <div class="option" data-value="Khoa học máy tính">Khoa học máy tính</div>
-                            <div class="option" data-value="Hệ thống thông tin">Hệ thống thông tin</div>
-                            <div class="option" data-value="An toàn thông tin">An toàn thông tin</div>
+                            <div class="option" data-value="">Tất cả chuyên ngành</div>
                         </div>
-                        <input type="hidden" name="chuyennganh" value="Tất cả chuyên ngành">
+                        <input type="hidden" name="chuyennganh" id="major-filter" value="">
                     </div>
 
                     <!-- HỌC KỲ -->
                     <div class="fake-select">
                         <div class="selected">Tất cả học kỳ<i class="fa-solid fa-angle-down"></i></div>
                         <div class="options">
-                            <div class="option" data-value="Tất cả học kỳ">Tất cả học kỳ</div>
-                            <div class="option" data-value="Học kỳ 1">Kỳ 1 2024-2025</div>
-                            <div class="option" data-value="Học kỳ 2">Kỳ 2 2024-2025</div>
-                            <div class="option" data-value="Học kỳ hè">Kỳ hè 2024-2025</div>
+                            <div class="option" data-value="">Tất cả học kỳ</div>
                         </div>
-                        <input type="hidden" name="hocky" value="Tất cả học kỳ">
+                        <input type="hidden" name="hocky" id="semester-filter" value="">
                     </div>
 
                 </div>
@@ -98,56 +91,11 @@
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="class-table-body">
+                            <!-- Dữ liệu sẽ được load bằng JavaScript -->
                             <tr>
-                                <td>CS101.01</td>
-                                <td>Lập trình cơ bản</td>
-                                <td>1</td>
-                                <td>48/50</td>
-                                <td>Nguyễn Văn A</td>
-                                <td><span class="badge active">Hoạt động</span></td>
-                                <td class="action">
-                                    <i class="fa-solid fa-pen-to-square edit"></i>
-                                    <i class="fa-solid fa-trash delete"></i>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>CS101</td>
-                                <td>Lập trình mạng</td>
-                                <td>1</td>
-                                <td>48/50</td>
-                                <td>Nguyễn Văn A</td>
-                                <td><span class="badge active">Hoạt động</span></td>
-                                <td class="action">
-                                    <i class="fa-solid fa-pen-to-square edit"></i>
-                                    <i class="fa-solid fa-trash delete"></i>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>CS101</td>
-                                <td>Lập trình mạng</td>
-                                <td>1</td>
-                                <td>48/50</td>
-                                <td>Nguyễn Văn A</td>
-                                <td><span class="badge pending">Tạm ngưng</span></td>
-                                <td class="action">
-                                    <i class="fa-solid fa-pen-to-square edit"></i>
-                                    <i class="fa-solid fa-trash delete"></i>
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>CS101</td>
-                                <td>Lập trình mạng</td>
-                                <td>1</td>
-                                <td>48/50</td>
-                                <td>Nguyễn Văn A</td>
-                                <td><span class="badge closed">Đóng</span></td>
-                                <td class="action">
-                                    <i class="fa-solid fa-pen-to-square edit"></i>
-                                    <i class="fa-solid fa-trash delete"></i>
+                                <td colspan="7" style="text-align: center; padding: 20px;">
+                                    <i class="fa-solid fa-spinner" style="animation: spin 1s linear infinite;"></i> Đang tải dữ liệu...
                                 </td>
                             </tr>
                         </tbody>

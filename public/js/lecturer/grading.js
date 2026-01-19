@@ -22,6 +22,39 @@
 
   const format1 = (n) => (Number.isFinite(n) ? n.toFixed(1) : '_');
 
+  // IMPORTANT: Must match PHP round($score, 1, PHP_ROUND_HALF_UP)
+  // Test cases:
+  // 3.96 -> 4.0
+  // 3.94 -> 3.9
+  const roundScore1 = (n) => {
+    if (n === null || n === undefined) return null;
+    if (!Number.isFinite(n) || Number.isNaN(n)) return null;
+    // Avoid floating quirks (e.g., 1.005)
+    return Math.round((n + 1e-9) * 10) / 10;
+  };
+
+  const getStatusTooltip = (status, rawTotal, roundedTotal) => {
+    if (roundedTotal === null || roundedTotal === undefined || !Number.isFinite(roundedTotal)) {
+      return 'Chưa đủ điểm để tính tổng kết.';
+    }
+    const rawText = (rawTotal !== null && rawTotal !== undefined && Number.isFinite(rawTotal))
+      ? `Raw ${rawTotal.toFixed(2)} → Làm tròn ${roundedTotal.toFixed(1)}.`
+      : `Làm tròn ${roundedTotal.toFixed(1)}.`;
+    if (status === 'passed') return `${rawText} Đạt (>= 5.0)`;
+    if (status === 'warning') return `${rawText} Nguy cơ (>= 4.0 và < 5.0)`;
+    if (status === 'failed') return `${rawText} Không đạt (< 4.0)`;
+    return '';
+  };
+
+  const applyTotalCellDecorations = (cellEl, rawTotal, roundedTotal, status) => {
+    if (!cellEl) return;
+    cellEl.classList.remove('grade-total--passed', 'grade-total--warning', 'grade-total--failed', 'grade-total--empty');
+    const cls = status ? `grade-total--${status}` : 'grade-total--empty';
+    cellEl.classList.add('grade-total', cls);
+    const tip = getStatusTooltip(status, rawTotal, roundedTotal);
+    if (tip) cellEl.setAttribute('title', tip);
+  };
+
   const TopWarning = (() => {
     let timer = null;
 
@@ -98,7 +131,7 @@
     AppState.scores.set(getScoreKey(enrollmentId, componentId), value);
   };
 
-  const computeTotal = (enrollmentId) => {
+  const computeTotalRaw = (enrollmentId) => {
     const comps = weightedComponents();
     if (comps.length === 0) return null;
 
@@ -111,10 +144,17 @@
     return sum;
   };
 
-  const computeStatus = (total) => {
-    if (total === null || total === undefined || !Number.isFinite(total)) return '';
-    if (total >= 5.0) return 'passed';
-    if (total >= 4.0) return 'warning';
+  const computeTotalRounded = (enrollmentId) => {
+    const raw = computeTotalRaw(enrollmentId);
+    if (raw === null || raw === undefined || !Number.isFinite(raw)) return null;
+    return roundScore1(raw);
+  };
+
+  const computeStatus = (roundedTotal) => {
+    // IMPORTANT: status is based on rounded total (1 decimal)
+    if (roundedTotal === null || roundedTotal === undefined || !Number.isFinite(roundedTotal)) return '';
+    if (roundedTotal >= 5.0) return 'passed';
+    if (roundedTotal >= 4.0) return 'warning';
     return 'failed';
   };
 
@@ -163,8 +203,8 @@
       const headers = [
         `<div class="grade-header" style="width:100px">STT</div>`,
         `<div class="grade-header" style="width:300px; text-align:left; padding-left:20px">Họ và tên</div>`,
-        ...components.map(c => `<div class="grade-header" style="width:150px" title="${c.component_name}">${c.component_name}</div>`),
-        `<div class="grade-header" style="width:120px">Tổng</div>`,
+        ...components.map(c => `<div class="grade-header" style="width:120px" title="${c.component_name}">${c.component_name}</div>`),
+        `<div class="grade-header" style="width:100px">Tổng</div>`,
         `<div class="grade-header" style="flex:1; min-width:100px">Trạng thái</div>`
       ].join('');
 
@@ -202,7 +242,7 @@
           ...components.map(c => {
             const v = getScore(enrollmentId, c.component_id);
             return `
-              <div class="grade-cell" style="width:150px">
+              <div class="grade-cell" style="width:120px">
                 <input type="number"
                        class="grade-input"
                        value="${v ?? ''}"
@@ -216,9 +256,11 @@
           }),
         ];
 
-        const total = computeTotal(enrollmentId);
+        const rawTotal = computeTotalRaw(enrollmentId);
+        const total = roundScore1(rawTotal);
         const status = computeStatus(total);
-        cells.push(`<div class="grade-cell" style="width:120px" data-total-for="${enrollmentId}">${total === null ? '_' : format1(total)}</div>`);
+        const totalClass = status ? ('grade-total--' + status) : 'grade-total--empty';
+        cells.push(`<div class="grade-cell grade-total ${totalClass}" style="width:100px" data-total-for="${enrollmentId}" title="${getStatusTooltip(status, rawTotal, total)}">${total === null ? '_' : format1(total)}</div>`);
         cells.push(`<div class="grade-cell" style="flex:1; min-width:100px; border-right:none" data-status-for="${enrollmentId}">${Templates.getStatusBadge(status)}</div>`);
 
         stt += 1;
@@ -365,14 +407,18 @@
       setScore(enrollmentId, componentId, value);
 
       // Update total + status for this row
-      const total = computeTotal(enrollmentId);
+      const rawTotal = computeTotalRaw(enrollmentId);
+      const total = roundScore1(rawTotal);
       const status = computeStatus(total);
 
       const row = input.closest('.grade-table-row');
       if (!row) return;
       const totalCell = row.querySelector(`[data-total-for="${enrollmentId}"]`);
       const statusCell = row.querySelector(`[data-status-for="${enrollmentId}"]`);
-      if (totalCell) totalCell.textContent = (total === null ? '_' : format1(total));
+      if (totalCell) {
+        totalCell.textContent = (total === null ? '_' : format1(total));
+        applyTotalCellDecorations(totalCell, rawTotal, total, status);
+      }
       if (statusCell) statusCell.innerHTML = Templates.getStatusBadge(status);
     },
 

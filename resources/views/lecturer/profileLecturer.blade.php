@@ -146,6 +146,5 @@
     </div>
 </div>
 
-<script src="{{ asset('js/lecturer/lecturer.js') }}"></script>
 </body>
 </html>
