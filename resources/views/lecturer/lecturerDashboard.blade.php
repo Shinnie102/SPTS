@@ -38,7 +38,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar"></div>
                         <h2 class="stat-title">Lớp phụ trách</h2>
-                        <p class="stat-number" data-stat="totalClasses">25</p>
+                       <p class="stat-number">{{ $totalClasses }}</p>
                         <p class="stat-subtitle">Đang giảng dạy</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-4.svg') }}" alt="Lớp học icon" />
                     </article>
@@ -47,7 +47,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar warning"></div>
                         <h2 class="stat-title">Cảnh báo</h2>
-                        <p class="stat-number" data-stat="warnings">8</p>
+                        <p class="stat-number warning">{{ $warnings }}</p>
                         <p class="stat-subtitle">Sinh viên có nguy cơ học vụ</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-5.svg') }}" alt="Cảnh báo icon" />
                     </article>
@@ -56,7 +56,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar"></div>
                         <h2 class="stat-title">Nhập điểm</h2>
-                        <p class="stat-number" data-stat="completedGrading">12</p>
+                        <p class="stat-number">{{ $completedGrading }}</p>
                         <p class="stat-subtitle">Lớp hoàn tất nhập điểm</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-6.svg') }}" alt="Nhập điểm icon" />
                     </article>
@@ -65,7 +65,7 @@
                     <article class="stat-card warning-accent">
                         <div class="stat-color-bar warning"></div>
                         <h2 class="stat-title warning">Cần nhập điểm</h2>
-                        <p class="stat-number warning" data-stat="pendingGrading">7</p>
+                        <p class="stat-number warning">{{ $pendingGrading }}</p>
                         <p class="stat-subtitle">Lớp sắp đến hạn.</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-7.svg') }}" alt="Cần nhập điểm icon" />
                     </article>
@@ -89,9 +89,26 @@
                                     <th role="columnheader">Thao tác</th>
                                 </tr>
                             </thead>
-                            <tbody id="class-table-body">
-                                <!-- Rows will be rendered by JavaScript (chỉ 3 lớp) -->
-                            </tbody>
+                            <tbody>
+@foreach ($latestClasses as $class)
+<tr>
+    <td>{{ $class->course_code }}</td>
+    <td>{{ $class->course_name }}</td>
+    <td>{{ $class->total_students }}</td>
+    <td>
+        <span class="{{ $class->status_class }}">
+            {{ $class->status_name }}
+        </span>
+    </td>
+    <td>
+        <a href="{{ route('lecturer.class.detail', $class->class_section_id) }}">
+            Xem
+        </a>
+    </td>
+</tr>
+@endforeach
+</tbody>
+
                         </table>
                     </div>
 
