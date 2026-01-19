@@ -203,8 +203,8 @@
       const headers = [
         `<div class="grade-header" style="width:100px">STT</div>`,
         `<div class="grade-header" style="width:300px; text-align:left; padding-left:20px">Họ và tên</div>`,
-        ...components.map(c => `<div class="grade-header" style="width:150px" title="${c.component_name}">${c.component_name}</div>`),
-        `<div class="grade-header" style="width:120px">Tổng</div>`,
+        ...components.map(c => `<div class="grade-header" style="width:120px" title="${c.component_name}">${c.component_name}</div>`),
+        `<div class="grade-header" style="width:100px">Tổng</div>`,
         `<div class="grade-header" style="flex:1; min-width:100px">Trạng thái</div>`
       ].join('');
 
@@ -242,7 +242,7 @@
           ...components.map(c => {
             const v = getScore(enrollmentId, c.component_id);
             return `
-              <div class="grade-cell" style="width:150px">
+              <div class="grade-cell" style="width:120px">
                 <input type="number"
                        class="grade-input"
                        value="${v ?? ''}"
@@ -260,7 +260,7 @@
         const total = roundScore1(rawTotal);
         const status = computeStatus(total);
         const totalClass = status ? ('grade-total--' + status) : 'grade-total--empty';
-        cells.push(`<div class="grade-cell grade-total ${totalClass}" style="width:120px" data-total-for="${enrollmentId}" title="${getStatusTooltip(status, rawTotal, total)}">${total === null ? '_' : format1(total)}</div>`);
+        cells.push(`<div class="grade-cell grade-total ${totalClass}" style="width:100px" data-total-for="${enrollmentId}" title="${getStatusTooltip(status, rawTotal, total)}">${total === null ? '_' : format1(total)}</div>`);
         cells.push(`<div class="grade-cell" style="flex:1; min-width:100px; border-right:none" data-status-for="${enrollmentId}">${Templates.getStatusBadge(status)}</div>`);
 
         stt += 1;

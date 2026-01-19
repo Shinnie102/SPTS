@@ -34,6 +34,8 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
+                <div class="attendance-container">
+
 @include('lecturer.attendance_header', [
     'currentClass' => $currentClass,
     'classes' => $classes,
@@ -116,7 +118,7 @@
                             <i class="fas fa-arrow-left"></i> Quay lại trang chủ
                         </a>
                     </div>
-                
+                </div>
             </main>
         </div>
     </div>

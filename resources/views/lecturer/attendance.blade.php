@@ -35,16 +35,9 @@
             <p id="tieudephu">Quản lý và theo dõi các lớp học của bạn</p>
 
             <main class="main-content">
-                <!-- Attendance Container -->
-                @include('lecturer.attendance_header', [
-                    'currentClass' => $currentClass,
-                    'classes' => $classes,
-                    'currentTab' => 'attendance'
-                ])
-
                 <!-- Khối thông báo Khóa dữ liệu -->
                 @if($isAttendanceLocked)
-                <div class="lock-status-container">
+                <div id="attendance-lock-notice" class="lock-status-container">
                     <div class="lock-header-row">
                         <div>
                             <h2 class="lock-main-title">Khóa dữ liệu điểm danh</h2>
@@ -59,12 +52,23 @@
                             <img src="{{ asset('lecturer/img/warning-icon.png') }}" alt="Cảnh báo">
                         </div>
                         <div class="warning-text-box">
-                            <h3 class="warning-heading">Không thể sửa điểm danh</h3>
-                            <p class="warning-detail">Dữ liệu điểm danh cho buổi học này đã được lưu và khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
+                            <h3 class="warning-heading" style="color: #FEBC2F;">Không thể sửa điểm danh</h3>
+                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu điểm danh cho buổi học này đã được lưu và khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
                         </div>
                     </div>
                 </div>
                 @endif
+                
+                <div class="attendance-container">
+
+                <!-- Attendance Container -->
+                @include('lecturer.attendance_header', [
+                    'currentClass' => $currentClass,
+                    'classes' => $classes,
+                    'currentTab' => 'attendance'
+                ])
+
+                
 
                 <!-- Hàng 3: Buổi điểm danh + Stats + Nút Lưu -->
                 <div class="action-row">
@@ -179,6 +183,7 @@
                         <i class="fas fa-arrow-left"></i> Quay lại trang chủ
                     </a>
                 </div>
+                </div>
             </main>
         </div>
     </div>
@@ -197,6 +202,16 @@
             3: 'late',
             4: 'excused'
         };
+
+        // Tự ẩn thông báo khóa sau 5 giây
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!window.isLocked) return;
+            const notice = document.getElementById('attendance-lock-notice');
+            if (!notice) return;
+            window.setTimeout(function () {
+                notice.style.display = 'none';
+            }, 3000);
+        });
     </script>
     <script src="{{ asset('js/lecturer/dropdown-header.js') }}"></script>
     <script src="{{ asset('js/lecturer/attendance.js') }}"></script>
