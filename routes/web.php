@@ -108,9 +108,22 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     Route::get('/hoc-thuat/course/api/check-code/{code}', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'checkCourseCode'])->name('hocthuat.course.api.checkCode');
 
     // Quy tắc đánh giá
-    Route::get('/quy-tac', function () {
-        return view('admin.adminQuytac');
-    })->name('quytac');
+    Route::get('/quy-tac', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'index'])->name('quytac');
+    
+    Route::prefix('quy-tac')->name('quytac.')->group(function () {
+        // API: Lấy tất cả dữ liệu (quy tắc + sơ đồ điểm)
+        Route::get('/api/data', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getData'])->name('api.data');
+        
+        // API: Quy tắc học vụ
+        Route::get('/api/academic-rules', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getAcademicRules'])->name('api.academicRules');
+        
+        // API: Sơ đồ điểm
+        Route::get('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getGradingSchemes'])->name('api.gradingSchemes');
+        Route::post('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'store'])->name('api.store');
+        Route::get('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'show'])->name('api.show');
+        Route::put('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'update'])->name('api.update');
+        Route::delete('/api/grading-schemes/{id}', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'destroy'])->name('api.destroy');
+    });
 
     // Thời gian học vụ
     Route::prefix('thoi-gian')->name('thoigian.')->group(function () {

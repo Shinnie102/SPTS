@@ -1,6 +1,6 @@
 // ================= CONFIG =================
 const API_BASE_URL = '/admin/users/api';
-const ROWS_PER_PAGE = 5;
+const ROWS_PER_PAGE = 100;
 
 // ================= STATE MANAGEMENT =================
 let currentState = {
