@@ -41,7 +41,7 @@
                 <div class="overview-card" id="card-gpa-total">
                     <div class="card-info">
                         <span id="label-gpa-total">GPA tích lũy</span>
-                        <h2 id="value-gpa-total">3.25</h2>
+                        <h2 id="value-gpa-total">--</h2>
                         <small id="desc-gpa-total">Điểm trung bình toàn khóa</small>
                     </div>
                     <div class="card-icon">
@@ -53,7 +53,7 @@
                 <div class="overview-card" id="card-gpa-semester">
                     <div class="card-info">
                         <span id="label-gpa-semester">GPA học kỳ</span>
-                        <h2 id="value-gpa-semester">3.25</h2>
+                        <h2 id="value-gpa-semester">--</h2>
                         <small id="desc-gpa-semester">Học kỳ 2 năm 2023</small>
                     </div>
                     <div class="card-icon">
@@ -65,7 +65,7 @@
                 <div class="overview-card" id="card-credit">
                     <div class="card-info">
                         <span id="label-credit">Tín chỉ tích lũy</span>
-                        <h2 id="value-credit">78</h2>
+                        <h2 id="value-credit">--</h2>
                         <small id="desc-credit">Còn 72 tín chỉ để tốt nghiệp</small>
                     </div>
                     <div class="card-icon">
@@ -77,7 +77,7 @@
                 <div class="overview-card" id="card-attendance">
                     <div class="card-info">
                         <span id="label-attendance">Chuyên cần</span>
-                        <h2 id="value-attendance">85%</h2>
+                        <h2 id="value-attendance">--</h2>
                         <small id="desc-attendance">Mức an toàn</small>
                     </div>
                     <div class="card-icon">
@@ -163,6 +163,7 @@
     <script src="{{ asset('js/student/student.js') }}"></script>
     <script src="{{ asset('js/student/studentAlertWarning.js') }}"></script>
     <script src="{{ asset('js/student/studentCharts.js') }}"></script>
+    <script src="{{ asset('js/student/studentDashboard.js') }}"></script>
 </body>
 
 </html>

@@ -244,15 +244,33 @@ function handleViewDetails(classCode) {
 // ================= INITIALIZATION =================
 
 // Khởi tạo dashboard khi DOM đã load xong
-document.addEventListener('DOMContentLoaded', function() {
-    // Render tất cả các phần
-    renderOverviewCards();
-    renderSystemAlerts();
-    renderProblemChart();
-    renderProblemClassesTable();
+document.addEventListener('DOMContentLoaded', function () {
 
-    console.log('Admin Dashboard đã được khởi tạo thành công');
+    // 1. Ẩn dashboard lúc chưa có data
+    document.body.classList.add('dashboard-loading');
+
+    // 2. Fetch DB thật
+    fetch('/admin/dashboard/api/data')
+        .then(res => res.json())
+        .then(data => {
+
+            // Update data
+            AdminDashboard.updateData(data);
+
+            // Render SAU KHI CÓ DATA
+            renderOverviewCards();
+            renderSystemAlerts();
+            renderProblemChart();
+            renderProblemClassesTable();
+
+            // 3. Hiện dashboard
+            document.body.classList.remove('dashboard-loading');
+        })
+        .catch(err => {
+            console.error('Lỗi tải dữ liệu dashboard:', err);
+        });
 });
+
 
 // ================= UTILITY FUNCTIONS =================
 

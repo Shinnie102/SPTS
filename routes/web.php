@@ -154,11 +154,17 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
 // Student Routes
 Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/api/data',
+    [StudentDashboardController::class, 'getDashboardData']
+)->name('dashboard.api.data');
     Route::get('/profile', [App\Http\Controllers\Student\Profile::class, 'index'])->name('profile');
     Route::get('/study', [StudentStudyController::class, 'index'])->name('study');
     Route::get('/history', [studentHistoryController::class, 'history'])->name('history');
     Route::get('/classes/{class}', function () {
         return 'Class details';
     })->name('classes.show');
+     Route::get('/dashboard/api/gpa-chart',
+            [StudentDashboardController::class, 'getGpaChartData']
+        )->name('dashboard.api.gpaChart');
 
 });
