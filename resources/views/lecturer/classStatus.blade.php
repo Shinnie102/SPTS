@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleL.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleClass.css') }}">
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lecturer/attendance.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lecturer/dropdown-header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/classStatus.css') }}">
     <!-- --------------------------------- -->
     <link
@@ -41,102 +41,117 @@
 ])
 
                 <style>
-                    /* Ensure class selector stays visible/clickable on this page */
-                    .attendance-container {
-                        position: relative;
-                        z-index: 50;
+                    /* Modal-only styling (scoped) to avoid altering the legacy page UI */
+                    #exportScoresModal.modal {
+                        display: none;
+                        position: fixed;
+                        inset: 0;
+                        z-index: 1055;
+                        overflow-y: auto;
+                        padding: 24px 12px;
                     }
-                    .select-wrapper,
-                    #class-select {
-                        position: relative;
-                        z-index: 60;
+                    #exportScoresModal.modal.show {
+                        display: block;
                     }
-
-                    /* attendance.css hides all .select-wrapper select; restore native select for class picker */
-                    .attendance-container .select-wrapper select#class-select {
-                        display: block !important;
+                    #exportScoresModal .modal-dialog {
+                        max-width: 520px;
+                        margin: 0 auto;
                     }
-
-                    .students-status-section {
-                        margin-top: 24px;
+                    #exportScoresModal .modal-content {
                         background: #fff;
-                        border-radius: 12px;
-                        padding: 18px;
-                        box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+                        border-radius: 14px;
+                        overflow: hidden;
+                        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+                        border: 1px solid #e5e7eb;
                     }
-                    .students-status-header {
+                    #exportScoresModal .modal-header,
+                    #exportScoresModal .modal-body,
+                    #exportScoresModal .modal-footer {
+                        padding: 14px 16px;
+                    }
+                    #exportScoresModal .modal-header {
                         display: flex;
                         align-items: center;
                         justify-content: space-between;
                         gap: 12px;
-                        margin-bottom: 12px;
+                        border-bottom: 1px solid #e5e7eb;
                     }
-                    .students-status-header h2 {
+                    #exportScoresModal .modal-title {
                         margin: 0;
                         font-size: 18px;
+                        font-weight: 600;
+                        color: #000;
                     }
-                    .students-status-summary {
+                    #exportScoresModal .modal-close {
+                        background: transparent;
+                        border: 0;
+                        font-size: 22px;
+                        line-height: 1;
+                        cursor: pointer;
+                        color: rgba(0, 0, 0, 0.65);
+                        padding: 0 4px;
+                    }
+                    #exportScoresModal .modal-close:hover {
+                        color: rgba(0, 0, 0, 0.9);
+                    }
+                    #exportScoresModal .export-type {
                         display: flex;
+                        flex-direction: column;
                         gap: 10px;
-                        flex-wrap: wrap;
-                        font-size: 13px;
-                        color: #475569;
+                        margin-top: 10px;
                     }
-                    .students-status-summary .pill {
-                        background: #f1f5f9;
-                        padding: 6px 10px;
-                        border-radius: 999px;
+                    #exportScoresModal .export-option {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
                     }
-                    .students-status-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        overflow: hidden;
-                        border-radius: 10px;
-                    }
-                    .students-status-table th,
-                    .students-status-table td {
-                        padding: 10px 12px;
-                        border-bottom: 1px solid #e2e8f0;
-                        text-align: left;
-                        font-size: 14px;
-                    }
-                    .students-status-table thead th {
-                        background: #f8fafc;
-                        color: #0f172a;
-                        font-weight: 700;
-                    }
-                    .badge {
-                        display: inline-block;
-                        padding: 4px 10px;
-                        border-radius: 999px;
+                    #exportScoresModal .modal-note {
+                        margin-top: 12px;
                         font-size: 12px;
-                        font-weight: 700;
-                        line-height: 1.4;
+                        color: rgba(0, 0, 0, 0.6);
                     }
-                    .badge-studying {
-                        background: #e2e8f0;
-                        color: #334155;
+                    #exportScoresModal .modal-footer {
+                        border-top: 1px solid #e5e7eb;
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 10px;
                     }
-                    .badge-warning {
-                        background: #ffedd5;
-                        color: #9a3412;
+                    #exportScoresModal .btn-secondary-lite {
+                        border: 1px solid #dedcdc;
+                        background: #fff;
+                        color: rgba(0, 0, 0, 0.75);
                     }
-                    .badge-eligible {
-                        background: #dcfce7;
-                        color: #166534;
+                    #exportScoresModal .btn-secondary-lite:hover {
+                        background: #f9f9f9;
                     }
-                    .empty-note {
-                        margin: 0;
-                        color: #64748b;
-                        font-size: 14px;
+                    .modal-backdrop {
+                        position: fixed;
+                        inset: 0;
+                        background: rgba(0, 0, 0, 0.45);
+                        z-index: 1050;
+                    }
+                    .modal-backdrop.fade {
+                        opacity: 0;
+                    }
+                    .modal-backdrop.show {
+                        opacity: 1;
                     }
                 </style>
 
                 @php
                     $totalStudents = is_array($students ?? null) ? count($students) : 0;
-                    $eligibleCount = is_array($students ?? null) ? count(array_filter($students, fn($s) => ($s['status_label'] ?? '') === 'Đủ điều kiện')) : 0;
-                    $warningCount = is_array($students ?? null) ? count(array_filter($students, fn($s) => ($s['status_label'] ?? '') === 'Cảnh báo')) : 0;
-                    $studyingCount = max(0, $totalStudents - $eligibleCount - $warningCount);
+                    $passedCount = is_array($students ?? null)
+                        ? count(array_filter($students, fn ($s) => ($s['status_label'] ?? null) === 'Đạt'))
+                        : 0;
+                    $warningCount = is_array($students ?? null)
+                        ? count(array_filter($students, fn ($s) => ($s['status_label'] ?? null) === 'Nguy cơ'))
+                        : 0;
+                    $failedCount = is_array($students ?? null)
+                        ? count(array_filter($students, fn ($s) => ($s['status_label'] ?? null) === 'Không đạt'))
+                        : 0;
+                    $noScoreCount = is_array($students ?? null)
+                        ? count(array_filter($students, fn ($s) => ($s['status_label'] ?? null) === 'Chưa có điểm'))
+                        : 0;
                 @endphp
 
                 @if($totalStudents === 0)
@@ -229,7 +244,7 @@
                             </div>
                             <div class="card-body action-layout">
                                 <p class="note">Xuất bảng điểm danh và bảng điểm của lớp dưới dạng file Excel hoặc PDF.</p>
-                                <button class="btn btn-dark-blue" type="button" disabled>
+                                <button class="btn btn-dark-blue" type="button" id="exportScoresBtn" data-bs-toggle="modal" data-bs-target="#exportScoresModal">
                                     <svg width="14" height="14" fill="white" viewBox="0 0 24 24">
                                         <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                                     </svg>
@@ -240,48 +255,84 @@
                     </div>
                 </div>
 
-                <section class="students-status-section">
-                    <div class="students-status-header">
-                        <h2>Danh sách sinh viên</h2>
-                        <div class="students-status-summary" aria-label="Tóm tắt trạng thái">
-                            <span class="pill">Tổng: <strong>{{ $totalStudents }}</strong></span>
-                            <span class="pill">Đang học: <strong>{{ $studyingCount }}</strong></span>
-                            <span class="pill">Cảnh báo: <strong>{{ $warningCount }}</strong></span>
-                            <span class="pill">Đủ điều kiện: <strong>{{ $eligibleCount }}</strong></span>
+                <!-- Bootstrap Modal: Export scores -->
+                <div class="modal fade" id="exportScoresModal" tabindex="-1" aria-labelledby="exportScoresModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content" style="border-radius: 14px; overflow:hidden;">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exportScoresModalLabel">Xuất bảng điểm</h5>
+                                <button type="button" class="modal-close" data-bs-dismiss="modal" aria-label="Đóng">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <p style="margin-top:0; color:#475569;">Chọn định dạng xuất:</p>
+                                <div class="export-type">
+                                    <label class="export-option" for="exportTypeExcel">
+                                        <input type="radio" name="exportType" id="exportTypeExcel" value="excel" checked>
+                                        <span>Excel (.xlsx)</span>
+                                    </label>
+                                    <label class="export-option" for="exportTypePdf">
+                                        <input type="radio" name="exportType" id="exportTypePdf" value="pdf">
+                                        <span>PDF (.pdf)</span>
+                                    </label>
+                                </div>
+
+                                <div class="modal-note">
+                                    Ghi chú: PDF hiện là trang in (Print → Save as PDF). Excel .xlsx sẽ báo “đang phát triển” nếu chưa cài package.
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary-lite" data-bs-dismiss="modal">Hủy</button>
+                                <button type="button" class="btn btn-dark-blue" id="confirmExportScoresBtn">Xuất</button>
+                            </div>
                         </div>
+                    </div>
+                </div>
+
+                <section class="table-section">
+                    <div class="table-header-content">
+                        <h2 class="table-title">Danh sách sinh viên</h2>
+                        <p class="table-subtitle">
+                            Tổng: <strong>{{ $totalStudents }}</strong> • Đạt: <strong>{{ $passedCount }}</strong> • Nguy cơ: <strong>{{ $warningCount }}</strong> • Không đạt: <strong>{{ $failedCount }}</strong> • Chưa có điểm: <strong>{{ $noScoreCount }}</strong>
+                        </p>
                     </div>
 
                     @if(!is_array($students ?? null) || count($students) === 0)
-                        <p class="empty-note">Lớp hiện chưa có sinh viên hợp lệ.</p>
+                        <div class="no-data">
+                            <p>Lớp hiện chưa có sinh viên hợp lệ.</p>
+                        </div>
                     @else
-                        <table class="students-status-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 72px;">STT</th>
-                                    <th style="width: 160px;">Mã SV</th>
-                                    <th>Họ tên</th>
-                                    <th style="width: 160px;">Trạng thái</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($students as $index => $student)
-                                    @php
-                                        $label = $student['status_label'] ?? 'Đang học';
-                                        $badgeClass = match ($label) {
-                                            'Đủ điều kiện' => 'badge-eligible',
-                                            'Cảnh báo' => 'badge-warning',
-                                            default => 'badge-studying',
-                                        };
-                                    @endphp
+                        <div class="table-wrapper">
+                            <table class="class-table">
+                                <thead>
                                     <tr>
-                                        <td>{{ $index + 1 }}</td>
-                                        <td>{{ $student['student_code'] ?? '' }}</td>
-                                        <td>{{ $student['name'] ?? '' }}</td>
-                                        <td><span class="badge {{ $badgeClass }}">{{ $label }}</span></td>
+                                        <th style="width: 72px;">STT</th>
+                                        <th style="width: 160px;">Mã SV</th>
+                                        <th>Họ tên</th>
+                                        <th style="width: 180px;">Trạng thái</th>
                                     </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @foreach($students as $index => $student)
+                                        @php
+                                            $label = $student['status_label'] ?? '—';
+                                            $statusClass = match ($label) {
+                                                'Đạt' => 'completed',
+                                                'Nguy cơ' => 'pending',
+                                                'Không đạt' => 'locked',
+                                                'Chưa có điểm' => 'empty',
+                                                default => '',
+                                            };
+                                        @endphp
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $student['student_code'] ?? '' }}</td>
+                                            <td>{{ $student['name'] ?? '' }}</td>
+                                            <td><span class="status {{ $statusClass }}">{{ $label }}</span></td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
                     @endif
                 </section>
 
@@ -294,5 +345,34 @@
             </main>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/lecturer/dropdown-header.js') }}"></script>
+    <script>
+        (function () {
+            const confirmBtn = document.getElementById('confirmExportScoresBtn');
+            if (!confirmBtn) return;
+
+            const baseUrl = @json(route('lecturer.class.exportScores', ['id' => $currentClass->class_section_id]));
+
+            confirmBtn.addEventListener('click', function () {
+                const selected = document.querySelector('input[name="exportType"]:checked');
+                const type = selected ? selected.value : 'excel';
+                const url = baseUrl + '?type=' + encodeURIComponent(type);
+
+                if (type === 'pdf') {
+                    window.open(url, '_blank', 'noopener');
+                } else {
+                    window.location.href = url;
+                }
+
+                const modalEl = document.getElementById('exportScoresModal');
+                if (modalEl && window.bootstrap && window.bootstrap.Modal) {
+                    const inst = window.bootstrap.Modal.getInstance(modalEl);
+                    if (inst) inst.hide();
+                }
+            });
+        })();
+    </script>
 </body>
 </html>

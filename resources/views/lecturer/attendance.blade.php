@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleL.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleClass.css') }}">
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lecturer/dropdown-header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/attendance.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lecturer/classStatus.css') }}">
 
     <!-- --------------------------------- -->
     <link
@@ -198,6 +198,7 @@
             4: 'excused'
         };
     </script>
+    <script src="{{ asset('js/lecturer/dropdown-header.js') }}"></script>
     <script src="{{ asset('js/lecturer/attendance.js') }}"></script>
 </body>
 </html>

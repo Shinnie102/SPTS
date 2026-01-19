@@ -179,7 +179,6 @@
     </div>
 
     <!-- Javascript -->
-    <script src="{{ asset('js/lecturer/lecturer.js') }}"></script>
     <script src="{{ asset('js/lecturer/data.js') }}"></script>
     <script src="{{ asset('js/lecturer/render.js') }}"></script>
 

@@ -9,8 +9,8 @@
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleL.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/styleClass.css') }}">
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lecturer/dropdown-header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/grading.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/lecturer/attendance.css') }}">
     <!-- --------------------------------- -->
     <link
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
@@ -95,50 +95,6 @@
     <!-- Javascript -->
     <script src="{{ asset('js/lecturer/dataGrading.js') }}"></script>
     <script src="{{ asset('js/lecturer/grading.js') }}"></script>
-    <script src="{{ asset('js/lecturer/attendance.js') }}"></script>
-
-    <script>
-        function checkClassLockStatus(classCode) {
-            // 1. Tìm thông tin lớp trong mockData (giả sử dữ liệu nằm trong biến mockData)
-            const currentClass = mockData.classes.find(c => c.code === classCode);
-            
-            const lockBox = document.getElementById('lock-notification');
-            const saveBtn = document.getElementById('save-attendance-btn');
-            const attendanceTable = document.getElementById('attendance-table-body');
-
-            if (currentClass && currentClass.status === 'locked') {
-                // TRƯỜNG HỢP: LỚP BỊ KHÓA
-                lockBox.style.display = 'block'; // Hiện thông báo
-                
-                if (saveBtn) {
-                    saveBtn.disabled = true; // Vô hiệu hóa nút lưu
-                    saveBtn.style.opacity = '0.5';
-                    saveBtn.style.cursor = 'not-allowed';
-                    saveBtn.innerText = 'Dữ liệu đã khóa';
-                }
-
-                // Ngăn không cho click vào các radio/checkbox điểm danh
-                if (attendanceTable) {
-                    attendanceTable.style.pointerEvents = 'none'; 
-                    attendanceTable.style.opacity = '0.8';
-                }
-            } else {
-                // TRƯỜNG HỢP: LỚP ĐANG MỞ
-                lockBox.style.display = 'none'; // Ẩn thông báo
-                
-                if (saveBtn) {
-                    saveBtn.disabled = false;
-                    saveBtn.style.opacity = '1';
-                    saveBtn.style.cursor = 'pointer';
-                    saveBtn.innerText = 'Lưu điểm danh';
-                }
-
-                if (attendanceTable) {
-                    attendanceTable.style.pointerEvents = 'auto';
-                    attendanceTable.style.opacity = '1';
-                }
-            }
-        }
-    </script>
+    <script src="{{ asset('js/lecturer/dropdown-header.js') }}"></script>
 </body>
 </html>

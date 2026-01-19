@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardController;
+use App\Http\Controllers\Lecturer\AttendanceController;
+use App\Http\Controllers\Lecturer\GradingController;
+use App\Http\Controllers\Lecturer\ReportController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
 use App\Http\Controllers\Student\StudentStudyController;
@@ -151,17 +154,23 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-
+    
     // Các route cho từng chức năng của lớp học phần
-    Route::get('/class/{id}/attendance', [ClassController::class, 'attendance'])->name('attendance');
-    Route::get('/class/{id}/attendance-data/{meetingId}', [ClassController::class, 'getAttendanceData'])->name('attendance.data');
-    Route::post('/class/{id}/attendance/save', [ClassController::class, 'saveAttendance'])->name('attendance.save');
-    Route::get('/class/{id}/grading', [ClassController::class, 'grading'])->name('grading');
-    Route::get('/class/{id}/grading-data', [ClassController::class, 'getGradingData'])->name('grading.data');
-    Route::post('/class/{id}/grading/save', [ClassController::class, 'saveGrading'])->name('grading.save');
+    Route::get('/class/{id}/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
+    Route::get('/class/{id}/attendance-data/{meetingId}', [AttendanceController::class, 'getAttendanceData'])->name('attendance.data');
+    Route::post('/class/{id}/attendance/save', [AttendanceController::class, 'saveAttendance'])->name('attendance.save');
+    Route::get('/class/{id}/grading', [GradingController::class, 'grading'])->name('grading');
+    Route::get('/class/{id}/grading-data', [GradingController::class, 'getGradingData'])->name('grading.data');
+    Route::post('/class/{id}/grading/save', [GradingController::class, 'saveGrading'])->name('grading.save');
+    Route::post('/class/{id}/grading/lock', [GradingController::class, 'lockGrades'])->name('grading.lock');
     Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
-    Route::get('/class/{id}/report', [ClassController::class, 'report'])->name('report');
-    Route::get('/class/{id}/report-data', [ClassController::class, 'getReportData'])->name('report.data');
+    Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
+    Route::get('/class/{id}/report', [ReportController::class, 'report'])->name('report');
+    Route::get('/class/{id}/report-data', [ReportController::class, 'getReportData'])->name('report.data');
+    Route::get('/class/{id}/report-export', [ReportController::class, 'exportReport'])->name('report.export');
+
+    // API: Student detail in a class (for Report modal)
+    Route::get('/class/{classId}/student/{studentId}/detail', [ReportController::class, 'getStudentDetail'])->name('report.student.detail');
 });
 
 // Student Routes
