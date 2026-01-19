@@ -59,18 +59,30 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
     });
 
     // Quản lý lớp học phần
-    Route::get('/lop-hoc', function () {
-        return view('admin.adminLophoc');
-    })->name('lophoc');
-    Route::get('/lop-hoc/tao-buoc-1', function () {
-        return view('admin.adminBuoc1Taolophoc');
-    })->name('lophoc.create.step1');
-    Route::get('/lop-hoc/tao-buoc-2', function () {
-        return view('admin.adminBuoc2Taolophoc');
-    })->name('lophoc.create.step2');
-    Route::get('/lop-hoc/{id}/chi-tiet', function ($id) {
-        return view('admin.adminHocphandetail');
-    })->name('lophoc.detail');
+    Route::prefix('lop-hoc')->name('lophoc.')->group(function () {
+        // View page
+        Route::get('/', [\App\Http\Controllers\Admin\ClassSectionController::class, 'index'])->name('index');
+
+        // API Routes
+        Route::get('/api', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getClassSections'])->name('api.index');
+        Route::get('/api/filters', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getFilterOptions'])->name('api.filters');
+        Route::get('/api/majors', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getMajorsByFaculty'])->name('api.majors');
+        Route::get('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'show'])->name('api.show');
+        Route::delete('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'destroy'])->name('api.destroy');
+
+        // Create steps (keep old routes)
+        Route::get('/tao-buoc-1', function () {
+            return view('admin.adminBuoc1Taolophoc');
+        })->name('create.step1');
+        Route::get('/tao-buoc-2', function () {
+            return view('admin.adminBuoc2Taolophoc');
+        })->name('create.step2');
+
+        // Detail (keep old route)
+        Route::get('/{id}/chi-tiet', function ($id) {
+            return view('admin.adminHocphandetail');
+        })->name('detail');
+    });
 
     // Cấu trúc học thuật
     Route::get('/hoc-thuat', [\App\Http\Controllers\Admin\AcademicStructureController::class, 'index'])->name('hocthuat');
