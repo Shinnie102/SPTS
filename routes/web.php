@@ -202,5 +202,9 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
         )->name('dashboard.api.gpaChart');
      Route::post('/profile/update', [App\Http\Controllers\Student\Profile::class, 'update'])
     ->name('profile.update');
+    
+    // Student Warnings API
+    Route::get('/warnings/api', [App\Http\Controllers\Student\StudentWarningController::class, 'getWarnings'])
+        ->name('warnings.api');
 
 });
