@@ -124,14 +124,14 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 
     // Quy tắc đánh giá
     Route::get('/quy-tac', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'index'])->name('quytac');
-    
+
     Route::prefix('quy-tac')->name('quytac.')->group(function () {
         // API: Lấy tất cả dữ liệu (quy tắc + sơ đồ điểm)
         Route::get('/api/data', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getData'])->name('api.data');
-        
+
         // API: Quy tắc học vụ
         Route::get('/api/academic-rules', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getAcademicRules'])->name('api.academicRules');
-        
+
         // API: Sơ đồ điểm
         Route::get('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'getGradingSchemes'])->name('api.gradingSchemes');
         Route::post('/api/grading-schemes', [\App\Http\Controllers\Admin\GradingSchemeController::class, 'store'])->name('api.store');
@@ -166,7 +166,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
-    
+
     // Các route cho từng chức năng của lớp học phần
     Route::get('/class/{id}/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
     Route::get('/class/{id}/attendance-data/{meetingId}', [AttendanceController::class, 'getAttendanceData'])->name('attendance.data');
@@ -200,5 +200,7 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
      Route::get('/dashboard/api/gpa-chart',
             [StudentDashboardController::class, 'getGpaChartData']
         )->name('dashboard.api.gpaChart');
+     Route::post('/profile/update', [App\Http\Controllers\Student\Profile::class, 'update'])
+    ->name('profile.update');
 
 });

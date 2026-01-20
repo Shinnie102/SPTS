@@ -31,8 +31,22 @@
                         <h2 class="section-title">Hồ sơ cá nhân</h2>
                         <p class="section-subtitle">Thông tin sinh viên</p>
                     </div>
+
+                    {{-- NÚT CHỈNH SỬA --}}
+                    <button type="button" id="editProfileBtn" class="btn-secondary">
+                        <i class="fas fa-pen"></i> Chỉnh sửa hồ sơ
+                    </button>
                 </div>
             </section>
+
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('student.profile.update') }}">
+            @csrf
 
             <div class="profile-layout">
 
@@ -86,16 +100,16 @@
 
                             <div class="detail-item">
                                 <label>Họ và tên</label>
-                                <p>{{ auth()->user()->full_name }}</p>
+                                <input type="text" name="full_name"
+                                       value="{{ auth()->user()->full_name }}"
+                                       disabled class="profile-input">
                             </div>
 
                             <div class="detail-item">
                                 <label>Ngày sinh</label>
-                                <p>
-                                    {{ auth()->user()->birth
-                                        ? date('d/m/Y', strtotime(auth()->user()->birth))
-                                        : 'Chưa cập nhật' }}
-                                </p>
+                                <input type="date" name="birth"
+                                       value="{{ auth()->user()->birth }}"
+                                       disabled class="profile-input">
                             </div>
 
                             <div class="detail-item">
@@ -105,12 +119,16 @@
 
                             <div class="detail-item">
                                 <label>Số điện thoại</label>
-                                <p>{{ auth()->user()->phone ?? 'Chưa cập nhật' }}</p>
+                                <input type="text" name="phone"
+                                       value="{{ auth()->user()->phone }}"
+                                       disabled class="profile-input">
                             </div>
 
                             <div class="detail-item full-width">
                                 <label>Địa chỉ</label>
-                                <p>{{ auth()->user()->address ?? 'Chưa cập nhật' }}</p>
+                                <input type="text" name="address"
+                                       value="{{ auth()->user()->address }}"
+                                       disabled class="profile-input">
                             </div>
 
                         </div>
@@ -123,7 +141,9 @@
 
                             <div class="detail-item">
                                 <label>Chuyên ngành</label>
-                                <p>{{ auth()->user()->major ?? 'Chưa cập nhật' }}</p>
+                                <input type="text" name="major"
+                                       value="{{ auth()->user()->major }}"
+                                       disabled class="profile-input">
                             </div>
 
                             <div class="detail-item">
@@ -134,8 +154,19 @@
                         </div>
                     </div>
 
+                    {{-- ACTION --}}
+                    <div class="form-actions" id="saveActions" style="display:none;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Lưu thay đổi
+                        </button>
+                        <button type="button" id="cancelEditBtn" class="btn-secondary">
+                            Huỷ
+                        </button>
+                    </div>
+
                 </div>
             </div>
+            </form>
 
             <div class="back-link-container">
                 <a href="{{ route('student.dashboard') }}" class="back-link">
@@ -148,5 +179,26 @@
 </div>
 
 <script src="{{ asset('js/student/student.js') }}"></script>
+
+<script>
+document.getElementById('editProfileBtn').addEventListener('click', function () {
+    document.querySelectorAll('.profile-input').forEach(input => {
+        input.disabled = false;
+    });
+
+    document.getElementById('saveActions').style.display = 'block';
+    this.style.display = 'none';
+});
+
+document.getElementById('cancelEditBtn').addEventListener('click', function () {
+    document.querySelectorAll('.profile-input').forEach(input => {
+        input.disabled = true;
+    });
+
+    document.getElementById('saveActions').style.display = 'none';
+    document.getElementById('editProfileBtn').style.display = 'inline-block';
+});
+</script>
+
 </body>
 </html>

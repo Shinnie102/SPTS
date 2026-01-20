@@ -16,6 +16,8 @@
 </head>
 
 <body>
+
+{{-- CHỈ INCLUDE 1 LẦN --}}
 @include('partials.header_lecturer')
 
 <div id="main">
@@ -24,127 +26,148 @@
     <div id="content">
         <main class="main-content">
 
-            <section class="overview-section">
-                <div class="header-content">
-                    <div class="title-group">
-                        <h2 class="section-title">Hồ sơ cá nhân</h2>
-                        <p class="section-subtitle">Xem thông tin giảng viên</p>
-                    </div>
+        <section class="overview-section">
+            <div class="header-content">
+                <div class="title-group">
+                    <h2 class="section-title">Hồ sơ cá nhân</h2>
+                    <p class="section-subtitle">Xem thông tin giảng viên</p>
                 </div>
-            </section>
 
-            <div class="profile-layout">
+                <button id="editBtn" class="btn-secondary">
+                    <i class="fas fa-pen"></i> Chỉnh sửa
+                </button>
+            </div>
+        </section>
 
-                {{-- SIDEBAR --}}
-                <aside class="profile-card-sidebar">
-                    <div class="avatar-wrapper">
-                        <div class="avatar-circle-large">
-                            @if(auth()->user()->avatar)
-                                <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="Avatar">
-                            @else
-                                {{ mb_substr(auth()->user()->full_name, 0, 2) }}
-                            @endif
-                        </div>
-                    </div>
+        <div class="profile-layout">
 
-                    <div class="lecturer-info-header">
-                        <h3 class="lecturer-name-display">
-                            {{ auth()->user()->full_name }}
-                        </h3>
-                        <p class="lecturer-id-display">
-                            {{ auth()->user()->code_user }}
-                        </p>
-                    </div>
-
-                    <div class="divider"></div>
-
-                    <div class="stats-container">
-                        <div class="stat-row">
-                            <div class="stat-icon-box">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <div class="stat-text">
-                                <span class="stat-label">Ngày bắt đầu</span>
-                                <span class="stat-value">
-                                    {{ auth()->user()->orientation_day
-                                        ? date('d/m/Y', strtotime(auth()->user()->orientation_day))
-                                        : 'Chưa cập nhật' }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
-
-                {{-- CONTENT --}}
-                <div class="profile-details-column">
-
-                    {{-- THÔNG TIN CÁ NHÂN --}}
-                    <div class="detail-card">
-                        <h4 class="detail-card-title">Thông tin cá nhân</h4>
-                        <div class="detail-grid">
-
-                            <div class="detail-item">
-                                <label>Họ và tên</label>
-                                <p>{{ auth()->user()->full_name }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <label>Ngày sinh</label>
-                                <p>
-                                    {{ auth()->user()->birth
-                                        ? date('d/m/Y', strtotime(auth()->user()->birth))
-                                        : 'Chưa cập nhật' }}
-                                </p>
-                            </div>
-
-                            <div class="detail-item">
-                                <label>Email</label>
-                                <p>{{ auth()->user()->email }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <label>Số điện thoại</label>
-                                <p>{{ auth()->user()->phone ?? 'Chưa cập nhật' }}</p>
-                            </div>
-
-                            <div class="detail-item full-width">
-                                <label>Địa chỉ</label>
-                                <p>{{ auth()->user()->address ?? 'Chưa cập nhật' }}</p>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    {{-- THÔNG TIN HỌC THUẬT --}}
-                    <div class="detail-card">
-                        <h4 class="detail-card-title">Thông tin học thuật</h4>
-                        <div class="detail-grid">
-
-                            <div class="detail-item">
-                                <label>Chuyên ngành</label>
-                                <p>{{ auth()->user()->major ?? 'Chưa cập nhật' }}</p>
-                            </div>
-
-                            <div class="detail-item">
-                                <label>Tên đăng nhập</label>
-                                <p>{{ auth()->user()->username }}</p>
-                            </div>
-
-                        </div>
-                    </div>
-
+        {{-- SIDEBAR --}}
+        <aside class="profile-card-sidebar">
+            <div class="avatar-wrapper">
+                <div class="avatar-circle-large">
+                    @if(auth()->user()->avatar)
+                        <img src="{{ asset('storage/' . auth()->user()->avatar) }}">
+                    @else
+                        {{ mb_substr(auth()->user()->full_name, 0, 2) }}
+                    @endif
                 </div>
             </div>
 
-            <div class="back-link-container">
-                <a href="{{ route('lecturer.dashboard') }}" class="back-link">
-                    <i class="fas fa-arrow-left"></i> Quay lại trang chủ
-                </a>
+            <div class="lecturer-info-header">
+                <h3>{{ auth()->user()->full_name }}</h3>
+                <p>{{ auth()->user()->code_user }}</p>
             </div>
+        </aside>
+
+        {{-- CONTENT --}}
+        <div class="profile-details-column">
+
+        <form id="profileForm"
+              action="{{ route('lecturer.profile.update') }}"
+              method="POST">
+        @csrf
+
+        {{-- THÔNG TIN CÁ NHÂN --}}
+        <div class="detail-card">
+        <h4 class="detail-card-title">Thông tin cá nhân</h4>
+        <div class="detail-grid">
+
+        <div class="detail-item">
+        <label>Họ và tên</label>
+        <p class="view">{{ auth()->user()->full_name }}</p>
+        <input class="edit profile-input" type="text" name="full_name"
+               value="{{ auth()->user()->full_name }}" hidden>
+        </div>
+
+        <div class="detail-item">
+        <label>Ngày sinh</label>
+        <p class="view">
+        {{ auth()->user()->birth ? date('d/m/Y', strtotime(auth()->user()->birth)) : 'Chưa cập nhật' }}
+        </p>
+        <input class="edit profile-input" type="date" name="birth"
+               value="{{ auth()->user()->birth }}" hidden>
+        </div>
+
+        <div class="detail-item">
+        <label>Email</label>
+        <p>{{ auth()->user()->email }}</p>
+        </div>
+
+        <div class="detail-item">
+        <label>Số điện thoại</label>
+        <p class="view">{{ auth()->user()->phone ?? 'Chưa cập nhật' }}</p>
+        <input class="edit profile-input" type="text" name="phone"
+               value="{{ auth()->user()->phone }}" hidden>
+        </div>
+
+        <div class="detail-item full-width">
+        <label>Địa chỉ</label>
+        <p class="view">{{ auth()->user()->address ?? 'Chưa cập nhật' }}</p>
+        <input class="edit profile-input" type="text" name="address"
+               value="{{ auth()->user()->address }}" hidden>
+        </div>
+
+        </div>
+        </div>
+
+        {{-- HỌC THUẬT --}}
+        <div class="detail-card">
+        <h4 class="detail-card-title">Thông tin học thuật</h4>
+        <div class="detail-grid">
+
+        <div class="detail-item">
+        <label>Chuyên ngành</label>
+        <p class="view">{{ auth()->user()->major ?? 'Chưa cập nhật' }}</p>
+        <input class="edit profile-input" type="text" name="major"
+               value="{{ auth()->user()->major }}" hidden>
+        </div>
+
+        <div class="detail-item">
+        <label>Tên đăng nhập</label>
+        <p>{{ auth()->user()->username }}</p>
+        </div>
+
+        </div>
+        </div>
+
+        <div id="actionButtons" hidden>
+        <button type="submit" class="btn-primary">
+        <i class="fas fa-save"></i> Lưu
+        </button>
+        <button type="button" id="cancelBtn" class="btn-secondary">
+        Huỷ
+        </button>
+        </div>
+
+        </form>
+        </div>
+        </div>
 
         </main>
     </div>
 </div>
+
+<script>
+const editBtn = document.getElementById('editBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const views = document.querySelectorAll('.view');
+const edits = document.querySelectorAll('.edit');
+const actions = document.getElementById('actionButtons');
+
+editBtn.onclick = () => {
+    views.forEach(v => v.hidden = true);
+    edits.forEach(e => e.hidden = false);
+    actions.hidden = false;
+    editBtn.hidden = true;
+};
+
+cancelBtn.onclick = () => {
+    views.forEach(v => v.hidden = false);
+    edits.forEach(e => e.hidden = true);
+    actions.hidden = true;
+    editBtn.hidden = false;
+};
+</script>
 
 </body>
 </html>
