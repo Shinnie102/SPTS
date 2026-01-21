@@ -126,32 +126,34 @@
             </div>
 
             <!-- ====== TRUY CẬP NHANH ====== -->
-            <div class="quick-access">
-                <h3>Truy cập nhanh</h3>
-                <p>Xem chi tiết các thông tin học tập của bạn</p>
+            <div class="quick-cards">
 
-                <div class="quick-cards">
-                    <div class="quick-card">
-                        <div class="quick-icon blue">
-                            <i class="fa-solid fa-book-open"></i>
-                        </div>
-                        <div class="quick-info">
-                            <strong>Xem điểm môn học</strong>
-                            <span>Chi tiết từng môn học</span>
-                        </div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </div>
+    <!-- XEM ĐIỂM MÔN HỌC -->
+    <a href="{{ route('student.study') }}" class="quick-card">
+        <div class="quick-icon blue">
+            <i class="fa-solid fa-book-open"></i>
+        </div>
+        <div class="quick-info">
+            <strong>Xem điểm môn học</strong>
+            <span>Chi tiết từng môn học</span>
+        </div>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
 
-                    <div class="quick-card">
-                        <div class="quick-icon blue">
-                            <i class="fa-solid fa-calendar-days"></i>
-                        </div>
-                        <div class="quick-info">
-                            <strong>Lịch sử chuyên cần</strong>
-                            <span>Thống kê điểm danh</span>
-                        </div>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </div>
+    <!-- LỊCH SỬ CHUYÊN CẦN -->
+    <a href="{{ route('student.history') }}" class="quick-card">
+        <div class="quick-icon blue">
+            <i class="fa-solid fa-calendar-days"></i>
+        </div>
+        <div class="quick-info">
+            <strong>Lịch sử chuyên cần</strong>
+            <span>Thống kê điểm danh</span>
+        </div>
+        <i class="fa-solid fa-arrow-right"></i>
+    </a>
+
+</div>
+
                 </div>
             </div>
 
