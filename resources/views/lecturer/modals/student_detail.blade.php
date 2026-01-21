@@ -311,7 +311,6 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="sd-btn secondary" id="sdPrintBtn">In báo cáo</button>
         <button type="button" class="sd-btn primary" data-bs-dismiss="modal">Đóng</button>
       </div>
     </div>

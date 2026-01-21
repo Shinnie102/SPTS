@@ -7,6 +7,7 @@ use App\Http\Controllers\Lecturer\DashboardController as LecturerDashboardContro
 use App\Http\Controllers\Lecturer\AttendanceController;
 use App\Http\Controllers\Lecturer\GradingController;
 use App\Http\Controllers\Lecturer\ReportController;
+use App\Http\Controllers\Lecturer\ClassStatusController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Student\studentHistoryController;
 use App\Http\Controllers\Student\StudentStudyController;
@@ -185,7 +186,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     Route::get('/class/{id}/grading-data', [GradingController::class, 'getGradingData'])->name('grading.data');
     Route::post('/class/{id}/grading/save', [GradingController::class, 'saveGrading'])->name('grading.save');
     Route::post('/class/{id}/grading/lock', [GradingController::class, 'lockGrades'])->name('grading.lock');
-    Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
+    Route::get('/class/{id}/status', [ClassStatusController::class, 'show'])->name('class.status');
     Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
     Route::get('/class/{id}/report', [ReportController::class, 'report'])->name('report');
     Route::get('/class/{id}/report-data', [ReportController::class, 'getReportData'])->name('report.data');
