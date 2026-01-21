@@ -57,7 +57,7 @@
 }
 
 .frame-thongtin .don-thongtin {
-    width: 50%;
+    width: 33.33%;
     display: flex;
     flex-direction: column;
     margin-bottom: 0.625rem;
@@ -441,5 +441,36 @@
         gap: 0.25rem;
         margin-top: 1rem;
     }
+}
+
+/* Enrollment status select styles */
+.status.studying {
+    color: #28a745;
+    border: 1px solid #28a745;
+    background-color: rgba(40, 167, 69, 0.05);
+}
+
+.status.stopped {
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    background-color: rgba(220, 53, 69, 0.05);
+}
+
+.status.warning {
+    color: #ffc107;
+    border: 1px solid #ffc107;
+    background-color: rgba(255, 193, 7, 0.05);
+}
+
+.status.completed {
+    color: #0066cc;
+    border: 1px solid #0066cc;
+    background-color: rgba(0, 102, 204, 0.05);
+}
+
+.status.failed {
+    color: #ff6b6b;
+    border: 1px solid #ff6b6b;
+    background-color: rgba(255, 107, 107, 0.05);
 }
 

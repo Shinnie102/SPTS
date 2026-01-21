@@ -132,6 +132,73 @@ class ClassSectionRepository implements ClassSectionRepositoryInterface
     }
 
     /**
+     * Lấy chi tiết đầy đủ lớp học với tất cả quan hệ cần thiết cho trang detail
+     * 
+     * @param int $classSectionId
+     * @return ClassSection|null
+     */
+    public function getDetailedClassSection(int $classSectionId)
+    {
+        return $this->model
+            ->with([
+                // Thông tin course
+                'courseVersion.course.majors.faculties',
+                // Thông tin semester và academic year
+                'semester.academicYear',
+                'semester.status',
+                // Giảng viên
+                'lecturer.gender',
+                // Trạng thái lớp
+                'status',
+                // Buổi học với time slot và phòng
+                'classGradingScheme.gradingScheme',
+                // Enrollment với thông tin sinh viên đầy đủ
+                'enrollments' => function ($query) {
+                    $query->with([
+                        'student.gender',
+                        'student.role',
+                        'status',
+                    ])
+                    ->whereIn('enrollment_status_id', [1, 2, 3]) // PENDING, CONFIRMED, DROPPED
+                    ->orderBy('enrollment_id', 'ASC');
+                },
+            ])
+            ->find($classSectionId);
+    }
+
+    /**
+     * Lấy danh sách buổi học của lớp
+     * 
+     * @param int $classSectionId
+     * @return array
+     */
+    public function getClassMeetings(int $classSectionId): array
+    {
+        return ClassMeeting::where('class_section_id', $classSectionId)
+            ->with(['timeSlot', 'room', 'meetingStatus'])
+            ->orderBy('meeting_date', 'ASC')
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * Lấy thông tin academic status của sinh viên
+     * 
+     * @param int $studentId
+     * @return array|null
+     */
+    public function getStudentAcademicStatus(int $studentId): ?array
+    {
+        $status = DB::table('academic_status')
+            ->join('academic_status_type', 'academic_status.status_code_id', '=', 'academic_status_type.status_id')
+            ->where('academic_status.student_id', $studentId)
+            ->select('academic_status_type.code', 'academic_status_type.name')
+            ->first();
+
+        return $status ? (array) $status : null;
+    }
+
+    /**
      * Lấy danh sách Khoa có môn học
      * 
      * Vì DB không có liên kết trực tiếp faculty->major
@@ -257,6 +324,16 @@ class ClassSectionRepository implements ClassSectionRepositoryInterface
     public function classCodeExists(string $classCode): bool
     {
         return $this->model->where('class_code', $classCode)->exists();
+    }
+
+    /**
+     * Kiểm tra mã lớp đã tồn tại cho các lớp khác (dùng khi update)
+     */
+    public function classCodeExistsForUpdate(string $classCode, int $classSectionId): bool
+    {
+        return $this->model->where('class_code', $classCode)
+            ->where('class_section_id', '!=', $classSectionId)
+            ->exists();
     }
 
     public function createMeetings(array $meetings): void
