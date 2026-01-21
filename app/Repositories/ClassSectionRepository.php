@@ -4,11 +4,19 @@ namespace App\Repositories;
 
 use App\Contracts\ClassSectionRepositoryInterface;
 use App\Models\ClassSection;
+use App\Models\ClassMeeting;
+use App\Models\ClassSectionStatus;
+use App\Models\AcademicYear;
+use App\Models\CourseVersion;
 use App\Models\Faculty;
+use App\Models\Enrollment;
 use App\Models\Major;
 use App\Models\Semester;
-use App\Models\ClassSectionStatus;
+use App\Models\Room;
+use App\Models\TimeSlot;
+use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Class ClassSectionRepository
@@ -150,6 +158,26 @@ class ClassSectionRepository implements ClassSectionRepositoryInterface
     }
 
     /**
+     * Lấy danh sách khoa
+     * 
+     * @return array
+     */
+    public function getFaculties(): array
+    {
+        return Faculty::query()
+            ->where('faculty_status_id', 1)
+            ->orderBy('faculty_name', 'ASC')
+            ->get()
+            ->map(function ($faculty) {
+                return [
+                    'id' => $faculty->faculty_id,
+                    'name' => $faculty->faculty_name,
+                ];
+            })
+            ->toArray();
+    }
+
+    /**
      * Lấy danh sách Chuyên ngành theo Khoa
      * 
      * Vì DB không có link trực tiếp faculty->major
@@ -218,6 +246,157 @@ class ClassSectionRepository implements ClassSectionRepositoryInterface
                     'name' => $status->name,
                 ];
             })
+            ->toArray();
+    }
+
+    public function create(array $data)
+    {
+        return $this->model->create($data);
+    }
+
+    public function classCodeExists(string $classCode): bool
+    {
+        return $this->model->where('class_code', $classCode)->exists();
+    }
+
+    public function createMeetings(array $meetings): void
+    {
+        if (empty($meetings)) {
+            return;
+        }
+
+        $now = now();
+        foreach ($meetings as &$meeting) {
+            $meeting['created_at'] = $meeting['created_at'] ?? $now;
+        }
+
+        ClassMeeting::insert($meetings);
+    }
+
+    public function enrollStudents(int $classSectionId, array $studentIds, int $statusId = 1): void
+    {
+        if (empty($studentIds)) {
+            return;
+        }
+
+        $now = now();
+        $rows = array_map(function ($studentId) use ($classSectionId, $statusId, $now) {
+            return [
+                'student_id' => $studentId,
+                'class_section_id' => $classSectionId,
+                'enrollment_status_id' => $statusId,
+                'enrolled_at' => $now,
+                'created_at' => $now,
+            ];
+        }, $studentIds);
+
+        Enrollment::insert($rows);
+    }
+
+    public function getActiveLecturers(): array
+    {
+        return User::select('user_id as id', 'full_name', 'code_user')
+            ->where('role_id', 2) // LECTURER
+            ->where('status_id', 1)
+            ->orderBy('full_name')
+            ->get()
+            ->toArray();
+    }
+
+    public function getActiveStudents(?string $keyword = null): array
+    {
+        $query = User::select('user_id as id', 'full_name', 'code_user', 'email', 'major')
+            ->where('role_id', 3) // STUDENT
+            ->where('status_id', 1)
+            ->orderBy('full_name');
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('full_name', 'LIKE', "%{$keyword}%")
+                  ->orWhere('code_user', 'LIKE', "%{$keyword}%")
+                  ->orWhere('email', 'LIKE', "%{$keyword}%");
+            });
+        }
+
+        return $query->limit(200)->get()->toArray();
+    }
+
+    public function getRooms(): array
+    {
+        return Room::select('room_id as id', 'room_code', 'room_name', 'capacity')
+            ->where('room_status_id', 1)
+            ->orderBy('room_code')
+            ->get()
+            ->toArray();
+    }
+
+    public function getTimeSlots(): array
+    {
+        return TimeSlot::select('time_slot_id as id', 'slot_code', 'start_time', 'end_time')
+            ->orderBy('campus_id')
+            ->orderBy('start_time')
+            ->get()
+            ->toArray();
+    }
+
+    public function getCourseVersions(): array
+    {
+        return CourseVersion::with('course')
+            ->orderBy('course_version_id', 'ASC')
+            ->get()
+            ->map(function ($cv) {
+                return [
+                    'id' => $cv->course_version_id,
+                    'name' => $cv->course->course_name ?? 'N/A',
+                    'code' => $cv->course->course_code ?? '',
+                ];
+            })
+            ->toArray();
+    }
+
+    public function getAcademicYears(): array
+    {
+        return AcademicYear::query()
+            ->orderBy('start_date', 'DESC')
+            ->get()
+            ->map(function ($year) {
+                return [
+                    'id' => $year->academic_year_id,
+                    // year_code đã có dạng "2023-2024" trong dữ liệu dump
+                    'name' => $year->year_code,
+                ];
+            })
+            ->toArray();
+    }
+
+    public function getSemestersByAcademicYear(int $academicYearId): array
+    {
+        return Semester::query()
+            ->where('academic_year_id', $academicYearId)
+            // Tạm bỏ filter status để load tất cả học kỳ
+            // ->where('status_id', 1)
+            ->orderBy('start_date')
+            ->get()
+            ->map(function ($semester) {
+                return [
+                    'id' => $semester->semester_id,
+                    'name' => $semester->semester_code,
+                ];
+            })
+            ->toArray();
+    }
+
+    public function getCourseVersionsByMajor(int $majorId): array
+    {
+        return CourseVersion::query()
+            ->join('course', 'course_version.course_id', '=', 'course.course_id')
+            ->join('major_course', 'course.course_id', '=', 'major_course.course_id')
+            ->where('major_course.major_id', $majorId)
+            ->where('course_version.status_id', 1)
+            ->where('course.course_status_id', 1)
+            ->select('course_version.course_version_id as id', 'course.course_name as name', 'course.course_code as code')
+            ->orderBy('course.course_name')
+            ->get()
             ->toArray();
     }
 }

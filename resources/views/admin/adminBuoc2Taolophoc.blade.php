@@ -5,6 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="route-admin-lophoc-api-create-step1-get" content="{{ route('admin.lophoc.api.create.step1.get') }}">
+    <meta name="route-admin-lophoc-api-create-step2" content="{{ route('admin.lophoc.api.create.step2') }}">
+    <meta name="route-admin-lophoc-api-lecturers" content="{{ route('admin.lophoc.api.lecturers') }}">
+    <meta name="route-admin-lophoc-api-students" content="{{ route('admin.lophoc.api.students') }}">
+    <meta name="route-admin-lophoc-api-faculties" content="{{ route('admin.lophoc.api.faculties') }}">
+    <meta name="route-admin-lophoc-api-majors-by-faculty" content="{{ route('admin.lophoc.api.majors-by-faculty') }}">
     <!-- hạn chế đụng vào file overall.css -->
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
     <!-- --------------------------------- -->
@@ -58,15 +64,11 @@
                         </div>
                         <div id="select-form">
                             <select name="khoa" id="khoa">
-                                <option value="Tất cả Khoa/Viên">Tất cả Khoa/Viên</option>
-                                <option value="CNTT">CNTT</option>
-                                <option value="CNPM">CNPM</option>
+                                <option value="">Tất cả Khoa/Viên</option>
                             </select>
 
                             <select name="chuyennganh" id="chuyennganh">
-                                <option value="Tất cả Chuyên ngành">Tất cả Chuyên ngành</option>
-                                <option value="KTPM">KTPM</option>
-                                <option value="ATTT">ATTT</option>
+                                <option value="">Tất cả Chuyên ngành</option>
                             </select>
                         </div>
 

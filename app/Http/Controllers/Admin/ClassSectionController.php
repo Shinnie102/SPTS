@@ -111,19 +111,181 @@ class ClassSectionController extends Controller
     }
 
     /**
+     * API: Lấy options cho form tạo lớp (bước 1)
+     */
+    public function getCreateOptions(): JsonResponse
+    {
+        try {
+            $options = $this->classService->getCreateOptions();
+            return response()->json(['success' => true, 'data' => $options]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy options tạo lớp: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Lấy danh sách học kỳ theo năm học
+     */
+    public function getSemestersByYear(Request $request): JsonResponse
+    {
+        $yearId = $request->get('academic_year_id');
+        if (!$yearId) {
+            return response()->json(['success' => false, 'message' => 'Thiếu academic_year_id'], 400);
+        }
+
+        try {
+            $semesters = $this->classService->getSemestersByAcademicYear((int) $yearId);
+            return response()->json(['success' => true, 'data' => $semesters]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: Lấy danh sách học phần theo chuyên ngành
+     */
+    public function getCoursesByMajor(Request $request): JsonResponse
+    {
+        $majorId = $request->get('major_id');
+        if (!$majorId) {
+            return response()->json(['success' => false, 'message' => 'Thiếu major_id'], 400);
+        }
+
+        try {
+            $courses = $this->classService->getCoursesByMajor((int) $majorId);
+            return response()->json(['success' => true, 'data' => $courses]);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * API: Lưu bước 1 vào session
+     */
+    public function storeStepOne(Request $request): JsonResponse
+    {
+        $request->validate([
+            'class_code' => 'required|string|max:50',
+            'course_version_id' => 'required|integer',
+            'semester_id' => 'required|integer',
+            'capacity' => 'required|integer|min:1',
+            'time_slot_id' => 'required|integer',
+            'room_id' => 'required|integer',
+            'meeting_dates' => 'required|array|min:1',
+            'meeting_dates.*' => 'date',
+            'academic_year_id' => 'nullable|integer',
+            'faculty_id' => 'nullable|integer',
+            'major_id' => 'nullable|integer',
+        ]);
+
+        try {
+            if ($this->classService->getClassCodeExists($request->get('class_code'))) {
+                return response()->json(['success' => false, 'message' => 'Mã lớp đã tồn tại.'], 422);
+            }
+
+            $payload = $this->classService->storeStepOne($request->all());
+            return response()->json(['success' => true, 'data' => $payload]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể lưu bước 1: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Lấy dữ liệu đã lưu của bước 1
+     */
+    public function getStepOne(): JsonResponse
+    {
+        $data = $this->classService->getStepOne();
+        return response()->json(['success' => true, 'data' => $data]);
+    }
+
+    /**
+     * API: Danh sách giảng viên
+     */
+    public function lecturers(): JsonResponse
+    {
+        return response()->json([
+            'success' => true,
+            'data' => $this->classService->getLecturers(),
+        ]);
+    }
+
+    /**
+     * API: Danh sách sinh viên
+     */
+    public function students(Request $request): JsonResponse
+    {
+        $keyword = $request->get('keyword');
+        return response()->json([
+            'success' => true,
+            'data' => $this->classService->getStudents($keyword),
+        ]);
+    }
+
+    /**
+     * API: Danh sách khoa
+     */
+    public function faculties(): JsonResponse
+    {
+        try {
+            $faculties = $this->classService->getFaculties();
+            return response()->json([
+                'success' => true,
+                'data' => $faculties,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi khi lấy khoa: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Hoàn tất tạo lớp (bước 2)
+     */
+    public function finalize(Request $request): JsonResponse
+    {
+        $request->validate([
+            'lecturer_id' => 'required|integer',
+            'student_ids' => 'required|array|min:1',
+            'student_ids.*' => 'integer'
+        ]);
+
+        try {
+            $result = $this->classService->createWithEnrollments($request->all());
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'message' => 'Tạo lớp học thành công',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
      * API: Lấy danh sách chuyên ngành theo khoa
      */
     public function getMajorsByFaculty(Request $request): JsonResponse
     {
         try {
             $facultyId = (int) $request->get('faculty_id', 0);
-            $options = $this->classService->getFilterOptions();
             // Gọi lại repository trực tiếp qua service để lấy majors theo faculty
             $majors = app(\App\Repositories\ClassSectionRepository::class)->getMajorsByFaculty($facultyId);
 
             return response()->json([
                 'success' => true,
-                'data' => [ 'majors' => $majors ],
+                'data' => $majors,
             ]);
         } catch (\Exception $e) {
             return response()->json([

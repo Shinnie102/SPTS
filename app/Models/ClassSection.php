@@ -20,6 +20,7 @@ class ClassSection extends Model
         'semester_id',
         'lecturer_id',
         'class_section_status_id',
+        'capacity',
     ];
 
     public function courseVersion()
