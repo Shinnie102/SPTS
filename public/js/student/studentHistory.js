@@ -79,16 +79,16 @@ function renderAttendanceTable(semesterKey) {
         row.className = 'course-row';
         row.dataset.courseIndex = index;
         
-        // Mã lớp học
+        // Mã lớp học (with expand icon)
         const classCodeCell = row.insertCell();
-        classCodeCell.innerHTML = `<span class="course-code">${course.class_code || 'N/A'}</span>`;
-        
-        // Mã môn học (with expand icon)
-        const codeCell = row.insertCell();
-        codeCell.innerHTML = `
+        classCodeCell.innerHTML = `
             <span class="expand-icon">▶</span>
-            <span class="course-code">${course.code}</span>
+            <span class="course-code">${course.class_code || 'N/A'}</span>
         `;
+        
+        // Mã môn học
+        const codeCell = row.insertCell();
+        codeCell.innerHTML = `<span class="course-code">${course.code}</span>`;
         
         // Tên môn học
         row.insertCell().textContent = course.name;
@@ -161,6 +161,10 @@ function renderAttendanceTable(semesterKey) {
                         <tr>
                             <th>STT</th>
                             <th>Ngày học</th>
+                            <th>Giờ học</th>
+                            <th>Phòng</th>
+                            <th>Chủ đề</th>
+                            <th>Giờ check-in</th>
                             <th>Trạng thái</th>
                         </tr>
                     </thead>
@@ -196,10 +200,14 @@ function renderAttendanceTable(semesterKey) {
                                 <tr>
                                     <td>${detail.stt}</td>
                                     <td>${detail.date}</td>
+                                    <td>${detail.time || '-'}</td>
+                                    <td>${detail.room || '-'}</td>
+                                    <td style="max-width: 200px; text-align: left;">${detail.topic || '-'}</td>
+                                    <td>${detail.check_in_time || '-'}</td>
                                     <td><span class="detail-status ${statusClass}">${statusText}</span></td>
                                 </tr>
                             `;
-                        }).join('') : '<tr><td colspan="3" style="text-align: center; color: #94a3b8;">Chưa có dữ liệu</td></tr>'}
+                        }).join('') : '<tr><td colspan="7" style="text-align: center; color: #94a3b8;">Chưa có dữ liệu</td></tr>'}
                     </tbody>
                 </table>
             </div>

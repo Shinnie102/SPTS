@@ -52,19 +52,35 @@ class StudentAlertWarning {
 
     /**
      * Fetch dữ liệu cảnh báo từ backend
-     * Có thể thay thế bằng data thực tế từ API
      */
     async fetchWarnings() {
         try {
-            // Uncomment dòng dưới khi có API thực
-            // const response = await fetch(this.config.apiEndpoint);
-            // this.warnings = await response.json();
+            const response = await fetch(this.config.apiEndpoint, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                credentials: 'same-origin'
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
             
-            // Demo data - Thay bằng API call thực tế
-            this.warnings = await this.getDemoWarnings();
+            if (result.success) {
+                this.warnings = result.data;
+            } else {
+                console.error('API error:', result.message);
+                this.warnings = { hasViolations: false, warnings: [] };
+            }
         } catch (error) {
             console.error('Lỗi khi fetch warnings:', error);
-            this.warnings = [];
+            // Return empty warnings on error
+            this.warnings = { hasViolations: false, warnings: [] };
         }
     }
 

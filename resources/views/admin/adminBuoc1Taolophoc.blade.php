@@ -5,6 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="class-section-id" content="{{ $classSectionId ?? '' }}">
+    <meta name="route-admin-lophoc-api-create-options" content="{{ route('admin.lophoc.api.create.options') }}">
+    <meta name="route-admin-lophoc-api-create-step1" content="{{ route('admin.lophoc.api.create.step1') }}">
+    <meta name="route-admin-lophoc-api-update-step1" content="{{ isset($classSectionId) ? route('admin.lophoc.api.update.step1', ['id' => $classSectionId]) : '' }}">
+    <meta name="route-admin-lophoc-api-detail" content="{{ isset($classSectionId) ? route('admin.lophoc.api.show', ['id' => $classSectionId]) : '' }}"><meta name="route-admin-lophoc-api-semesters-by-year" content="{{ route('admin.lophoc.api.semestersByYear') }}">
+<meta name="route-admin-lophoc-api-courses-by-major" content="{{ route('admin.lophoc.api.coursesByMajor') }}">
+<meta name="route-admin-lophoc-api-majors" content="{{ route('admin.lophoc.api.majors') }}">    <meta name="route-admin-lophoc-api-create-step1-get" content="{{ route('admin.lophoc.api.create.step1.get') }}">
     <!-- hạn chế đụng vào file overall.css -->
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
     <!-- --------------------------------- -->
@@ -85,10 +92,8 @@
 
                     <div id="duoi">
                         <div id="trai">
-                            <p class="ten">Lịch học</p>
-                            <select name="lichhoc" id="lichhoc">-- Chọn lịch học --
-                                <option value="-- Chọn lịch học --">-- Chọn lịch học --</option>
-                            </select>
+                            <p class="ten">Lịch học <span>(*)</span></p>
+                            <div id="lichhoc" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; padding: 5px; background: white;"></div>
                         </div>
                         <div id="phai">
                             <p class="ten">Phòng học</p>
@@ -152,6 +157,7 @@
 
     <!-- Javascript -->
     <script src="{{ asset('js/admin/admin.js') }}"></script>
+    <script src="{{ asset('js/admin/adminBuoc1Taolophoc.js') }}"></script>
 </body>
 
 </html>

@@ -66,7 +66,20 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
         // API Routes
         Route::get('/api', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getClassSections'])->name('api.index');
         Route::get('/api/filters', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getFilterOptions'])->name('api.filters');
+        Route::get('/api/faculties', [\App\Http\Controllers\Admin\ClassSectionController::class, 'faculties'])->name('api.faculties');
         Route::get('/api/majors', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getMajorsByFaculty'])->name('api.majors');
+        Route::get('/api/majors-by-faculty', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getMajorsByFaculty'])->name('api.majors-by-faculty');
+        Route::get('/api/create/options', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getCreateOptions'])->name('api.create.options');
+        Route::get('/api/semesters-by-year', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getSemestersByYear'])->name('api.semestersByYear');
+        Route::get('/api/courses-by-major', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getCoursesByMajor'])->name('api.coursesByMajor');
+        Route::post('/api/create/step1', [\App\Http\Controllers\Admin\ClassSectionController::class, 'storeStepOne'])->name('api.create.step1');
+        Route::get('/api/create/step1', [\App\Http\Controllers\Admin\ClassSectionController::class, 'getStepOne'])->name('api.create.step1.get');
+        Route::get('/api/lecturers', [\App\Http\Controllers\Admin\ClassSectionController::class, 'lecturers'])->name('api.lecturers');
+        Route::get('/api/students', [\App\Http\Controllers\Admin\ClassSectionController::class, 'students'])->name('api.students');
+        Route::post('/api/create/step2', [\App\Http\Controllers\Admin\ClassSectionController::class, 'finalize'])->name('api.create.step2');
+        Route::put('/api/{id}/update-step1', [\App\Http\Controllers\Admin\ClassSectionController::class, 'updateStepOne'])->name('api.update.step1');
+        Route::put('/api/{id}/update-step2', [\App\Http\Controllers\Admin\ClassSectionController::class, 'updateStepTwo'])->name('api.update.step2');
+        Route::delete('/api/enrollment/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'deleteEnrollment'])->name('api.enrollment.delete');
         Route::get('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'show'])->name('api.show');
         Route::delete('/api/{id}', [\App\Http\Controllers\Admin\ClassSectionController::class, 'destroy'])->name('api.destroy');
 
@@ -77,6 +90,14 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
         Route::get('/tao-buoc-2', function () {
             return view('admin.adminBuoc2Taolophoc');
         })->name('create.step2');
+
+        // Edit steps
+        Route::get('/{id}/sua-buoc-1', function ($id) {
+            return view('admin.adminBuoc1Taolophoc', ['classSectionId' => $id]);
+        })->name('edit.step1');
+        Route::get('/{id}/sua-buoc-2', function ($id) {
+            return view('admin.adminBuoc2Taolophoc', ['classSectionId' => $id]);
+        })->name('edit.step2');
 
         // Detail (keep old route)
         Route::get('/{id}/chi-tiet', function ($id) {
@@ -202,5 +223,9 @@ Route::middleware(['auth', 'role:STUDENT'])->prefix('student')->name('student.')
         )->name('dashboard.api.gpaChart');
      Route::post('/profile/update', [App\Http\Controllers\Student\Profile::class, 'update'])
     ->name('profile.update');
+    
+    // Student Warnings API
+    Route::get('/warnings/api', [App\Http\Controllers\Student\StudentWarningController::class, 'getWarnings'])
+        ->name('warnings.api');
 
 });
