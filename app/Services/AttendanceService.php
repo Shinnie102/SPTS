@@ -55,7 +55,7 @@ class AttendanceService
     protected function calculateEnrollmentStats(Enrollment $enrollment): ?array
     {
         $attendances = $enrollment->attendances()
-            ->with(['classMeeting', 'status'])
+            ->with(['classMeeting.room', 'classMeeting.timeSlot', 'status'])
             ->orderBy('marked_at')
             ->get();
         
@@ -88,11 +88,43 @@ class AttendanceService
         $details = [];
         foreach ($attendances as $index => $attendance) {
             $classMeeting = $attendance->classMeeting;
+            
+            // Format time range (e.g., "08:00-10:00")
+            $timeRange = '-';
+            if ($classMeeting && $classMeeting->timeSlot) {
+                $startTime = \Carbon\Carbon::parse($classMeeting->timeSlot->start_time)->format('H:i');
+                $endTime = \Carbon\Carbon::parse($classMeeting->timeSlot->end_time)->format('H:i');
+                $timeRange = "{$startTime}-{$endTime}";
+            }
+            
+            // Get room code
+            $roomCode = '-';
+            if ($classMeeting && $classMeeting->room) {
+                $roomCode = $classMeeting->room->room_code;
+            }
+            
+            // Get topic/note
+            $topic = '-';
+            if ($classMeeting && $classMeeting->topic) {
+                $topic = $classMeeting->topic;
+            } elseif ($classMeeting && $classMeeting->note) {
+                $topic = $classMeeting->note;
+            }
+            
+            // Format check-in time (using marked_at as check-in time)
+            $checkInTime = '-';
+            if ($attendance->marked_at) {
+                $checkInTime = $attendance->marked_at->format('H:i');
+            }
+            
             $details[] = [
                 'stt' => $index + 1,
                 'date' => $attendance->marked_at ? $attendance->marked_at->format('d/m/Y') : 'N/A',
+                'time' => $timeRange,
+                'room' => $roomCode,
+                'topic' => $topic,
+                'check_in_time' => $checkInTime,
                 'status' => strtolower($attendance->status->code), // present, absent, late
-                'note' => $classMeeting ? $classMeeting->note : '' // Thêm note từ class_meeting
             ];
         }
 

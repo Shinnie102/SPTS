@@ -70,26 +70,38 @@ class StudentWarningService
         // Lấy danh sách lớp đang học của sinh viên
         $activeEnrollments = $this->getActiveEnrollments($studentId, $currentSemester->semester_id);
 
-        // 1. Kiểm tra cảnh báo GPA học kỳ
-        $gpaWarning = $this->checkGPAWarning($studentId, $currentSemester->semester_id);
-        if ($gpaWarning) {
-            $warnings[] = $gpaWarning;
+        // Tính GPA học kỳ một lần (để tránh duplicate)
+        $semesterGPA = $this->calculateSemesterGPA($studentId, $currentSemester->semester_id);
+        
+        // Tính GPA tổng tích lũy (cumulative GPA)
+        $cumulativeGPA = $this->calculateCumulativeGPA($studentId);
+
+        // 1. Kiểm tra cảnh báo GPA tổng tích lũy
+        $cumulativeGPAWarning = $this->checkCumulativeGPAWarning($cumulativeGPA);
+        if ($cumulativeGPAWarning) {
+            $warnings[] = $cumulativeGPAWarning;
         }
 
-        // 2. Kiểm tra cảnh báo chuyên cần
+        // 2. Kiểm tra cảnh báo GPA học kỳ
+        $semesterGPAWarning = $this->checkSemesterGPAWarning($semesterGPA);
+        if ($semesterGPAWarning) {
+            $warnings[] = $semesterGPAWarning;
+        }
+
+        // 3. Kiểm tra cảnh báo chuyên cần
         $attendanceWarning = $this->checkAttendanceWarning($studentId, $activeEnrollments);
         if ($attendanceWarning) {
             $warnings[] = $attendanceWarning;
         }
 
-        // 3. Kiểm tra môn học rớt
+        // 4. Kiểm tra môn học rớt
         $failedCoursesWarning = $this->checkFailedCourses($studentId);
         if ($failedCoursesWarning) {
             $warnings[] = $failedCoursesWarning;
         }
 
-        // 4. Kiểm tra cảnh báo học vụ tổng hợp (GPA + chuyên cần)
-        $compositeWarning = $this->checkCompositeWarning($studentId, $currentSemester->semester_id, $activeEnrollments);
+        // 5. Kiểm tra cảnh báo học vụ tổng hợp (GPA + chuyên cần)
+        $compositeWarning = $this->checkCompositeWarning($semesterGPA, $activeEnrollments);
         if ($compositeWarning) {
             $warnings[] = $compositeWarning;
         }
@@ -122,12 +134,11 @@ class StudentWarningService
     }
 
     /**
-     * Kiểm tra cảnh báo GPA học kỳ
+     * Tính GPA học kỳ
      */
-    private function checkGPAWarning(int $studentId, int $semesterId): ?array
+    private function calculateSemesterGPA(int $studentId, int $semesterId): ?float
     {
-        // Tính GPA học kỳ hiện tại
-        $semesterGPA = DB::table('student_score')
+        $gpa = DB::table('student_score')
             ->join('enrollment', 'student_score.enrollment_id', '=', 'enrollment.enrollment_id')
             ->join('class_section', 'enrollment.class_section_id', '=', 'class_section.class_section_id')
             ->where('enrollment.student_id', $studentId)
@@ -135,6 +146,57 @@ class StudentWarningService
             ->whereNotNull('student_score.score_value')
             ->avg('student_score.score_value');
 
+        return $gpa;
+    }
+
+    /**
+     * Tính GPA tổng tích lũy (cumulative GPA) của tất cả các học kỳ đã hoàn thành
+     */
+    private function calculateCumulativeGPA(int $studentId): ?float
+    {
+        $gpa = DB::table('student_score')
+            ->join('enrollment', 'student_score.enrollment_id', '=', 'enrollment.enrollment_id')
+            ->where('enrollment.student_id', $studentId)
+            ->where('enrollment.enrollment_status_id', 2) // COMPLETED enrollments only
+            ->whereNotNull('student_score.score_value')
+            ->avg('student_score.score_value');
+
+        return $gpa;
+    }
+
+    /**
+     * Kiểm tra cảnh báo GPA tổng tích lũy
+     */
+    private function checkCumulativeGPAWarning(?float $cumulativeGPA): ?array
+    {
+        if ($cumulativeGPA === null || $cumulativeGPA >= $this->minGPA) {
+            return null;
+        }
+
+        $severity = $cumulativeGPA < 1.0 ? 'high' : 'medium';
+
+        return [
+            'type' => 'cumulative_gpa_warning',
+            'title' => 'Cảnh báo học vụ (GPA Tích lũy)',
+            'message' => sprintf(
+                'GPA tích lũy của bạn là %.2f, thấp hơn mức tối thiểu %.2f. Bạn có nguy cơ bị đình chỉ học nếu không cải thiện kết quả học tập.',
+                $cumulativeGPA,
+                $this->minGPA
+            ),
+            'severity' => $severity,
+            'details' => [
+                ['label' => 'GPA tích lũy hiện tại', 'value' => number_format($cumulativeGPA, 2)],
+                ['label' => 'GPA tối thiểu yêu cầu', 'value' => number_format($this->minGPA, 2)],
+                ['label' => 'GPA tốt nghiệp yêu cầu', 'value' => number_format($this->graduationGPA, 2)]
+            ]
+        ];
+    }
+
+    /**
+     * Kiểm tra cảnh báo GPA học kỳ
+     */
+    private function checkSemesterGPAWarning(?float $semesterGPA): ?array
+    {
         if ($semesterGPA === null || $semesterGPA >= $this->minGPA) {
             return null;
         }
@@ -142,10 +204,10 @@ class StudentWarningService
         $severity = $semesterGPA < 1.0 ? 'high' : 'medium';
 
         return [
-            'type' => 'gpa_warning',
-            'title' => 'Cảnh báo học vụ (GPA)',
+            'type' => 'semester_gpa_warning',
+            'title' => 'Cảnh báo học vụ (GPA Học kỳ)',
             'message' => sprintf(
-                'GPA học kỳ của bạn là %.2f, thấp hơn mức tối thiểu %.2f. Bạn cần cải thiện kết quả học tập để tránh bị cảnh cáo học vụ.',
+                'GPA học kỳ của bạn là %.2f, thấp hơn mức tối thiểu %.2f. Bạn cần cải thiện kết quả học tập để không bị cảnh báo học vụ.',
                 $semesterGPA,
                 $this->minGPA
             ),
@@ -262,17 +324,8 @@ class StudentWarningService
     /**
      * Kiểm tra cảnh báo học vụ tổng hợp (GPA và chuyên cần đều không đạt)
      */
-    private function checkCompositeWarning(int $studentId, int $semesterId, $enrollments): ?array
+    private function checkCompositeWarning(?float $semesterGPA, $enrollments): ?array
     {
-        // Tính GPA học kỳ
-        $semesterGPA = DB::table('student_score')
-            ->join('enrollment', 'student_score.enrollment_id', '=', 'enrollment.enrollment_id')
-            ->join('class_section', 'enrollment.class_section_id', '=', 'class_section.class_section_id')
-            ->where('enrollment.student_id', $studentId)
-            ->where('class_section.semester_id', $semesterId)
-            ->whereNotNull('student_score.score_value')
-            ->avg('student_score.score_value');
-
         // Kiểm tra xem có môn nào dưới ngưỡng chuyên cần không
         $hasLowAttendance = false;
         foreach ($enrollments as $enrollment) {

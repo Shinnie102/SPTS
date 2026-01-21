@@ -271,10 +271,33 @@
     font-weight: 600;
     color: #475569;
     border-bottom: 1px solid #e2e8f0;
+    font-size: 12px;
 }
 
 .detail-table th:first-child {
+    text-align: center;
+    width: 50px;
+}
+
+.detail-table th:nth-child(2) {
+    width: 100px;
+}
+
+.detail-table th:nth-child(3) {
+    width: 100px;
+}
+
+.detail-table th:nth-child(4) {
+    width: 80px;
+}
+
+.detail-table th:nth-child(5) {
     text-align: left;
+    min-width: 200px;
+}
+
+.detail-table th:nth-child(6) {
+    width: 100px;
 }
 
 .detail-table tbody tr {
@@ -289,10 +312,17 @@
     padding: 10px 12px;
     text-align: center;
     color: #334155;
+    font-size: 13px;
 }
 
 .detail-table td:first-child {
+    text-align: center;
+    font-weight: 500;
+}
+
+.detail-table td:nth-child(5) {
     text-align: left;
+    color: #64748b;
 }
 
 /* Detail status badges */

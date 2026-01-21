@@ -4,8 +4,9 @@ const attendanceData = {
     semesters: {
         '2025-2026': [
             {
-                code: 'CS101',
-                name: 'Lập trình mạng',
+                classCode: 'CS202_HK1-2024_08',
+                code: 'CS202',
+                name: 'Cơ sở Dữ liệu',
                 totalSessions: 15,
                 present: 15,
                 absent: 0,
@@ -19,8 +20,9 @@ const attendanceData = {
                 ]
             },
             {
-                code: 'CS101',
-                name: 'Lập trình mạng',
+                classCode: 'SE101_HK1-2024_11',
+                code: 'SE101',
+                name: 'Kỹ thuật Phần mềm',
                 totalSessions: 30,
                 present: 20,
                 absent: 10,
@@ -41,8 +43,9 @@ const attendanceData = {
                 ]
             },
             {
-                code: 'CS101',
-                name: 'Lập trình mạng',
+                classCode: 'IT101_HK1-2024_14',
+                code: 'IT101',
+                name: 'Tin học Cơ bản',
                 totalSessions: 15,
                 present: 6,
                 absent: 4,
@@ -55,8 +58,9 @@ const attendanceData = {
                 ]
             },
             {
-                code: 'CS101',
-                name: 'Lập trình mạng',
+                classCode: 'IT201_HK1-2024_17',
+                code: 'IT201',
+                name: 'Mạng Máy tính Cơ bản',
                 totalSessions: 15,
                 present: 5,
                 absent: 0,
@@ -68,6 +72,7 @@ const attendanceData = {
         ],
         '2024-2025-2': [
             {
+                classCode: 'CS102_HK2-2024_05',
                 code: 'CS102',
                 name: 'Cơ sở dữ liệu',
                 totalSessions: 20,
@@ -109,12 +114,15 @@ function renderAttendanceTable(semesterKey) {
         row.className = 'course-row';
         row.dataset.courseIndex = index;
         
-        // Mã môn học (with expand icon)
-        const codeCell = row.insertCell();
-        codeCell.innerHTML = `
+        // Mã lớp học (with expand icon)
+        const classCodeCell = row.insertCell();
+        classCodeCell.innerHTML = `
             <span class="expand-icon">▶</span>
-            <span class="course-code">${course.code}</span>
+            <span class="course-code">${course.classCode}</span>
         `;
+        
+        // Mã môn học
+        row.insertCell().textContent = course.code;
         
         // Tên môn học
         row.insertCell().textContent = course.name;

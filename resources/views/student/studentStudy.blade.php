@@ -92,7 +92,7 @@
                             <div class="card-icon"><i class="fa-solid fa-book-open"></i></div>
                             <p class="label">Tín chỉ tích lũy</p>
                             <h2 id="total-credits" class="stat-value">{{ $scoreData['summary']['total_credits'] ?? 0 }}</h2>
-                            <p class="description">Gồm {{ $scoreData['summary']['passed_credits'] ?? 0 }} tín chỉ đã đạt</p>
+                            <p class="description">{{ $scoreData['summary']['passed_credits'] ?? 0 }} / 150 tín chỉ đã đạt</p>
                         </div>
                         <div class="card">
                             <div class="card-icon"><i class="fa-solid fa-bullseye"></i></div>
