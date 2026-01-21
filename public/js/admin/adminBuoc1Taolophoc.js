@@ -1,7 +1,13 @@
 (() => {
     const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+    const classSectionIdMeta = document.querySelector('meta[name="class-section-id"]');
+    const classSectionId = classSectionIdMeta?.content || '';
+    const isEditMode = !!classSectionId;
+    
     const optionsMeta = document.querySelector('meta[name="route-admin-lophoc-api-create-options"]');
     const step1Meta = document.querySelector('meta[name="route-admin-lophoc-api-create-step1"]');
+    const updateStep1Meta = document.querySelector('meta[name="route-admin-lophoc-api-update-step1"]');
+    const detailMeta = document.querySelector('meta[name="route-admin-lophoc-api-detail"]');
     const semestersByYearMeta = document.querySelector('meta[name="route-admin-lophoc-api-semesters-by-year"]');
     const coursesByMajorMeta = document.querySelector('meta[name="route-admin-lophoc-api-courses-by-major"]');
     const majorsMeta = document.querySelector('meta[name="route-admin-lophoc-api-majors"]');
@@ -10,6 +16,8 @@
 
     const optionsUrl = optionsMeta.content;
     const step1Url = step1Meta.content;
+    const updateStep1Url = updateStep1Meta?.content;
+    const detailUrl = detailMeta?.content;
     const semestersByYearUrl = semestersByYearMeta?.content;
     const coursesByMajorUrl = coursesByMajorMeta?.content;
     const majorsUrl = majorsMeta?.content;
@@ -103,6 +111,58 @@
         }));
     }
 
+    function ensureMeetingDateCheckbox(dateValue) {
+        // Tạo checkbox nếu ngày không nằm trong 14 ngày được render sẵn
+        const container = selects.meetingDate;
+        if (!container) return;
+        const existing = container.querySelector(`input.meeting-date-checkbox[value="${dateValue}"]`);
+        if (existing) return existing;
+
+        const d = new Date(dateValue);
+        const labelText = d.toLocaleDateString('vi-VN');
+        const dayName = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()];
+
+        const wrapper = document.createElement('label');
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.justifyContent = 'center';
+        wrapper.style.gap = '8px';
+        wrapper.style.padding = '8px';
+        wrapper.style.border = '1px solid #ddd';
+        wrapper.style.borderRadius = '3px';
+        wrapper.style.cursor = 'pointer';
+        wrapper.style.transition = 'all 0.2s';
+        wrapper.style.background = '#e3f2fd';
+        wrapper.style.borderColor = '#1976d2';
+        wrapper.classList.add('date-checkbox-label');
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.className = 'meeting-date-checkbox';
+        input.value = dateValue;
+        input.dataset.label = labelText;
+        input.checked = true;
+        input.style.cursor = 'pointer';
+        input.style.width = '16px';
+        input.style.height = '16px';
+        input.style.margin = '0';
+        input.style.flexShrink = '0';
+        input.onchange = function () {
+            this.parentElement.style.background = this.checked ? '#e3f2fd' : '#f9f9f9';
+            this.parentElement.style.borderColor = this.checked ? '#1976d2' : '#ddd';
+        };
+
+        const span = document.createElement('span');
+        span.style.fontSize = '1rem';
+        span.style.flex = '1';
+        span.innerHTML = `<div style="font-weight: 500; line-height: 1.2;">${labelText}</div><div style="font-size: 0.85rem; color: #666; line-height: 1;">${dayName}</div>`;
+
+        wrapper.appendChild(input);
+        wrapper.appendChild(span);
+        container.appendChild(wrapper);
+        return input;
+    }
+
     function generateClassCode() {
         const courseOpt = selects.course?.selectedOptions[0];
         const semesterOpt = selects.semester?.selectedOptions[0];
@@ -188,8 +248,8 @@
             return;
         }
 
-        const res = await fetch(step1Url, {
-            method: 'POST',
+        const res = await fetch(isEditMode ? updateStep1Url : step1Url, {
+            method: isEditMode ? 'PUT' : 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': csrfToken,
@@ -199,9 +259,13 @@
         });
         const json = await res.json();
         if (res.ok && json.success) {
-            window.location.href = '/admin/lop-hoc/tao-buoc-2';
+            if (isEditMode) {
+                window.location.href = `/admin/lop-hoc/${classSectionId}/chi-tiet`;
+            } else {
+                window.location.href = '/admin/lop-hoc/tao-buoc-2';
+            }
         } else {
-            alert(json.message || 'Không thể lưu bước 1');
+            alert(json.message || `Không thể ${isEditMode ? 'cập nhật' : 'lưu'} bước 1`);
         }
     }
 
@@ -234,7 +298,10 @@
         });
         const json = await res.json();
         if (json.success) {
-            addOptions(selects.major, json.data || [], (m) => ({ value: m.id, label: m.name }));
+            const majors = Array.isArray(json.data) ? json.data : (json.data?.majors || []);
+            addOptions(selects.major, majors, (m) => ({ value: m.id, label: m.name }));
+        } else {
+            addOptions(selects.major, [], () => ({ value: '', label: '-- Chọn --' }));
         }
     }
 
@@ -297,10 +364,110 @@
         }
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadOptions();
+    async function loadExistingData() {
+        try {
+            const res = await fetch(detailUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                }
+            });
+            const json = await res.json();
+            if (!json.success || !json.data) {
+                alert('Không thể tải thông tin lớp học');
+                return;
+            }
+            
+            const data = json.data.class_info || json.data;
+            if (!data) {
+                alert('Không thể tải thông tin lớp học');
+                return;
+            }
+            
+            // Set academic year first, then trigger semester load
+            if (data.academic_year_id) {
+                selects.academicYear.value = data.academic_year_id;
+                await loadSemestersByYear(data.academic_year_id);
+            }
+            
+            // Set semester
+            if (data.semester_id) {
+                selects.semester.value = data.semester_id;
+            }
+            
+            // Set faculty first, then trigger major load
+            if (data.faculty_id) {
+                selects.faculty.value = data.faculty_id;
+                await loadMajorsByFaculty(data.faculty_id);
+            }
+            
+            // Set major, then trigger course load
+            if (data.major_id) {
+                selects.major.value = data.major_id;
+                await loadCoursesByMajor(data.major_id);
+            }
+            
+            // Set course version
+            if (data.course_version_id) {
+                selects.course.value = data.course_version_id;
+            }
+            
+            // Set class code
+            if (data.class_code && classCodeInput) {
+                classCodeInput.value = data.class_code;
+            }
+            
+            // Set time slot
+            if (data.time_slot_id) {
+                selects.timeSlot.value = data.time_slot_id;
+            }
+            
+            // Set room
+            if (data.room_id) {
+                selects.room.value = data.room_id;
+            }
+            
+            // Set capacity
+            if (data.capacity && capacityInput) {
+                capacityInput.value = data.capacity;
+            }
+            
+            // Set meeting dates - ensure checkboxes exist and check them
+            if (json.data.meetings && json.data.meetings.length > 0) {
+                const existingDates = json.data.meetings.map(m => m.meeting_date);
+                existingDates.forEach(dateVal => {
+                    const cb = ensureMeetingDateCheckbox(dateVal) || document.querySelector(`.meeting-date-checkbox[value="${dateVal}"]`);
+                    if (cb) {
+                        cb.checked = true;
+                        cb.parentElement.style.background = '#e3f2fd';
+                        cb.parentElement.style.borderColor = '#1976d2';
+                    }
+                });
+            }
+            
+            updateSummary();
+        } catch (error) {
+            console.error('Error loading existing data:', error);
+            alert('Lỗi khi tải thông tin lớp học');
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadOptions();
         bindSummaryUpdates();
         bindCascadingDropdowns();
+        
+        // Update button text for edit mode
+        if (isEditMode && continueBtn) {
+            continueBtn.textContent = 'Cập nhật';
+        }
+        
+        // Load existing data in edit mode
+        if (isEditMode && detailUrl) {
+            await loadExistingData();
+        }
+        
         continueBtn?.addEventListener('click', submitStep1);
     });
 })();

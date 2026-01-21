@@ -279,13 +279,17 @@ class ClassSectionController extends Controller
     public function getMajorsByFaculty(Request $request): JsonResponse
     {
         try {
-            $facultyId = (int) $request->get('faculty_id', 0);
-            // Gọi lại repository trực tiếp qua service để lấy majors theo faculty
+            $facultyId = $request->get('faculty_id');
+            // Nếu facultyId trống hoặc 0, lấy tất cả majors
+            $facultyId = !empty($facultyId) ? (int) $facultyId : 0;
+            
             $majors = app(\App\Repositories\ClassSectionRepository::class)->getMajorsByFaculty($facultyId);
 
             return response()->json([
                 'success' => true,
-                'data' => $majors,
+                'data' => [
+                    'majors' => $majors,
+                ],
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -326,6 +330,73 @@ class ClassSectionController extends Controller
     }
 
     /**
+     * API: Cập nhật thông tin lớp học (bước 1)
+     * 
+     * @param int $id ID của lớp học
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateStepOne(int $id, Request $request): JsonResponse
+    {
+        $request->validate([
+            'class_code' => 'required|string|max:50',
+            'course_version_id' => 'required|integer',
+            'semester_id' => 'required|integer',
+            'capacity' => 'required|integer|min:1',
+            'time_slot_id' => 'required|integer',
+            'room_id' => 'required|integer',
+            'meeting_dates' => 'required|array|min:1',
+            'meeting_dates.*' => 'date',
+        ]);
+
+        try {
+            // Check if class code exists for other classes
+            $existingClass = $this->classService->getClassCodeExistsForUpdate($request->get('class_code'), $id);
+            if ($existingClass) {
+                return response()->json(['success' => false, 'message' => 'Mã lớp đã tồn tại.'], 422);
+            }
+
+            $result = $this->classService->updateStepOne($id, $request->all());
+            return response()->json(['success' => true, 'data' => $result, 'message' => 'Cập nhật thông tin lớp học thành công']);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không thể cập nhật: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Cập nhật thành viên lớp học (bước 2)
+     * 
+     * @param int $id ID của lớp học
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateStepTwo(int $id, Request $request): JsonResponse
+    {
+        $request->validate([
+            'lecturer_id' => 'required|integer',
+            'student_ids' => 'required|array|min:1',
+            'student_ids.*' => 'integer'
+        ]);
+
+        try {
+            $result = $this->classService->updateStepTwo($id, $request->all());
+            return response()->json([
+                'success' => true,
+                'data' => $result,
+                'message' => 'Cập nhật thành viên lớp học thành công',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+    }
+
+    /**
      * API: Xóa cứng một lớp học phần và toàn bộ dữ liệu liên quan
      *
      * @param int $id
@@ -343,6 +414,25 @@ class ClassSectionController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Không thể xóa lớp học phần: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * API: Xóa một enrollment khỏi lớp
+     */
+    public function deleteEnrollment(int $id): JsonResponse
+    {
+        try {
+            $this->classService->deleteEnrollment($id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã xóa sinh viên khỏi lớp',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
             ], 500);
         }
     }

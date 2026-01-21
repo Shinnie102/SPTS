@@ -235,4 +235,24 @@
     .chart-header select {
         width: 100%;
     }
+    .quick-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+.quick-card:hover {
+    background-color: #f5f8ff;
+}
+
+/* Đảm bảo icon không chặn click */
+.quick-card * {
+    pointer-events: none;
+}
+
 }

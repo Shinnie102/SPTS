@@ -261,6 +261,120 @@ class ClassSectionService
         return $this->classRepository->classCodeExists($classCode);
     }
 
+    /**
+     * Xóa một enrollment khỏi lớp, kèm attendance liên quan
+     */
+    public function deleteEnrollment(int $enrollmentId): void
+    {
+        DB::transaction(function () use ($enrollmentId) {
+            Attendance::where('enrollment_id', $enrollmentId)->delete();
+            Enrollment::where('enrollment_id', $enrollmentId)->delete();
+        });
+    }
+
+    /**
+     * Kiểm tra mã lớp đã tồn tại cho các lớp khác (dùng khi update)
+     */
+    public function getClassCodeExistsForUpdate(string $classCode, int $classSectionId): bool
+    {
+        return $this->classRepository->classCodeExistsForUpdate($classCode, $classSectionId);
+    }
+
+    /**
+     * Cập nhật thông tin lớp học (bước 1)
+     */
+    public function updateStepOne(int $classSectionId, array $data): array
+    {
+        try {
+            DB::beginTransaction();
+
+            // Xử lý meeting_dates array
+            $meetingDates = is_array($data['meeting_dates']) ? $data['meeting_dates'] : [$data['meeting_dates']];
+            $firstMeetingDate = !empty($meetingDates) ? reset($meetingDates) : null;
+
+            // Cập nhật thông tin lớp học
+            $updateData = [
+                'class_code' => trim($data['class_code']),
+                'course_version_id' => (int) $data['course_version_id'],
+                'semester_id' => (int) $data['semester_id'],
+                'capacity' => (int) $data['capacity'],
+                'time_slot_id' => (int) $data['time_slot_id'],
+                'room_id' => (int) $data['room_id'],
+                'meeting_date' => $firstMeetingDate,
+            ];
+
+            $classSection = ClassSection::findOrFail($classSectionId);
+            $classSection->update($updateData);
+
+            // Xóa các buổi học cũ
+            ClassMeeting::where('class_section_id', $classSectionId)->delete();
+
+            // Tạo các buổi học mới
+            $meetingStatusId = DB::table('meeting_status')->where('code', 'SCHEDULED')->value('status_id') ?? 1;
+            foreach ($meetingDates as $date) {
+                ClassMeeting::create([
+                    'class_section_id' => $classSectionId,
+                    'meeting_date' => $date,
+                    'time_slot_id' => (int) $data['time_slot_id'],
+                    'room_id' => (int) $data['room_id'],
+                    'meeting_status_id' => $meetingStatusId,
+                ]);
+            }
+
+            DB::commit();
+
+            return [
+                'class_section_id' => $classSectionId,
+                'class_code' => $classSection->class_code,
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * Cập nhật thành viên lớp học (bước 2)
+     */
+    public function updateStepTwo(int $classSectionId, array $data): array
+    {
+        try {
+            DB::beginTransaction();
+
+            // Cập nhật giảng viên
+            $classSection = ClassSection::findOrFail($classSectionId);
+            $classSection->update([
+                'lecturer_id' => (int) $data['lecturer_id'],
+            ]);
+
+            // Xóa các enrollment cũ
+            Enrollment::where('class_section_id', $classSectionId)->delete();
+
+            // Tạo enrollment mới cho các sinh viên
+            $enrollmentStatusId = DB::table('enrollment_status')->where('code', 'WAITING')->value('status_id') ?? 1;
+            $studentIds = $data['student_ids'];
+            
+            foreach ($studentIds as $studentId) {
+                Enrollment::create([
+                    'class_section_id' => $classSectionId,
+                    'student_id' => (int) $studentId,
+                    'enrollment_status_id' => $enrollmentStatusId,
+                ]);
+            }
+
+            DB::commit();
+
+            return [
+                'class_section_id' => $classSectionId,
+                'class_code' => $classSection->class_code,
+                'total_students' => count($studentIds),
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
     public function getLecturers(): array
     {
         return $this->classRepository->getActiveLecturers();
@@ -288,41 +402,247 @@ class ClassSectionService
     }
 
     /**
-     * Lấy chi tiết lớp học
+     * Lấy chi tiết lớp học đầy đủ
      * 
      * @param int $classSectionId
      * @return array|null
      */
     public function getClassSectionDetail(int $classSectionId): ?array
     {
-        $classSection = $this->classRepository->findById($classSectionId);
+        $classSection = $this->classRepository->getDetailedClassSection($classSectionId);
 
         if (!$classSection) {
             return null;
         }
 
-        $currentStudents = $classSection->enrollments->count();
-        $displayStatus = $this->deriveDisplayStatus($classSection, $currentStudents);
+        // Lấy danh sách buổi học
+        $meetings = $this->classRepository->getClassMeetings($classSectionId);
+
+        // Format thông tin ca học (lấy từ buổi học đầu tiên)
+        $timeSlotLabel = 'Chưa có lịch';
+        $scheduleLabel = 'Chưa có lịch';
+        $roomLabel = 'Chưa có phòng';
+        
+        if (!empty($meetings)) {
+            $firstMeeting = $meetings[0];
+            
+            // Ca học
+            if (isset($firstMeeting['time_slot'])) {
+                $ts = $firstMeeting['time_slot'];
+                $start = substr($ts['start_time'], 0, 5); // HH:MM
+                $end = substr($ts['end_time'], 0, 5);
+                $timeSlotLabel = "{$start} - {$end}";
+            }
+            
+            // Phòng học (lấy từ buổi đầu tiên)
+            if (isset($firstMeeting['room'])) {
+                $roomLabel = $firstMeeting['room']['room_name'] ?? $firstMeeting['room']['room_code'];
+            }
+            
+            // Lịch học - Lấy các ngày trong tuần từ meeting_date
+            $daysOfWeek = [];
+            foreach ($meetings as $meeting) {
+                if (isset($meeting['meeting_date'])) {
+                    $date = Carbon::parse($meeting['meeting_date']);
+                    $dayNum = $date->dayOfWeek; // 0=Sunday, 1=Monday...
+                    
+                    // Convert to Vietnamese day name
+                    $dayName = $this->getDayNameVietnamese($dayNum);
+                    if (!in_array($dayName, $daysOfWeek)) {
+                        $daysOfWeek[] = $dayName;
+                    }
+                }
+            }
+            
+            if (!empty($daysOfWeek)) {
+                $scheduleLabel = implode(', ', $daysOfWeek);
+            }
+        }
+
+        // Thông tin năm học
+        $academicYearName = $classSection->semester->academicYear->year_code ?? 'N/A';
+        $semesterName = $classSection->semester->semester_code ?? 'N/A';
+
+        // Thông tin khoa và ngành (lấy từ course)
+        $facultyName = 'N/A';
+        $majorName = 'N/A';
+        
+        if ($classSection->courseVersion && $classSection->courseVersion->course) {
+            $course = $classSection->courseVersion->course;
+            
+            // Lấy major đầu tiên
+            if ($course->majors && $course->majors->count() > 0) {
+                $major = $course->majors->first();
+                $majorName = $major->major_name;
+                
+                // Lấy faculty từ major
+                if ($major->faculties && $major->faculties->count() > 0) {
+                    $facultyName = $major->faculties->first()->faculty_name;
+                }
+            }
+        }
+
+        // Thông tin sơ đồ điểm
+        $gradingSchemeName = 'Chưa có sơ đồ điểm';
+        if ($classSection->classGradingScheme && $classSection->classGradingScheme->gradingScheme) {
+            $gradingSchemeName = $classSection->classGradingScheme->gradingScheme->scheme_name;
+        }
+
+        // Format danh sách sinh viên
+        $students = [];
+        $studentCount = 0;
+        
+        // Kiểm tra xem semester có đang diễn ra hay không
+        $semesterIsOngoing = false;
+        if ($classSection->semester && $classSection->semester->status) {
+            // Semester status codes: ONGOING, COMPLETED, UPCOMING
+            $statusCode = strtoupper($classSection->semester->status->code ?? '');
+            $semesterIsOngoing = ($statusCode === 'ONGOING');
+        }
+        
+        foreach ($classSection->enrollments as $enrollment) {
+            $student = $enrollment->student;
+            if (!$student) continue;
+            
+            $studentCount++;
+            
+            // Lấy academic status của sinh viên
+            $academicStatus = $this->classRepository->getStudentAcademicStatus($student->user_id);
+            $academicStatusName = $academicStatus['name'] ?? 'N/A';
+            $academicStatusCode = $academicStatus['code'] ?? '';
+
+            // Nếu lớp chưa/không diễn ra (không ONGOING) thì không cảnh cáo theo học vụ chung
+            if (!$semesterIsOngoing) {
+                $academicStatusName = 'Chưa học';
+                $academicStatusCode = 'PENDING';
+            }
+            
+            // Xác định class CSS cho tình trạng
+            $statusClass = 'good'; // Mặc định
+            if (in_array($academicStatusCode, ['WARNING', 'PROBATION'])) {
+                $statusClass = 'bad';
+            }
+            
+            // Enrollment status
+            $enrollmentStatusName = $enrollment->status->name ?? 'N/A';
+            $enrollmentStatusId = $enrollment->enrollment_status_id;
+            
+            // Xác định class cho select enrollment status
+            // Logic: Nếu status là 1 hoặc 2 (chờ học/đang học) thì check semester
+            // Nếu semester đang diễn ra → default "Đang học" (2), còn không → "Chờ học" (1)
+            $enrollmentClass = 'studying'; // Mặc định
+            if ($enrollmentStatusId == 1 || $enrollmentStatusId == 2) {
+                if ($semesterIsOngoing) {
+                    $enrollmentClass = 'studying'; // Đang học
+                } else {
+                    $enrollmentClass = 'warning'; // Chờ học
+                }
+            } elseif ($enrollmentStatusId == 3) { // DROPPED - stopped
+                $enrollmentClass = 'stopped';
+            } elseif ($enrollmentStatusId == 4) { // COMPLETED - completed
+                $enrollmentClass = 'completed';
+            } elseif ($enrollmentStatusId == 5) { // FAILED - failed
+                $enrollmentClass = 'failed';
+            }
+
+            $students[] = [
+                'enrollment_id' => $enrollment->enrollment_id,
+                'student_id' => $student->user_id,
+                'student_code' => $student->code_user ?? 'N/A',
+                'student_name' => $student->full_name ?? 'N/A',
+                'faculty_name' => $facultyName,
+                'major_name' => $majorName,
+                'academic_status_name' => $academicStatusName,
+                'academic_status_class' => $statusClass,
+                'enrollment_status_name' => $enrollmentStatusName,
+                'enrollment_status_id' => $enrollmentStatusId,
+                'enrollment_class' => $enrollmentClass,
+            ];
+        }
+
+        // Lấy thêm các ID phục vụ chế độ chỉnh sửa (edit mode)
+        $firstMeeting = $meetings[0] ?? null;
+        $majorId = null;
+        $facultyId = null;
+        if ($classSection->courseVersion && $classSection->courseVersion->course) {
+            $course = $classSection->courseVersion->course;
+            if ($course->majors && $course->majors->count() > 0) {
+                $major = $course->majors->first();
+                $majorId = $major->major_id ?? null;
+                if ($major->faculties && $major->faculties->count() > 0) {
+                    $facultyId = $major->faculties->first()->faculty_id ?? null;
+                }
+            }
+        }
+
+        $classInfo = [
+            'class_section_id' => $classSection->class_section_id,
+            'class_code' => $classSection->class_code,
+            'course_version_id' => $classSection->course_version_id,
+            'course_name' => $classSection->courseVersion->course->course_name ?? 'N/A',
+            'academic_year_id' => $classSection->semester->academic_year_id ?? null,
+            'academic_year_name' => $academicYearName,
+            'semester_id' => $classSection->semester_id,
+            'semester_name' => $semesterName,
+            'faculty_id' => $facultyId,
+            'faculty_name' => $facultyName,
+            'major_id' => $majorId,
+            'major_name' => $majorName,
+            'lecturer_id' => $classSection->lecturer_id,
+            'lecturer_name' => $classSection->lecturer->full_name ?? 'N/A',
+            'status_id' => $classSection->class_section_status_id,
+            'status_name' => $classSection->status->name ?? 'N/A',
+            'status_code' => $classSection->status->code ?? '',
+            'time_slot_id' => $firstMeeting['time_slot_id'] ?? null,
+            'time_slot_label' => $timeSlotLabel,
+            'room_id' => $firstMeeting['room_id'] ?? null,
+            'room_label' => $roomLabel,
+            'capacity' => $classSection->capacity ?? 0,
+            'meeting_dates' => array_map(fn($m) => $m['meeting_date'], $meetings),
+        ];
 
         return [
             'id' => $classSection->class_section_id,
             'class_code' => $classSection->class_code,
             'course_name' => $classSection->courseVersion->course->course_name ?? 'N/A',
-            'semester_code' => $classSection->semester->semester_code ?? 'N/A',
+            'academic_year_name' => $academicYearName,
+            'semester_name' => $semesterName,
+            'faculty_name' => $facultyName,
+            'major_name' => $majorName,
             'lecturer_name' => $classSection->lecturer->full_name ?? 'N/A',
-            'capacity' => $classSection->capacity,
-            'current_students' => $currentStudents,
-            'status_name' => $displayStatus['name'],
-            'status_code' => $displayStatus['code'],
-            'badge_class' => $displayStatus['badge'],
-            'status_id' => $displayStatus['status_id'],
-            'students' => $classSection->enrollments->map(function ($enrollment) {
-                return [
-                    'student_id' => $enrollment->student_id,
-                    'student_name' => $enrollment->student->full_name ?? 'N/A',
-                ];
-            })->toArray(),
+            'status_name' => $classSection->status->name ?? 'N/A',
+            'status_code' => $classSection->status->code ?? '',
+            'time_slot_label' => $timeSlotLabel,
+            'schedule_label' => $scheduleLabel,
+            'room_label' => $roomLabel,
+            'capacity' => $classSection->capacity ?? 0,
+            'current_students' => $studentCount,
+            'grading_scheme_name' => $gradingSchemeName,
+            'students' => $students,
+            'meetings' => $meetings,
+            'class_info' => $classInfo,
         ];
+    }
+
+    /**
+     * Chuyển đổi số ngày trong tuần sang tên tiếng Việt
+     * 
+     * @param int $dayNum (0=Sunday, 1=Monday, ... 6=Saturday)
+     * @return string
+     */
+    private function getDayNameVietnamese(int $dayNum): string
+    {
+        $days = [
+            0 => 'Chủ nhật',
+            1 => 'Thứ 2',
+            2 => 'Thứ 3',
+            3 => 'Thứ 4',
+            4 => 'Thứ 5',
+            5 => 'Thứ 6',
+            6 => 'Thứ 7',
+        ];
+        
+        return $days[$dayNum] ?? 'N/A';
     }
 
     /**

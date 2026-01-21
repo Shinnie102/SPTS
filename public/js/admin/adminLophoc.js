@@ -208,6 +208,17 @@ document.addEventListener("click", e => {
                 });
                 majorOptions.appendChild(option);
             });
+            // Bind "Tất cả chuyên ngành" to clear and reload
+            const allMajor = majorOptions.querySelector('.option[data-value=""]');
+            if (allMajor) {
+                allMajor.addEventListener('click', async function () {
+                    const hidden = document.getElementById('major-filter');
+                    if (hidden) hidden.value = '';
+                    const selected = allMajor.closest('.fake-select')?.querySelector('.selected');
+                    if (selected) selected.textContent = 'Tất cả chuyên ngành';
+                    loadClassSections(1);
+                });
+            }
         }
 
         // Semesters

@@ -5,8 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="class-section-id" content="{{ $classSectionId ?? '' }}">
     <meta name="route-admin-lophoc-api-create-step1-get" content="{{ route('admin.lophoc.api.create.step1.get') }}">
     <meta name="route-admin-lophoc-api-create-step2" content="{{ route('admin.lophoc.api.create.step2') }}">
+    <meta name="route-admin-lophoc-api-update-step2" content="{{ isset($classSectionId) ? route('admin.lophoc.api.update.step2', ['id' => $classSectionId]) : '' }}">
+    <meta name="route-admin-lophoc-api-detail" content="{{ isset($classSectionId) ? route('admin.lophoc.api.show', ['id' => $classSectionId]) : '' }}">
     <meta name="route-admin-lophoc-api-lecturers" content="{{ route('admin.lophoc.api.lecturers') }}">
     <meta name="route-admin-lophoc-api-students" content="{{ route('admin.lophoc.api.students') }}">
     <meta name="route-admin-lophoc-api-faculties" content="{{ route('admin.lophoc.api.faculties') }}">
