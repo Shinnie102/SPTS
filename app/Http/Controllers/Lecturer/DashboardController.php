@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Lecturer;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\ClassSection;
 
 class DashboardController extends Controller
@@ -12,24 +13,84 @@ class DashboardController extends Controller
     {
         $lecturerId = Auth::id();
 
-        // 1. Tổng số lớp phụ trách
+        /* =========================
+           1. TỔNG SỐ LỚP PHỤ TRÁCH
+        ========================== */
         $totalClasses = ClassSection::where('lecturer_id', $lecturerId)->count();
 
-        // 2. Cảnh báo (CHƯA CÓ BẢNG → 0)
-        $warnings = 0;
+        /* =========================
+           2. NOTIFICATIONS
+        ========================== */
+        $notifications = [];
 
-        // 3. Lớp đã hoàn tất nhập điểm (TẠM)
-        $completedGrading = 0;
+        /* ---------------------------------
+           A. LỚP MỚI ĐƯỢC PHÂN CÔNG
+           (dựa vào created_at hôm nay)
+        --------------------------------- */
+        $newClasses = ClassSection::where('lecturer_id', $lecturerId)
+            ->whereDate('created_at', now()->toDateString())
+            ->get();
 
-        // 4. Lớp cần nhập điểm (TẠM)
-        $pendingGrading = 0;
+        foreach ($newClasses as $class) {
+            $notifications[] = [
+                'type'    => 'info',
+                'title'   => 'Có lớp mới được phân công',
+                'message' => 'Lớp ' . $class->class_code
+            ];
+        }
 
-        // 5. Danh sách lớp mới nhất (3 lớp)
-        $latestClasses = ClassSection::with([
-                'courseVersion.course',
-                'status'
-            ])
-            ->where('lecturer_id', $lecturerId)
+        /* ---------------------------------
+           B. ĐẾN HẠN NHẬP ĐIỂM
+           (chưa có bản ghi trong student_score)
+        --------------------------------- */
+        $gradingDeadlineClasses = DB::table('class_section as cs')
+            ->where('cs.lecturer_id', $lecturerId)
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('student_score as ss')
+                    ->join('enrollment as e', 'e.enrollment_id', '=', 'ss.enrollment_id')
+                    ->whereRaw('e.class_section_id = cs.class_section_id');
+            })
+            ->get();
+
+        foreach ($gradingDeadlineClasses as $class) {
+            $notifications[] = [
+                'type'    => 'warning',
+                'title'   => 'Đến hạn nhập điểm',
+                'message' => 'Lớp ' . $class->class_code . ' chưa nhập điểm'
+            ];
+        }
+
+        /* ---------------------------------
+           C. LỚP HỌC SẮP KẾT THÚC
+           (≤ 2 buổi học – KHÔNG GROUP BY)
+        --------------------------------- */
+        $endingClasses = DB::table('class_section as cs')
+            ->where('cs.lecturer_id', $lecturerId)
+            ->whereRaw('(
+                SELECT COUNT(*)
+                FROM class_meeting cm
+                WHERE cm.class_section_id = cs.class_section_id
+            ) <= 2')
+            ->get();
+
+        foreach ($endingClasses as $class) {
+            $notifications[] = [
+                'type'    => 'danger',
+                'title'   => 'Lớp học sắp kết thúc',
+                'message' => 'Lớp ' . $class->class_code . ' còn ≤ 2 buổi học'
+            ];
+        }
+
+        /* =========================
+           3. DASHBOARD DATA
+        ========================== */
+        $warnings = count($endingClasses);
+
+        $completedGrading = 0; // có thể mở rộng sau
+        $pendingGrading   = count($gradingDeadlineClasses);
+
+        $latestClasses = ClassSection::where('lecturer_id', $lecturerId)
             ->orderByDesc('created_at')
             ->take(3)
             ->get();
@@ -39,7 +100,8 @@ class DashboardController extends Controller
             'warnings',
             'completedGrading',
             'pendingGrading',
-            'latestClasses'
+            'latestClasses',
+            'notifications'
         ));
     }
 }
