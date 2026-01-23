@@ -132,4 +132,15 @@ class SemesterRepository implements SemesterRepositoryInterface
             ->where('end_date', '<', $now)
             ->update(['status_id' => 2]);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getActiveSemester(): ?Semester
+    {
+        return $this->model
+            ->where('status_id', 1) // STATUS_ACTIVE = 1
+            ->with(['status', 'academicYear'])
+            ->first();
+    }
 }

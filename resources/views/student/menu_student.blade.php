@@ -3,7 +3,7 @@
     <div id="menu">
         <a href="{{ route('student.dashboard') }}">
             <div class="frame_menu {{ Request::routeIs('student.dashboard') ? 'menu_active' : '' }}">
-                <i class="fa-regular fa-house"></i>
+                <i class="fa-solid fa-house"></i>
                 <p>Trang chủ</p>
             </div>
         </a>

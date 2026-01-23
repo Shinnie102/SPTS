@@ -50,4 +50,19 @@ class AcademicRuleRepository implements AcademicRuleRepositoryInterface
                           ->where('status_id', 1)
                           ->first();
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getActiveRulesKeyValue(): array
+    {
+        $rules = $this->getAllActiveRules();
+        
+        $result = [];
+        foreach ($rules as $rule) {
+            $result[$rule->rule_type] = $rule->threshold_value;
+        }
+        
+        return $result;
+    }
 }

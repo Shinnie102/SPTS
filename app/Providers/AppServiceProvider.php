@@ -43,6 +43,25 @@ class AppServiceProvider extends ServiceProvider
         // Đăng ký Repository cho Grading Scheme và Academic Rule
         $this->app->bind(\App\Contracts\GradingSchemeRepositoryInterface::class, \App\Repositories\GradingSchemeRepository::class);
         $this->app->bind(\App\Contracts\AcademicRuleRepositoryInterface::class, \App\Repositories\AcademicRuleRepository::class);
+        
+        // Đăng ký Repository cho Student Score, Enrollment, Attendance
+        $this->app->bind(\App\Contracts\EnrollmentRepositoryInterface::class, \App\Repositories\EnrollmentRepository::class);
+        $this->app->bind(\App\Contracts\AttendanceRepositoryInterface::class, \App\Repositories\AttendanceRepository::class);
+        $this->app->bind(\App\Contracts\StudentScoreRepositoryInterface::class, \App\Repositories\StudentScoreRepository::class);
+        
+        // Đăng ký Helper Classes cho Student Score Service
+        $this->app->singleton(\App\Services\Student\Score\GradeConverter::class);
+        $this->app->singleton(\App\Services\Student\Score\ScoreCalculator::class);
+        $this->app->singleton(\App\Services\Student\Score\ScoreSemesterGrouper::class);
+        
+        // Đăng ký Helper Classes cho Student Warning Service
+        $this->app->singleton(\App\Services\Student\Warning\GPAWarningChecker::class);
+        $this->app->singleton(\App\Services\Student\Warning\AttendanceWarningChecker::class);
+        $this->app->singleton(\App\Services\Student\Warning\FailedCourseWarningChecker::class);
+        
+        // Đăng ký Helper Classes cho Student Attendance Service
+        $this->app->singleton(\App\Services\Student\Common\AttendanceStatisticsCalculator::class);
+        $this->app->singleton(\App\Services\Student\Common\AttendanceStatusDeterminer::class);
     }
 
     /**
