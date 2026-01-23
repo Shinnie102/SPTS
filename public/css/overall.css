@@ -16,6 +16,11 @@ body {
     display: flex;
     flex-direction: row;
     min-height: calc(100vh - 3.5rem);
+    
+    /* 
+      Layout 2 cột: sidebar + content
+      - Không overflow để sticky positioning hoạt động
+    */
 }
 
 .menu_lecturer {
@@ -27,6 +32,12 @@ body {
     overflow-y: auto;
     background-color: #F6F9FD;
     padding: 4rem;
+    
+    /* 
+      Content area cuộn dọc độc lập
+      - Nội dung dài vẫn scroll được
+      - Menu sticky sẽ dừng lại khi chạm viewport edges
+    */
 }
 
 #content #tieudechinh {
