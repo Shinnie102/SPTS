@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Services\StudentScoreService;
+use App\Services\Student\Score\StudentScoreService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 

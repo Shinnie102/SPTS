@@ -7,14 +7,38 @@ html {
     font-size: 16px;
 }
 
+/* 
+  Sticky Sidebar Container
+  - Sticky positioning: dừng lại khi chạm top viewport
+  - Dùng flexbox để quản lý layout: menu items + logout
+  - Menu items (#menu) có scroll nội bộ, logout dán dưới
+*/
 #menu_lecturer {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     background-color: #E0EAFA;
     width: 5rem;
     border-right: 1px solid #DEDCDC;
+    
+    /* Sticky positioning */
+    position: sticky;
+    top: 0;
+    
+    /* Chiều cao bằng viewport, không overflow ở đây */
+    height: 100vh;
+    
+    /* Tránh overflow-y: hidden | auto | scroll từ cha */
+    flex-shrink: 0;
+}
+
+/* Menu items container - cuộn riêng bên trong */
+#menu {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .frame_menu {
@@ -41,7 +65,7 @@ html {
 
 .frame_logout {
     width: 100%;
-    margin-top: auto;
+    margin-top: 0;
     margin-bottom: 0.5rem;
     padding-top: 1rem;
     padding-bottom: 1rem;
@@ -53,6 +77,9 @@ html {
     color: #FF0000;
     opacity: 40%;
     border-top: 1px solid #DEDCDC;
+    
+    /* Logout button dán ở dưới, không co lại */
+    flex-shrink: 0;
 }
 
 .frame_logout i {
@@ -98,12 +125,22 @@ a {
 
 /* Mobile - màn hình từ 480px trở xuống */
 @media (max-width: 480px) {
+    /* 
+      Trên mobile, menu chuyển sang ngang (horizontal)
+      - Tắt sticky (không cần fixed position trên mobile)
+      - Lộc scroll ngang cho menu items
+    */
     #menu_lecturer {
         width: 100%;
         height: auto;
         flex-direction: row;
         justify-content: flex-start;
         overflow-x: auto;
+        overflow-y: hidden;
+        
+        /* Tắt sticky trên mobile */
+        position: relative;
+        max-height: none;
     }
     
     #menu {

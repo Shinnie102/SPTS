@@ -36,4 +36,11 @@ interface AcademicRuleRepositoryInterface
      * @return AcademicRule|null
      */
     public function findByType(string $ruleType): ?AcademicRule;
+
+    /**
+     * Lấy tất cả active rules dưới dạng key-value (rule_type => threshold_value)
+     * 
+     * @return array ['MIN_GPA' => 1.5, 'MIN_ATTENDANCE' => 80, ...]
+     */
+    public function getActiveRulesKeyValue(): array;
 }

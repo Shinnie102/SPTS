@@ -26,7 +26,7 @@
      @include('partials.header_student')
     <div id="main">
         <!-- Menu -->
-        <div class="menu_student"></div>
+        @include('student.menu_student')
 
         <div id="content">
             <!-- Vui lòng điểu chỉnh tiêu đề, không thay đổi tên id có sẵn -->

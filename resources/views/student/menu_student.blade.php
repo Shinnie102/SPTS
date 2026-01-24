@@ -3,7 +3,7 @@
     <div id="menu">
         <a href="{{ route('student.dashboard') }}">
             <div class="frame_menu {{ Request::routeIs('student.dashboard') ? 'menu_active' : '' }}">
-                <i class="fa-regular fa-house"></i>
+                <i class="fa-solid fa-house"></i>
                 <p>Trang chủ</p>
             </div>
         </a>
@@ -19,12 +19,12 @@
                 <p>Chuyên cần</p>
             </div>
         </a>
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-            @csrf
-            <button type="submit" class="frame_menu" style="width: 100%; background: none; border: none; text-align: left; cursor: pointer; padding: 0;">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                <p>Đăng xuất</p>
-            </button>
-        </form>
     </div>
+    <form method="POST" action="{{ route('logout') }}" class="frame_logout">
+        @csrf
+        <button type="submit" style="background: none; border: none; cursor: pointer; display: flex; align-items: center; gap: 10px; width: 100%;">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            <p>Đăng xuất</p>
+        </button>
+    </form>
 </div>

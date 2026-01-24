@@ -47,39 +47,15 @@ class User extends Authenticatable
         'deleted_at' => 'datetime',
     ];
 
-    // Override password attribute for Laravel Auth
     public function getAuthPassword()
     {
         return $this->password_hash;
     }
 
-    // Override password name for Laravel Auth
     public function getAuthPasswordName()
     {
         return 'password_hash';
     }
-
-    /**
-     * Disable Laravel "remember me" token persistence because the SQL schema
-     * (academic_management (2).sql) does not contain a remember_token column.
-     */
-    public function getRememberToken()
-    {
-        return null;
-    }
-
-    public function setRememberToken($value)
-    {
-        // no-op
-    }
-
-    public function getRememberTokenName()
-    {
-        return null;
-    }
-
-    // Mutator removed - password hashing is handled in UserService layer
-    // This prevents double hashing which causes login failures
 
     // Relationships
     public function role()

@@ -78,4 +78,11 @@ interface SemesterRepositoryInterface
      * @return void
      */
     public function updateStatusByDate(): void;
+
+    /**
+     * Lấy học kỳ đang active
+     * 
+     * @return Semester|null
+     */
+    public function getActiveSemester(): ?Semester;
 }

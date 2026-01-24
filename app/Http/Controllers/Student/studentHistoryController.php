@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
-use App\Services\AttendanceService;
+use App\Services\Student\Common\StudentAttendanceService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,7 +14,7 @@ class studentHistoryController extends Controller
     /**
      * Constructor - Dependency Injection
      */
-    public function __construct(AttendanceService $attendanceService)
+    public function __construct(StudentAttendanceService $attendanceService)
     {
         $this->attendanceService = $attendanceService;
     }
