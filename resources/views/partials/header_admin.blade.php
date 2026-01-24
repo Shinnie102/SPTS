@@ -15,82 +15,82 @@
     <div id="frame_personal">
 
         <!-- 🔔 NOTIFICATION ADMIN -->
-<div class="notification-wrapper" style="position: relative; margin-right: 20px; z-index: 99999;">
-    <div id="bellContainer"
-         style="
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f0f0f0;
-            border-radius: 50%;
-            position: relative;
-         ">
-        <span style="font-size: 22px;">🔔</span>
+        <div class="notification-wrapper" style="position: relative; margin-right: 20px; z-index: 99999;">
+            <div id="bellContainer"
+                 style="
+                    cursor: pointer;
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #f0f0f0;
+                    border-radius: 50%;
+                    position: relative;
+                 ">
+                <span style="font-size: 22px;">🔔</span>
 
-        @if(count($notifications) > 0)
-        <span style="
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: red;
-            color: white;
-            font-size: 11px;
-            padding: 2px 6px;
-            border-radius: 12px;
-        ">
-            {{ count($notifications) }}
-        </span>
-        @endif
-    </div>
-
-    <!-- Dropdown -->
-    <div id="notificationDropdown"
-         style="
-            position: absolute;
-            top: 50px;
-            right: 0;
-            width: 360px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            display: none;
-            z-index: 999999;
-         ">
-        <div style="padding: 20px;">
-            <h3 style="margin: 0 0 15px 0;">Thông báo</h3>
-
-            @forelse ($notifications as $noti)
-                @php
-                    $bg = match($noti['type']) {
-                        'info' => '#e7f3ff',
-                        'warning' => '#fff3cd',
-                        'danger' => '#f8d7da',
-                        default => '#f1f1f1'
-                    };
-                @endphp
-
-                <div style="
-                    padding: 15px;
-                    background: {{ $bg }};
-                    border-radius: 8px;
-                    margin-bottom: 10px;
+                {{-- BADGE --}}
+                @if(isset($showBadge) && $showBadge)
+                <span id="notiBadge" style="
+                    position: absolute;
+                    top: -4px;
+                    right: -4px;
+                    background: red;
+                    color: white;
+                    font-size: 11px;
+                    padding: 2px 6px;
+                    border-radius: 12px;
                 ">
-                    <strong style="display:block;">
-                        {{ $noti['title'] }}
-                    </strong>
-                    <small>{{ $noti['message'] }}</small>
+                    {{ count($notifications) }}
+                </span>
+                @endif
+            </div>
+
+            <!-- Dropdown -->
+            <div id="notificationDropdown"
+                 style="
+                    position: absolute;
+                    top: 50px;
+                    right: 0;
+                    width: 360px;
+                    background: white;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+                    display: none;
+                    z-index: 999999;
+                 ">
+                <div style="padding: 20px;">
+                    <h3 style="margin: 0 0 15px 0;">Thông báo</h3>
+
+                    @forelse ($notifications as $noti)
+                        @php
+                            $bg = match($noti['type']) {
+                                'info' => '#e7f3ff',
+                                'warning' => '#fff3cd',
+                                'danger' => '#f8d7da',
+                                default => '#f1f1f1'
+                            };
+                        @endphp
+
+                        <div style="
+                            padding: 15px;
+                            background: {{ $bg }};
+                            border-radius: 8px;
+                            margin-bottom: 10px;
+                        ">
+                            <strong style="display:block;">
+                                {{ $noti['title'] }}
+                            </strong>
+                            <small>{{ $noti['message'] }}</small>
+                        </div>
+                    @empty
+                        <p style="color:#777;">Không có thông báo</p>
+                    @endforelse
+
                 </div>
-            @empty
-                <p style="color:#777;">Không có thông báo</p>
-            @endforelse
-
+            </div>
         </div>
-    </div>
-</div>
-
 
         <!-- PROFILE -->
         <div id="infor">
@@ -104,16 +104,32 @@
     </div>
 </div>
 
-<!-- JS TOGGLE NOTIFICATION -->
+<!-- JS TOGGLE + MARK AS READ -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const bell = document.getElementById('bellContainer');
     const dropdown = document.getElementById('notificationDropdown');
+    const badge = document.getElementById('notiBadge');
 
     bell.addEventListener('click', function (e) {
         e.stopPropagation();
+
         dropdown.style.display =
             dropdown.style.display === 'block' ? 'none' : 'block';
+
+        // 👉 Khi mở thông báo → đánh dấu đã đọc
+        if (badge) {
+            fetch('/admin/notifications/read', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content')
+                }
+            });
+
+            badge.remove(); // 💥 Ẩn số thông báo ngay
+        }
     });
 
     document.addEventListener('click', function (e) {
