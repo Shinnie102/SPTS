@@ -217,30 +217,39 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer.')->group(function () {
 
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
-    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
-    Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
 
+    // ✅ Route đánh dấu đã đọc thông báo
     Route::post('/notifications/mark-all-read', [LecturerDashboardController::class, 'markAllRead'])
         ->name('notifications.markAllRead');
 
+    Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
+    Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
+
+    // Lớp học phần - Sử dụng Controller mới
     Route::get('/classes', [ClassController::class, 'index'])->name('classes');
     Route::get('/class/{id}', [ClassController::class, 'show'])->name('class.detail');
 
-    Route::get('/class/{id}/status', [ClassController::class, 'status'])->name('class.status');
-    Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
-
+    // Các route cho từng chức năng của lớp học phần
     Route::get('/class/{id}/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
-    Route::get('/class/{classId}/attendance-data/{meetingId}', [AttendanceController::class, 'getAttendanceData'])->name('attendance.data');
-    Route::post('/class/{classId}/attendance/save', [AttendanceController::class, 'saveAttendance'])->name('attendance.save');
+    Route::get('/class/{id}/attendance-data/{meetingId}', [AttendanceController::class, 'getAttendanceData'])->name('attendance.data');
+    Route::post('/class/{id}/attendance/save', [AttendanceController::class, 'saveAttendance'])->name('attendance.save');
 
     Route::get('/class/{id}/grading', [GradingController::class, 'grading'])->name('grading');
     Route::get('/class/{id}/grading-data', [GradingController::class, 'getGradingData'])->name('grading.data');
     Route::post('/class/{id}/grading/save', [GradingController::class, 'saveGrading'])->name('grading.save');
+    Route::post('/class/{id}/grading/lock', [GradingController::class, 'lockGrades'])->name('grading.lock');
+
+    Route::get('/class/{id}/status', [ClassStatusController::class, 'show'])->name('class.status');
+    Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
 
     Route::get('/class/{id}/report', [ReportController::class, 'report'])->name('report');
     Route::get('/class/{id}/report-data', [ReportController::class, 'getReportData'])->name('report.data');
-    Route::get('/class/{classId}/student/{studentId}/detail', [ReportController::class, 'getStudentDetail'])->name('report.studentDetail');
+    Route::get('/class/{id}/report-export', [ReportController::class, 'exportReport'])->name('report.export');
+
+    // API: Student detail in a class (for Report modal)
+    Route::get('/class/{classId}/student/{studentId}/detail', [ReportController::class, 'getStudentDetail'])->name('report.student.detail');
 });
+
 
 /*
 |--------------------------------------------------------------------------
