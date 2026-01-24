@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Lecturer;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use App\Models\ClassSection;
 
 class DashboardController extends Controller
@@ -12,6 +13,9 @@ class DashboardController extends Controller
     public function index()
     {
         $lecturerId = Auth::id();
+
+        // ✅ XÓA SESSION MỖI KHI VÀO DASHBOARD - SỐ THÔNG BÁO LUÔN HIỂN THỊ
+        session()->forget('notifications_read');
 
         /* =========================
            1. TỔNG SỐ LỚP PHỤ TRÁCH
@@ -82,6 +86,9 @@ class DashboardController extends Controller
             ];
         }
 
+        // ✅ LUÔN SET hasRead = false ĐỂ SỐ THÔNG BÁO LUÔN HIỂN THỊ
+        $hasRead = false;
+
         /* =========================
            3. DASHBOARD DATA
         ========================== */
@@ -101,7 +108,18 @@ class DashboardController extends Controller
             'completedGrading',
             'pendingGrading',
             'latestClasses',
-            'notifications'
+            'notifications',
+            'hasRead'
         ));
+    }
+
+    /**
+     * Đánh dấu tất cả thông báo đã đọc
+     * (Chỉ ẩn số trong phiên làm việc hiện tại)
+     */
+    public function markAllRead()
+    {
+        session()->put('notifications_read', true);
+        return response()->json(['success' => true]);
     }
 }

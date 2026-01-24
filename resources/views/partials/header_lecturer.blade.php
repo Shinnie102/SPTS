@@ -5,6 +5,9 @@
 <link rel="stylesheet" href="{{ asset('css/header.css') }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+{{-- ✅ Thêm meta CSRF token --}}
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <div id="header" class="header">
     <a href="{{ route('lecturer.dashboard') }}">
         <div id="frame_logo">
@@ -31,8 +34,9 @@
                  ">
                 <span style="font-size:22px;">🔔</span>
 
-                @if(!empty($notifications) && count($notifications) > 0)
-                    <span style="
+                {{-- ✅ Chỉ hiển thị số khi chưa đọc --}}
+                @if(!empty($notifications) && count($notifications) > 0 && !$hasRead)
+                    <span id="notificationCount" style="
                         position: absolute;
                         top: -4px;
                         right: -4px;
@@ -55,6 +59,8 @@
                     top: 50px;
                     right: 0;
                     width: 360px;
+                    max-height: 500px;
+                    overflow-y: auto;
                     background: white;
                     border-radius: 10px;
                     box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -108,20 +114,57 @@
     </div>
 </div>
 
-<!-- JS TOGGLE NOTIFICATION -->
+<!-- ✅ JS ĐƠN GIẢN - CHỈ XỬ LÝ CLICK CHUÔNG -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const bell = document.getElementById('bellContainer');
     const dropdown = document.getElementById('notificationDropdown');
+    const notificationCount = document.getElementById('notificationCount');
 
-    bell.addEventListener('click', function (e) {
-        e.stopPropagation();
-        dropdown.style.display =
-            dropdown.style.display === 'block' ? 'none' : 'block';
+    // Setup CSRF token
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
     });
 
+    // ✅ Click vào chuông
+    bell.addEventListener('click', function (e) {
+        e.stopPropagation();
+
+        // Toggle dropdown
+        const isVisible = dropdown.style.display === 'block';
+        dropdown.style.display = isVisible ? 'none' : 'block';
+
+        // ✅ Nếu có số thông báo, gọi API để ẩn nó
+        if (notificationCount && !isVisible) {
+            $.ajax({
+                url: '{{ route("lecturer.notifications.markAllRead") }}',
+                type: 'POST',
+                success: function(response) {
+                    if(response.success) {
+                        // Ẩn số thông báo
+                        if(notificationCount) {
+                            notificationCount.style.display = 'none';
+                        }
+                    }
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr);
+                }
+            });
+        }
+    });
+
+    // Đóng dropdown khi click ra ngoài
     document.addEventListener('click', function () {
         dropdown.style.display = 'none';
+    });
+
+    // Ngăn dropdown đóng khi click vào nó
+    dropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
     });
 });
 </script>
