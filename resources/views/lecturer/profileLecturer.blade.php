@@ -26,6 +26,13 @@
     <div id="content">
         <main class="main-content">
 
+        {{-- THÔNG BÁO THÀNH CÔNG --}}
+        @if(session('success'))
+            <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; background: #d4edda; color: #155724; border-radius: 5px;">
+                <i class="fas fa-check-circle"></i> {{ session('success') }}
+            </div>
+        @endif
+
         <section class="overview-section">
             <div class="header-content">
                 <div class="title-group">
@@ -77,6 +84,9 @@
         <p class="view">{{ auth()->user()->full_name }}</p>
         <input class="edit profile-input" type="text" name="full_name"
                value="{{ auth()->user()->full_name }}" hidden>
+        @error('full_name')
+            <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+        @enderror
         </div>
 
         <div class="detail-item">
@@ -86,6 +96,9 @@
         </p>
         <input class="edit profile-input" type="date" name="birth"
                value="{{ auth()->user()->birth }}" hidden>
+        @error('birth')
+            <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+        @enderror
         </div>
 
         <div class="detail-item">
@@ -98,6 +111,9 @@
         <p class="view">{{ auth()->user()->phone ?? 'Chưa cập nhật' }}</p>
         <input class="edit profile-input" type="text" name="phone"
                value="{{ auth()->user()->phone }}" hidden>
+        @error('phone')
+            <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+        @enderror
         </div>
 
         <div class="detail-item full-width">
@@ -105,6 +121,9 @@
         <p class="view">{{ auth()->user()->address ?? 'Chưa cập nhật' }}</p>
         <input class="edit profile-input" type="text" name="address"
                value="{{ auth()->user()->address }}" hidden>
+        @error('address')
+            <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+        @enderror
         </div>
 
         </div>
@@ -117,9 +136,11 @@
 
         <div class="detail-item">
         <label>Chuyên ngành</label>
-        <p class="view">{{ auth()->user()->major ?? 'Chưa cập nhật' }}</p>
-        <input class="edit profile-input" type="text" name="major"
-               value="{{ auth()->user()->major }}" hidden>
+        {{-- ✅ CHỈ HIỂN THỊ, KHÔNG CHO SỬA --}}
+        <p>{{ auth()->user()->major ?? 'Chưa cập nhật' }}</p>
+        <small style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
+            <i class="fas fa-lock"></i> Chuyên ngành không thể thay đổi
+        </small>
         </div>
 
         <div class="detail-item">

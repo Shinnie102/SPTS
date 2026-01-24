@@ -35,15 +35,16 @@ class Profile extends Controller
             'phone'     => 'nullable|string|max:20',
             'address'   => 'nullable|string|max:255',
             'birth'     => 'nullable|date',
-            'major'     => 'nullable|string|max:255',
+            // ❌ XÓA VALIDATION CHO 'major' - KHÔNG CHO SỬA
         ]);
 
+        // ✅ CHỈ CẬP NHẬT CÁC TRƯỜNG ĐƯỢC PHÉP SỬA (KHÔNG CÓ 'major')
         $lecturer->update($request->only([
             'full_name',
             'phone',
             'address',
             'birth',
-            'major',
+            // ❌ KHÔNG CÓ 'major'
         ]));
 
         return redirect()
