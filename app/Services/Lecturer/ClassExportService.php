@@ -5,15 +5,47 @@ namespace App\Services\Lecturer;
 use App\Models\Attendance;
 use App\Models\ClassMeeting;
 use App\Models\ClassSection;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ClassExportService
 {
     public function __construct(
         private readonly CalculationService $calculationService
     ) {
+    }
+
+    private function normalizeStatusText(mixed $status): string
+    {
+        if (is_array($status)) {
+            $label = $status['label'] ?? $status['name'] ?? null;
+            if (is_string($label) || is_numeric($label)) {
+                return (string) $label;
+            }
+
+            return json_encode($status, JSON_UNESCAPED_UNICODE) ?: '';
+        }
+
+        if (is_object($status)) {
+            $label = $status->label ?? $status->name ?? null;
+            if (is_string($label) || is_numeric($label)) {
+                return (string) $label;
+            }
+
+            return json_encode($status, JSON_UNESCAPED_UNICODE) ?: '';
+        }
+
+        if ($status === null) {
+            return '';
+        }
+
+        return (string) $status;
     }
 
     public function exportScores(Request $request, int $classSectionId, int $lecturerId)
@@ -159,6 +191,7 @@ class ClassExportService
             $finalResult = $this->calculationService->calculateFinalScore($componentList, $scoreMap);
             $finalRounded = $finalResult['rounded'] ?? null;
             $finalStatus = $this->calculationService->evaluateFinalStatus($finalRounded);
+            $finalStatusText = $this->normalizeStatusText($finalStatus);
 
             $attended = (int) ($attendedCountByEnrollmentId[$enrollmentId] ?? 0);
             $attendancePercent = $this->calculationService->calculateAttendancePercent($attended, (int) $totalMeetings);
@@ -170,23 +203,110 @@ class ClassExportService
                 'attendance_percent' => $attendancePercent,
                 'final_score' => $finalRounded,
                 'final_status' => $finalStatus,
+                'final_status_text' => $finalStatusText,
                 'scores' => $scoreMap,
             ];
         })->values()->all();
 
+        $courseName = (string) data_get($currentClass, 'courseVersion.course.course_name', data_get($currentClass, 'courseVersion.course.name', ''));
+        $classCode = (string) data_get($currentClass, 'class_code', data_get($currentClass, 'code', ''));
+        $safeCourse = trim($courseName) !== '' ? $courseName : ('Lop_' . $classSectionId);
+        $safeCourse = preg_replace('/[^\p{L}\p{N}\-_ ]/u', '', $safeCourse) ?: ('Lop_' . $classSectionId);
+        $dateStamp = now()->format('Ymd_His');
+
         if ($type === 'pdf') {
-            return view('exports.class_scores_pdf', [
+            $html = view('exports.class_scores_pdf', [
                 'class' => $currentClass,
                 'components' => $componentList,
                 'rows' => $rows,
                 'generatedAt' => now(),
+            ])->render();
+
+            $options = new Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('defaultFont', 'DejaVu Sans');
+
+            $dompdf = new Dompdf($options);
+            $dompdf->loadHtml($html, 'UTF-8');
+            $dompdf->setPaper('A4', 'landscape');
+            $dompdf->render();
+
+            $filename = sprintf('BangDiem_%s_%s_%s.pdf', $classCode !== '' ? $classCode : $classSectionId, $safeCourse, $dateStamp);
+
+            return response($dompdf->output(), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
             ]);
         }
 
-        return response(
-            'Tính năng xuất Excel (.xlsx) đang phát triển (chưa cài package).',
-            501,
-            ['Content-Type' => 'text/plain; charset=UTF-8']
-        );
+        $headers = [
+            'STT',
+            'Mã SV',
+            'Họ tên',
+        ];
+        foreach ($componentList as $c) {
+            $w = isset($c['weight_percent']) ? (float) $c['weight_percent'] : 0.0;
+            $label = (string) ($c['component_name'] ?? '');
+            $headers[] = trim($label) !== '' ? sprintf('%s (%.0f%%)', $label, $w) : sprintf('TP %d (%.0f%%)', (int) ($c['order_no'] ?? 0), $w);
+        }
+        $headers[] = 'Chuyên cần (%)';
+        $headers[] = 'Điểm tổng kết';
+        $headers[] = 'Kết quả';
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Bảng điểm');
+
+        $sheet->fromArray($headers, null, 'A1');
+
+        $excelRows = [];
+        foreach ($rows as $i => $r) {
+            $line = [
+                $i + 1,
+                (string) ($r['student_code'] ?? ''),
+                (string) ($r['full_name'] ?? ''),
+            ];
+
+            $scoreMap = is_array($r['scores'] ?? null) ? $r['scores'] : [];
+            foreach ($componentList as $c) {
+                $componentId = (int) ($c['component_id'] ?? 0);
+                $v = $componentId > 0 ? ($scoreMap[$componentId] ?? null) : null;
+                $line[] = ($v === null) ? '' : (float) $v;
+            }
+
+            $line[] = (float) ($r['attendance_percent'] ?? 0);
+            $line[] = ($r['final_score'] === null) ? '' : (float) $r['final_score'];
+            $line[] = (string) ($r['final_status_text'] ?? '');
+
+            $excelRows[] = $line;
+        }
+
+        if (count($excelRows) > 0) {
+            $sheet->fromArray($excelRows, null, 'A2');
+        }
+
+        // Basic formatting
+        $lastCol = Coordinate::stringFromColumnIndex(count($headers));
+        $lastRow = 1 + max(1, count($excelRows));
+        $sheet->getStyle('A1:' . $lastCol . '1')->getFont()->setBold(true);
+        $sheet->freezePane('A2');
+        $sheet->setAutoFilter('A1:' . $lastCol . '1');
+        $sheet->getStyle('A1:' . $lastCol . $lastRow)
+            ->getAlignment()
+            ->setVertical(\PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER);
+
+        for ($col = 1; $col <= count($headers); $col++) {
+            $sheet->getColumnDimension(Coordinate::stringFromColumnIndex($col))->setAutoSize(true);
+        }
+
+        $filename = sprintf('BangDiem_%s_%s_%s.xlsx', $classCode !== '' ? $classCode : $classSectionId, $safeCourse, $dateStamp);
+
+        return response()->streamDownload(function () use ($spreadsheet) {
+            $writer = new Xlsx($spreadsheet);
+            $writer->save('php://output');
+        }, $filename, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ]);
     }
 }
