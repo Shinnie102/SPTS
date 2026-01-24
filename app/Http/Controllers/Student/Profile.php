@@ -22,15 +22,16 @@ class Profile extends Controller
             'phone'     => 'nullable|string|max:20',
             'birth'     => 'nullable|date',
             'address'   => 'nullable|string|max:255',
-            'major'     => 'nullable|string|max:255',
+            // ❌ XÓA VALIDATION CHO 'major' - KHÔNG CHO SỬA
         ]);
 
+        // ✅ CHỈ CẬP NHẬT CÁC TRƯỜNG ĐƯỢC PHÉP (KHÔNG CÓ 'major')
         $user->update([
             'full_name' => $request->full_name,
             'phone'     => $request->phone,
             'birth'     => $request->birth,
             'address'   => $request->address,
-            'major'     => $request->major,
+            // ❌ KHÔNG CÓ 'major'
         ]);
 
         return redirect()

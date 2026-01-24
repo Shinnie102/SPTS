@@ -40,8 +40,8 @@
             </section>
 
             @if(session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
+                <div class="alert alert-success" style="padding: 15px; margin-bottom: 20px; background: #d4edda; color: #155724; border-radius: 5px; border: 1px solid #c3e6cb; animation: slideDown 0.3s ease-out;">
+                    <i class="fas fa-check-circle"></i> {{ session('success') }}
                 </div>
             @endif
 
@@ -101,34 +101,51 @@
                             <div class="detail-item">
                                 <label>Họ và tên</label>
                                 <input type="text" name="full_name"
-                                       value="{{ auth()->user()->full_name }}"
-                                       disabled class="profile-input">
+                                       value="{{ old('full_name', auth()->user()->full_name) }}"
+                                       disabled class="profile-input editable-input">
+                                @error('full_name')
+                                    <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             <div class="detail-item">
                                 <label>Ngày sinh</label>
                                 <input type="date" name="birth"
-                                       value="{{ auth()->user()->birth }}"
-                                       disabled class="profile-input">
+                                       value="{{ old('birth', auth()->user()->birth) }}"
+                                       disabled class="profile-input editable-input">
+                                @error('birth')
+                                    <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             <div class="detail-item">
                                 <label>Email</label>
                                 <p>{{ auth()->user()->email }}</p>
+                                <small style="color: #888; font-size: 12px; display: block; margin-top: 3px;">
+                                    Email không thể thay đổi
+                                </small>
                             </div>
 
                             <div class="detail-item">
                                 <label>Số điện thoại</label>
                                 <input type="text" name="phone"
-                                       value="{{ auth()->user()->phone }}"
-                                       disabled class="profile-input">
+                                       value="{{ old('phone', auth()->user()->phone) }}"
+                                       disabled class="profile-input editable-input"
+                                       placeholder="Chưa cập nhật">
+                                @error('phone')
+                                    <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+                                @enderror
                             </div>
 
                             <div class="detail-item full-width">
                                 <label>Địa chỉ</label>
                                 <input type="text" name="address"
-                                       value="{{ auth()->user()->address }}"
-                                       disabled class="profile-input">
+                                       value="{{ old('address', auth()->user()->address) }}"
+                                       disabled class="profile-input editable-input"
+                                       placeholder="Chưa cập nhật">
+                                @error('address')
+                                    <small style="color: red; display: block; margin-top: 5px;">{{ $message }}</small>
+                                @enderror
                             </div>
 
                         </div>
@@ -141,14 +158,23 @@
 
                             <div class="detail-item">
                                 <label>Chuyên ngành</label>
-                                <input type="text" name="major"
-                                       value="{{ auth()->user()->major }}"
-                                       disabled class="profile-input">
+                                {{-- ✅ LUÔN DISABLED - KHÔNG BAO GIỜ CHO SỬA --}}
+                                <input type="text"
+                                       value="{{ auth()->user()->major ?? 'Chưa cập nhật' }}"
+                                       disabled
+                                       class="profile-input"
+                                       style="background-color: #e9ecef !important; cursor: not-allowed !important;">
+                                <small style="color: #888; font-size: 12px; display: block; margin-top: 5px;">
+                                    <i class="fas fa-lock"></i> Chuyên ngành không thể thay đổi
+                                </small>
                             </div>
 
                             <div class="detail-item">
                                 <label>Tên đăng nhập</label>
                                 <p>{{ auth()->user()->username }}</p>
+                                <small style="color: #888; font-size: 12px; display: block; margin-top: 3px;">
+                                    Tên đăng nhập không thể thay đổi
+                                </small>
                             </div>
 
                         </div>
@@ -160,7 +186,7 @@
                             <i class="fas fa-save"></i> Lưu thay đổi
                         </button>
                         <button type="button" id="cancelEditBtn" class="btn-secondary">
-                            Huỷ
+                            <i class="fas fa-times"></i> Hủy
                         </button>
                     </div>
 
@@ -181,24 +207,116 @@
 <script src="{{ asset('js/student/student.js') }}"></script>
 
 <script>
+// Lưu giá trị ban đầu để reset khi hủy
+const originalValues = {};
+document.querySelectorAll('.editable-input').forEach(input => {
+    originalValues[input.name] = input.value;
+});
+
+// Bật chế độ chỉnh sửa
 document.getElementById('editProfileBtn').addEventListener('click', function () {
-    document.querySelectorAll('.profile-input').forEach(input => {
+    // ✅ CHỈ BẬT CÁC INPUT CÓ CLASS 'editable-input'
+    document.querySelectorAll('.editable-input').forEach(input => {
         input.disabled = false;
     });
+
+    // ❌ INPUT CHUYÊN NGÀNH KHÔNG CÓ CLASS 'editable-input' NÊN VẪN DISABLED
 
     document.getElementById('saveActions').style.display = 'block';
     this.style.display = 'none';
 });
 
+// Hủy chỉnh sửa
 document.getElementById('cancelEditBtn').addEventListener('click', function () {
-    document.querySelectorAll('.profile-input').forEach(input => {
+    // Reset lại giá trị ban đầu
+    document.querySelectorAll('.editable-input').forEach(input => {
+        input.value = originalValues[input.name];
         input.disabled = true;
     });
 
     document.getElementById('saveActions').style.display = 'none';
     document.getElementById('editProfileBtn').style.display = 'inline-block';
 });
+
+// Tự động ẩn thông báo success sau 5 giây
+const alert = document.querySelector('.alert-success');
+if (alert) {
+    setTimeout(() => {
+        alert.style.transition = 'opacity 0.5s';
+        alert.style.opacity = '0';
+        setTimeout(() => alert.remove(), 500);
+    }, 5000);
+}
 </script>
+
+<style>
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.profile-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.profile-input:disabled {
+    background-color: #f8f9fa;
+    cursor: default;
+}
+
+.profile-input:not(:disabled):focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s;
+    margin-right: 10px;
+}
+
+.btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+.form-actions {
+    margin-top: 20px;
+    text-align: right;
+}
+</style>
 
 </body>
 </html>

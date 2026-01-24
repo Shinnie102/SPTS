@@ -11,7 +11,13 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 use App\Http\Controllers\Student\studentHistoryController;
 use App\Http\Controllers\Student\StudentStudyController;
 use App\Http\Controllers\Lecturer\ClassController;
+use App\Http\Controllers\Student\PasswordResetController;
 
+/*
+|--------------------------------------------------------------------------
+| HOME
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
     return view('welcome');
 });
@@ -24,6 +30,26 @@ Route::get('/', function () {
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| PASSWORD RESET - STUDENT ✅ (KHÔNG auth)
+|--------------------------------------------------------------------------
+*/
+Route::post(
+    '/student/password/request-code',
+    [PasswordResetController::class, 'requestCode']
+)->name('password.request.code');
+
+Route::post(
+    '/student/password/verify-code',
+    [PasswordResetController::class, 'verifyCode']
+)->name('password.verify.code');
+
+Route::post(
+    '/student/password/reset',
+    [PasswordResetController::class, 'resetPassword']
+)->name('password.reset');
 
 /*
 |--------------------------------------------------------------------------
@@ -49,7 +75,6 @@ Route::middleware(['auth', 'role:ADMIN'])->prefix('admin')->name('admin.')->grou
         Route::delete('/api/{userId}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('api.destroy');
     });
 
-    // ✅ Di chuyển route notifications của admin vào đây
     Route::post('/notifications/read', function () {
         session(['admin_notifications_read' => true]);
         return response()->json(['status' => 'ok']);
@@ -68,7 +93,6 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     Route::get('/profile', [App\Http\Controllers\Lecturer\Profile::class, 'index'])->name('profile');
     Route::post('/profile/update', [App\Http\Controllers\Lecturer\Profile::class, 'update'])->name('profile.update');
 
-    // ✅ Route đánh dấu đã đọc thông báo
     Route::post('/notifications/mark-all-read', [LecturerDashboardController::class, 'markAllRead'])
         ->name('notifications.markAllRead');
 
