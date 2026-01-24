@@ -15,82 +15,82 @@
     <div id="frame_personal">
 
         <!-- 🔔 NOTIFICATION ADMIN -->
-        <div class="notification-wrapper" style="position: relative; margin-right: 20px; z-index: 99999;">
-            <div id="bellContainer"
-                 style="
-                    cursor: pointer;
-                    width: 40px;
-                    height: 40px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    background: #f0f0f0;
-                    border-radius: 50%;
-                    position: relative;
-                 ">
-                <span style="font-size: 22px;">🔔</span>
+<div class="notification-wrapper" style="position: relative; margin-right: 20px; z-index: 99999;">
+    <div id="bellContainer"
+         style="
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f0f0f0;
+            border-radius: 50%;
+            position: relative;
+         ">
+        <span style="font-size: 22px;">🔔</span>
 
-                <!-- Badge -->
-                <span style="
-                    position: absolute;
-                    top: -4px;
-                    right: -4px;
-                    background: red;
-                    color: white;
-                    font-size: 11px;
-                    padding: 2px 6px;
-                    border-radius: 12px;
+        @if(count($notifications) > 0)
+        <span style="
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: red;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 12px;
+        ">
+            {{ count($notifications) }}
+        </span>
+        @endif
+    </div>
+
+    <!-- Dropdown -->
+    <div id="notificationDropdown"
+         style="
+            position: absolute;
+            top: 50px;
+            right: 0;
+            width: 360px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 999999;
+         ">
+        <div style="padding: 20px;">
+            <h3 style="margin: 0 0 15px 0;">Thông báo</h3>
+
+            @forelse ($notifications as $noti)
+                @php
+                    $bg = match($noti['type']) {
+                        'info' => '#e7f3ff',
+                        'warning' => '#fff3cd',
+                        'danger' => '#f8d7da',
+                        default => '#f1f1f1'
+                    };
+                @endphp
+
+                <div style="
+                    padding: 15px;
+                    background: {{ $bg }};
+                    border-radius: 8px;
+                    margin-bottom: 10px;
                 ">
-                    3
-                </span>
-            </div>
-
-            <!-- Dropdown -->
-            <div id="notificationDropdown"
-                 style="
-                    position: absolute;
-                    top: 50px;
-                    right: 0;
-                    width: 360px;
-                    background: white;
-                    border-radius: 10px;
-                    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-                    display: none;
-                    z-index: 999999;
-                 ">
-                <div style="padding: 20px;">
-                    <h3 style="margin: 0 0 15px 0;">Thông báo</h3>
-
-                    <div style="padding: 15px; background: #e7f3ff; border-radius: 8px; margin-bottom: 10px;">
-    <strong style="font-size: 15px; display: block; margin-bottom: 4px;">
-        Phân công lớp thành công
-    </strong>
-    <small style="color: #555;">
-        Lớp Lập trình Web – HK2 đã được gán giảng viên
-    </small>
-</div>
-
-<div style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-bottom: 10px;">
-    <strong style="font-size: 15px; display: block; margin-bottom: 4px;">
-        Học kỳ mới được tạo
-    </strong>
-    <small style="color: #555;">
-        Học kỳ 2 – Năm học 2024–2025
-    </small>
-</div>
-
-<div style="padding: 15px; background: #f8d7da; border-radius: 8px;">
-    <strong style="font-size: 15px; display: block; margin-bottom: 4px;">
-        Có lỗi dữ liệu / thiếu phân công
-    </strong>
-    <small style="color: #555;">
-        Một số lớp chưa có giảng viên phụ trách
-    </small>
-</div>
-
+                    <strong style="display:block;">
+                        {{ $noti['title'] }}
+                    </strong>
+                    <small>{{ $noti['message'] }}</small>
                 </div>
-            </div>
+            @empty
+                <p style="color:#777;">Không có thông báo</p>
+            @endforelse
+
         </div>
+    </div>
+</div>
+
 
         <!-- PROFILE -->
         <div id="infor">

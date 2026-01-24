@@ -3,96 +3,77 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
-use App\Models\ClassSection;
-use App\Models\Enrollment;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('admin.adminDashboard');
-    }
+        $notifications = [];
 
-    /**
-     * API: Lấy dữ liệu dashboard (DB thật)
-     */
-    public function getDashboardData()
-    {
-        /* =========================
-         * 1. OVERVIEW
-         * ========================= */
-
-        $totalUsers = User::count();
-
-        $totalClasses = ClassSection::count();
-
-        $warningStudents = Enrollment::whereIn('enrollment_status_id', [1, 2])
-            ->distinct('student_id')
-            ->count('student_id');
-
-        /* =========================
-         * 2. DANH SÁCH LỚP CÓ VẤN ĐỀ
-         * ========================= */
-
-        $problemClassSections = ClassSection::with([
-                'courseVersion.course'
-            ])
-            ->withCount([
-                'enrollments as student_count' => function ($q) {
-                    $q->whereIn('enrollment_status_id', [1, 2]);
-                }
-            ])
-            ->having('student_count', '>', 50)
+        /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ PHÂN CÔNG LỚP THÀNH CÔNG
+        | Điều kiện: lớp có ít nhất 1 class_meeting
+        |--------------------------------------------------------------------------
+        */
+        $assignedClasses = DB::table('class_section as cs')
+            ->join('class_meeting as cm', 'cm.class_section_id', '=', 'cs.class_section_id')
+            ->select('cs.class_code', 'cm.created_at')
+            ->orderByDesc('cm.created_at')
+            ->limit(3)
             ->get();
 
-        $problemClasses = $problemClassSections->map(function ($class) {
-            return [
-                'classCode'   => $class->class_code,
-                'courseName' => $class->course_name,
-                'issueCount' => 1,
-                'severity'   => 'Cao',
-                'status'     => 'pending',
+        foreach ($assignedClasses as $class) {
+            $notifications[] = [
+                'type' => 'success',
+                'title' => 'Phân công lớp thành công',
+                'message' => "Lớp {$class->class_code} đã được phân công giảng dạy",
+                'time' => $class->created_at,
             ];
-        });
+        }
 
-        /* =========================
-         * 3. RESPONSE JSON
-         * ========================= */
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ HỌC KỲ MỚI ĐƯỢC TẠO (ĐÚNG THEO BẢNG semester)
+        |--------------------------------------------------------------------------
+        */
+        $newSemesters = DB::table('semester')
+            ->orderByDesc('created_at')
+            ->limit(2)
+            ->get();
 
-        return response()->json([
-            'overview' => [
-                'totalUsers' => [
-                    'value' => $totalUsers,
-                    'description' => 'Toàn hệ thống'
-                ],
-                'totalClasses' => [
-                    'value' => $totalClasses,
-                    'description' => 'Tổng lớp học phần'
-                ],
-                'warningStudents' => [
-                    'value' => $warningStudents,
-                    'description' => 'Sinh viên đang học'
-                ],
-                'problemClasses' => [
-                    'value' => $problemClasses->count(),
-                    'description' => 'Lớp quá tải'
-                ],
-            ],
+        foreach ($newSemesters as $sem) {
+            $notifications[] = [
+                'type' => 'warning',
+                'title' => 'Học kỳ mới được tạo',
+                'message' => "Học kỳ {$sem->semester_code}",
+                'time' => $sem->created_at,
+            ];
+        }
 
-            'systemAlerts' => [
-                'totalIssues' => $problemClasses->count(),
-                'alerts' => []
-            ],
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ CÓ LỖI DỮ LIỆU / THIẾU PHÂN CÔNG
+        | Điều kiện: lớp chưa có class_meeting
+        |--------------------------------------------------------------------------
+        */
+        $missingAssignClasses = DB::table('class_section as cs')
+            ->leftJoin('class_meeting as cm', 'cm.class_section_id', '=', 'cs.class_section_id')
+            ->whereNull('cm.class_meeting_id')
+            ->select('cs.class_code')
+            ->limit(3)
+            ->get();
 
-            'problemDistribution' => [
-                'labels' => ['Quá tải'],
-                'values' => [$problemClasses->count()],
-                'colors' => ['#ef4444']
-            ],
+        foreach ($missingAssignClasses as $class) {
+            $notifications[] = [
+                'type' => 'danger',
+                'title' => 'Có lỗi dữ liệu / thiếu phân công',
+                'message' => "Lớp {$class->class_code} chưa được phân công giảng dạy",
+                'time' => now(),
+            ];
+        }
 
-            'problemClasses' => $problemClasses
-        ]);
+        return view('admin.adminDashboard', compact('notifications'));
     }
 }

@@ -29,7 +29,7 @@
                     border-radius: 50%;
                     position: relative;
                  ">
-                <i class="fa-solid fa-bell"></i>
+                <span style="font-size:22px;">🔔</span>
 
                 @if(!empty($notifications) && count($notifications) > 0)
                     <span style="
