@@ -8,38 +8,38 @@
 <div id="menu_lecturer" class="menu_lecturer">
     <div id="menu">
         <a href="{{ route('admin.dashboard') }}">
-            <div class="frame_menu menu_active">
+            <div class="frame_menu {{ request()->routeIs('admin.dashboard') ? 'menu_active' : '' }}">
                 <i class="fa-regular fa-house "></i>
                 <p>Trang chủ</p>
             </div>
         </a>
         <a href="{{ route('admin.users.index') }}">
-            <div class="frame_menu">
+            <div class="frame_menu {{ request()->routeIs('admin.users.*') ? 'menu_active' : '' }}">
                 <i class="fa-regular fa-user"></i>
                 <p>Người dùng</p>
             </div>
         </a>
         
         <a href="{{ route('admin.hocthuat') }}">
-            <div class="frame_menu">
+            <div class="frame_menu {{ request()->routeIs('admin.hocthuat*') ? 'menu_active' : '' }}">
                 <i class="fa-solid fa-book-open"></i>
                 <p>Học thuật</p>
             </div>
         </a>
         <a href="{{ route('admin.thoigian.index') }}">
-            <div class="frame_menu">
+            <div class="frame_menu {{ request()->routeIs('admin.thoigian.*') ? 'menu_active' : '' }}">
                 <i class="fa-regular fa-calendar"></i>
                 <p>Thời gian</p>
             </div>
         </a>
         <a href="{{ route('admin.lophoc.index') }}">
-            <div class="frame_menu">
+            <div class="frame_menu {{ request()->routeIs('admin.lophoc.*') ? 'menu_active' : '' }}">
                 <i class="fa-regular fa-building"></i>
                 <p>Lớp học</p>
             </div>
         </a>
         <a href="{{ route('admin.quytac') }}">
-            <div class="frame_menu">
+            <div class="frame_menu {{ request()->routeIs('admin.quytac*') ? 'menu_active' : '' }}">
                 <i class="fa-solid fa-triangle-exclamation"></i>
                 <p>Quy tắc</p>
             </div>

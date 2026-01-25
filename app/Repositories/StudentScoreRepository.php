@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\StudentScoreRepositoryInterface;
 use App\Models\StudentScore;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -100,7 +101,7 @@ class StudentScoreRepository implements StudentScoreRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function getFailedCourses(int $studentId): Collection
+    public function getFailedCourses(int $studentId): SupportCollection
     {
         return DB::table('enrollment')
             ->join('class_section', 'enrollment.class_section_id', '=', 'class_section.class_section_id')

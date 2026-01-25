@@ -14,9 +14,15 @@
             </div>
         </a>
         <a href="{{ route('lecturer.classes') }}">
-            <div class="frame_menu {{ request()->routeIs('lecturer.classes') ? 'menu_active' : '' }}">
+            <div class="frame_menu {{ request()->routeIs('lecturer.classes', 'lecturer.class.detail', 'lecturer.attendance', 'lecturer.grading', 'lecturer.class.status', 'lecturer.report') ? 'menu_active' : '' }}">
                 <i class="fa-solid fa-list-check"></i>
                 <p>Lớp quản lý</p>
+            </div>
+        </a>
+        <a href="{{ route('lecturer.profile') }}">
+            <div class="frame_menu {{ request()->routeIs('lecturer.profile') ? 'menu_active' : '' }}">
+                <i class="fa-solid fa-user"></i>
+                <p>Hồ sơ</p>
             </div>
         </a>
     </div>
