@@ -3,6 +3,7 @@
 namespace App\Services\Lecturer;
 
 use App\Models\ClassSection;
+use App\Models\ClassSectionStatus;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,9 +39,12 @@ class GradingService
     public function getGradingData(int $classSectionId, int $lecturerId): array
     {
         // Ensure lecturer owns the class
-        ClassSection::where('class_section_id', $classSectionId)
+        $class = ClassSection::where('class_section_id', $classSectionId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        $isLocked = strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED';
 
         $classScheme = DB::table('class_grading_scheme')
             ->where('class_section_id', $classSectionId)
@@ -53,10 +57,6 @@ class GradingService
                 'message' => 'Lớp chưa được gán grading scheme.'
             ]];
         }
-
-        // IMPORTANT: No lock/chốt điểm mechanism in current DB.
-        // Keep response key for FE compatibility but always false.
-        $isLocked = false;
 
         $weightColumn = Schema::hasColumn('grading_component', 'weight_percent')
             ? 'weight_percent'
@@ -208,9 +208,17 @@ class GradingService
     public function saveGrading(Request $request, int $classSectionId, int $lecturerId): array
     {
         // Ensure lecturer owns the class
-        ClassSection::where('class_section_id', $classSectionId)
+        $class = ClassSection::where('class_section_id', $classSectionId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+            return [423, [
+                'success' => false,
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm số.',
+            ]];
+        }
 
         // Two modes on the same endpoint (no route changes):
         // - scores save: {scores:[{enrollment_id, component_id, score}]}
@@ -490,13 +498,36 @@ class GradingService
      */
     public function lockGrades(int $classSectionId, int $lecturerId): array
     {
-        ClassSection::where('class_section_id', $classSectionId)
+        $class = ClassSection::where('class_section_id', $classSectionId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
 
-        return [501, [
-            'success' => false,
-            'message' => 'Chức năng khóa điểm chưa được triển khai (DB chưa có cơ chế lock).',
+        $class->loadMissing('status');
+        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+            return [200, [
+                'success' => true,
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành.',
+            ]];
+        }
+
+        $completedStatusId = ClassSectionStatus::query()
+            ->where('code', 'COMPLETED')
+            ->value('status_id');
+
+        if (!$completedStatusId) {
+            return [500, [
+                'success' => false,
+                'message' => 'Không tìm thấy trạng thái COMPLETED trong class_section_status.',
+            ]];
+        }
+
+        $class->class_section_status_id = (int) $completedStatusId;
+        $class->updated_at = now();
+        $class->save();
+
+        return [200, [
+            'success' => true,
+            'message' => 'Khóa dữ liệu lớp học thành công. Lớp đã chuyển sang trạng thái Đã hoàn thành.',
         ]];
     }
 

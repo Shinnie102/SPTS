@@ -104,7 +104,38 @@
     filteredStudents: [],
     scores: new Map(), // key `${enrollment_id}:${component_id}` => number|null
     savingStructure: false,
-    savingGrades: false
+    savingGrades: false,
+    isLocked: false
+  };
+
+  const applyLockUi = (locked) => {
+    const isLocked = !!locked;
+    AppState.isLocked = isLocked;
+
+    // Attendance-style lock banner
+    const notice = document.getElementById('attendance-lock-notice');
+    if (notice) {
+      notice.style.display = isLocked ? 'block' : 'none';
+      // Match attendance behavior: auto-hide after a few seconds
+      if (isLocked) {
+        window.setTimeout(() => {
+          // Keep disabled controls even if banner auto-hides
+          notice.style.display = 'none';
+        }, 3000);
+      }
+    }
+
+    // Disable buttons if already rendered
+    const saveStructureBtn = document.getElementById('saveStructureBtn');
+    const saveGradeBtn = document.getElementById('saveGradeBtn');
+    if (saveStructureBtn) saveStructureBtn.disabled = isLocked;
+    if (saveGradeBtn) saveGradeBtn.disabled = isLocked;
+
+    // Disable inputs currently in DOM
+    document.querySelectorAll('.structure-input, .grade-input').forEach((el) => {
+      el.disabled = isLocked;
+    });
+
   };
 
   const getWeightPercent = (component) => {
@@ -188,13 +219,14 @@
                        min="0"
                        max="100"
                        step="1"
+                       ${AppState.isLocked ? 'disabled' : ''}
                        data-component-id="${c.component_id}">
               </div>
             </div>
           `).join('')}
         </div>
         <div class="structure-footer">
-          <button class="save-structure-btn" type="button" id="saveStructureBtn">Lưu</button>
+          <button class="save-structure-btn" type="button" id="saveStructureBtn" ${AppState.isLocked ? 'disabled' : ''}>Lưu</button>
         </div>
       `;
     },
@@ -220,7 +252,7 @@
           </div>
           <div class="grade-actions">
             <button class="export-grade-btn" type="button" id="exportBtn">Xuất bảng điểm</button>
-            <button class="save-grade-btn" type="button" id="saveGradeBtn">Lưu</button>
+            <button class="save-grade-btn" type="button" id="saveGradeBtn" ${AppState.isLocked ? 'disabled' : ''}>Lưu</button>
           </div>
         </div>
         <div class="grade-table-container">
@@ -249,6 +281,7 @@
                        min="0"
                        max="10"
                        step="0.1"
+                       ${AppState.isLocked ? 'disabled' : ''}
                        data-enrollment-id="${enrollmentId}"
                        data-component-id="${c.component_id}">
               </div>
@@ -356,6 +389,10 @@
 
     handleSaveStructure: async () => {
       try {
+        if (AppState.isLocked) {
+          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa cấu trúc điểm.' });
+          return;
+        }
         if (AppState.savingStructure) return;
         const saveBtn = document.getElementById('saveStructureBtn');
         AppState.savingStructure = true;
@@ -424,6 +461,10 @@
 
     handleSaveGrades: async () => {
       try {
+        if (AppState.isLocked) {
+          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm số.' });
+          return;
+        }
         if (AppState.savingGrades) return;
         const saveBtn = document.getElementById('saveGradeBtn');
         AppState.savingGrades = true;
@@ -500,6 +541,9 @@
     const structure = Array.isArray(payload.structure) ? payload.structure : [];
     const students = Array.isArray(payload.students) ? payload.students : [];
     const scores = Array.isArray(payload.scores) ? payload.scores : [];
+    const isLocked = !!payload.isLocked;
+
+    AppState.isLocked = isLocked;
 
     // Components: strictly component_id based
     AppState.components = structure
@@ -534,6 +578,8 @@
 
     Renderer.renderStructure();
     Renderer.renderGrades();
+
+    applyLockUi(isLocked);
   };
 
   const initializeApp = async () => {

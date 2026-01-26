@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('css/overall.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/dropdown-header.css') }}">
     <link rel="stylesheet" href="{{ asset('css/lecturer/grading.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/lecturer/attendance.css') }}">
     <!-- --------------------------------- -->
     <link
         href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400;500;600;700&family=Roboto:wght@100;300;400;500;700&display=swap"
@@ -36,27 +37,27 @@
             <main class="main-content">
                 <div class="attendance-container">
 
-                <section id="lock-notification" class="lock-status-container" style="display: none;">
+                <!-- Khối thông báo Khóa dữ liệu (đồng bộ y hệt Attendance) -->
+                <div id="attendance-lock-notice" class="lock-status-container" style="display:none;">
                     <div class="lock-header-row">
-                        <div class="lock-text-group">
-                            <h3 class="lock-main-title">Khóa dữ liệu lớp học</h3>
-                            <p class="lock-description">Khóa dữ liệu để ngăn chỉnh sửa điểm danh và điểm số</p>
+                        <div>
+                            <h2 class="lock-main-title">Khóa dữ liệu lớp học</h2>
+                            <p class="lock-description">Lớp đã ở trạng thái Đã hoàn thành. Bạn chỉ có thể xem, không thể chỉnh sửa.</p>
                         </div>
                         <div class="lock-status-icon">
-                            <i class="fas fa-lock"></i>
+                            <img src="{{ asset('lecturer/img/lock-gray.svg') }}" alt="Khóa">
                         </div>
                     </div>
-
                     <div class="lock-warning-banner">
                         <div class="warning-icon-circle">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <img src="{{ asset('lecturer/img/warning-icon.png') }}" alt="Cảnh báo">
                         </div>
                         <div class="warning-text-box">
-                            <h4 class="warning-heading">Dữ liệu đã được khóa</h4>
-                            <p class="warning-detail">Sau khi khóa, bạn không thể chỉnh sửa điểm danh và điểm số. Vui lòng liên hệ quản trị viên nếu cần mở khóa.</p>
+                            <h3 class="warning-heading" style="color: #FEBC2F;">Không thể sửa dữ liệu</h3>
+                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu của lớp đã được khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
                         </div>
                     </div>
-                </section>
+                </div>
 
                 
 @include('lecturer.attendance_header', [

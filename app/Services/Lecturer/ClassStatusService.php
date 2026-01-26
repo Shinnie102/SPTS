@@ -5,6 +5,7 @@ namespace App\Services\Lecturer;
 use App\Models\Attendance;
 use App\Models\ClassMeeting;
 use App\Models\ClassSection;
+use App\Models\ClassSectionStatus;
 use App\Models\Enrollment;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -31,6 +32,8 @@ class ClassStatusService
             ->firstOrFail();
 
         $currentClass->loadMissing('status');
+
+        $isClassLocked = strtoupper((string) ($currentClass->status?->code ?? '')) === 'COMPLETED';
 
         $classes = ClassSection::with(['courseVersion.course'])
             ->where('lecturer_id', $lecturerId)
@@ -273,7 +276,46 @@ class ClassStatusService
             return $student;
         }, $students);
 
-        return compact('currentClass', 'classes', 'students', 'dashboard');
+        return compact('currentClass', 'classes', 'students', 'dashboard', 'isClassLocked');
+    }
+
+    /**
+     * Lock class data by moving class_section_status_id to COMPLETED.
+     * Returns tuple: [statusCode, payload]
+     */
+    public function lockClass(int $classSectionId, int $lecturerId): array
+    {
+        $class = ClassSection::where('class_section_id', $classSectionId)
+            ->where('lecturer_id', $lecturerId)
+            ->firstOrFail();
+
+        $class->loadMissing('status');
+        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+            return [200, [
+                'success' => true,
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành.',
+            ]];
+        }
+
+        $completedStatusId = ClassSectionStatus::query()
+            ->where('code', 'COMPLETED')
+            ->value('status_id');
+
+        if (!$completedStatusId) {
+            return [500, [
+                'success' => false,
+                'message' => 'Không tìm thấy trạng thái COMPLETED trong class_section_status.',
+            ]];
+        }
+
+        $class->class_section_status_id = (int) $completedStatusId;
+        $class->updated_at = now();
+        $class->save();
+
+        return [200, [
+            'success' => true,
+            'message' => 'Khóa dữ liệu lớp học thành công. Lớp đã chuyển sang trạng thái Đã hoàn thành.',
+        ]];
     }
 
     private function getStudentsDatasetForClass(int $classSectionId): array

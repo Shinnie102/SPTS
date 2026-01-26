@@ -225,11 +225,11 @@
                                 <p class="note">
                                     Lưu ý: Khi khóa dữ liệu lớp, bạn sẽ không thể chỉnh sửa điểm danh hoặc điểm số. Vui lòng đảm bảo tất cả thông tin đã chính xác trước khi khóa.
                                 </p>
-                                <button class="btn btn-red" type="button" disabled>
+                                <button class="btn btn-red" type="button" id="lockClassBtn" {{ ($isClassLocked ?? false) ? 'disabled' : '' }}>
                                     <svg width="14" height="14" fill="white" viewBox="0 0 24 24">
                                         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zM9 6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9V6z" />
                                     </svg>
-                                    Khóa
+                                    {{ ($isClassLocked ?? false) ? 'Đã khóa' : 'Khóa' }}
                                 </button>
                             </div>
                         </div>
@@ -372,6 +372,51 @@
                 if (modalEl && window.bootstrap && window.bootstrap.Modal) {
                     const inst = window.bootstrap.Modal.getInstance(modalEl);
                     if (inst) inst.hide();
+                }
+            });
+        })();
+    </script>
+
+    <script>
+        (function () {
+            const btn = document.getElementById('lockClassBtn');
+            if (!btn || btn.disabled) return;
+
+            const csrf = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+            const lockUrl = @json(route('lecturer.class.status.lock', ['id' => $currentClass->class_section_id]));
+
+            btn.addEventListener('click', async function () {
+                const ok = window.confirm('Xác nhận khóa dữ liệu lớp học? Sau khi khóa, bạn sẽ không thể chỉnh sửa điểm danh hoặc điểm số.');
+                if (!ok) return;
+
+                btn.disabled = true;
+
+                try {
+                    const res = await fetch(lockUrl, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrf,
+                            'Accept': 'application/json'
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    const contentType = res.headers.get('content-type') || '';
+                    const data = contentType.includes('application/json') ? await res.json() : null;
+
+                    if (res.ok && data && data.success) {
+                        window.alert(data.message || 'Đã khóa dữ liệu lớp học.');
+                        window.location.reload();
+                        return;
+                    }
+
+                    const msg = (data && (data.message || data.error)) ? (data.message || data.error) : `HTTP ${res.status}`;
+                    window.alert(msg);
+                    btn.disabled = false;
+                } catch (e) {
+                    console.error(e);
+                    window.alert('Có lỗi xảy ra khi khóa lớp.');
+                    btn.disabled = false;
                 }
             });
         })();

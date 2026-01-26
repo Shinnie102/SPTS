@@ -20,6 +20,9 @@ class AttendanceService
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
 
+        $currentClass->loadMissing('status');
+        $isClassLocked = strtoupper((string) ($currentClass->status?->code ?? '')) === 'COMPLETED';
+
         $classes = ClassSection::with(['courseVersion.course'])
             ->where('lecturer_id', $lecturerId)
             ->orderBy('class_section_id', 'desc')
@@ -65,6 +68,9 @@ class AttendanceService
             $isAttendanceLocked = $attendanceCount > 0;
         }
 
+        // Class-level lock overrides meeting-level lock
+        $isAttendanceLocked = $isClassLocked || $isAttendanceLocked;
+
         return compact(
             'currentClass',
             'classes',
@@ -77,9 +83,12 @@ class AttendanceService
 
     public function getAttendanceData(int $classId, int $meetingId, int $lecturerId): array
     {
-        ClassSection::where('class_section_id', $classId)
+        $class = ClassSection::where('class_section_id', $classId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        $isClassLocked = strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED';
 
         $meeting = ClassMeeting::where('class_meeting_id', $meetingId)
             ->where('class_section_id', $classId)
@@ -111,6 +120,7 @@ class AttendanceService
         }
 
         $isLocked = Attendance::where('class_meeting_id', $meetingId)->count() > 0;
+        $isLocked = $isClassLocked || $isLocked;
 
         return [
             'success' => true,
@@ -125,9 +135,17 @@ class AttendanceService
      */
     public function saveAttendance(Request $request, int $classId, int $lecturerId): array
     {
-        ClassSection::where('class_section_id', $classId)
+        $class = ClassSection::where('class_section_id', $classId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+            return [423, [
+                'success' => false,
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm danh.',
+            ]];
+        }
 
         // Không cho lưu vào buổi đã tồn tại trong nghiệp vụ hiện tại
         if ($request->filled('meeting_id')) {
