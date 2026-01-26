@@ -218,6 +218,9 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
 
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/dashboard/api/data', [LecturerDashboardController::class, 'getDashboardData'])
+        ->name('dashboard.api.data');
+
     // ✅ Route đánh dấu đã đọc thông báo
     Route::post('/notifications/mark-all-read', [LecturerDashboardController::class, 'markAllRead'])
         ->name('notifications.markAllRead');

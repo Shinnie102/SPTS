@@ -8,6 +8,11 @@
 {{-- ✅ Thêm meta CSRF token --}}
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
+@php
+    $notifications = $notifications ?? [];
+    $hasRead = $hasRead ?? false;
+@endphp
+
 <div id="header" class="header">
     <a href="{{ route('lecturer.dashboard') }}">
         <div id="frame_logo">
@@ -115,19 +120,16 @@
 </div>
 
 <!-- ✅ JS ĐƠN GIẢN - CHỈ XỬ LÝ CLICK CHUÔNG -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const bell = document.getElementById('bellContainer');
     const dropdown = document.getElementById('notificationDropdown');
     const notificationCount = document.getElementById('notificationCount');
 
-    // Setup CSRF token
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
+    function getCsrfToken() {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    }
 
     // ✅ Click vào chuông
     bell.addEventListener('click', function (e) {
@@ -139,20 +141,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // ✅ Nếu có số thông báo, gọi API để ẩn nó
         if (notificationCount && !isVisible) {
-            $.ajax({
-                url: '{{ route("lecturer.notifications.markAllRead") }}',
-                type: 'POST',
-                success: function(response) {
-                    if(response.success) {
-                        // Ẩn số thông báo
-                        if(notificationCount) {
-                            notificationCount.style.display = 'none';
-                        }
-                    }
+            fetch('{{ route("lecturer.notifications.markAllRead") }}', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': getCsrfToken()
                 },
-                error: function(xhr) {
-                    console.error('Error:', xhr);
+                body: JSON.stringify({})
+            })
+            .then(resp => resp.ok ? resp.json() : null)
+            .then(response => {
+                if (response && response.success) {
+                    notificationCount.style.display = 'none';
                 }
+            })
+            .catch(() => {
+                // ignore
             });
         }
     });
