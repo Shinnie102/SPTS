@@ -187,7 +187,109 @@
 .pagination-container {
   margin-top: 30px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6c757d;
+  text-align: center;
+}
+
+/* Custom Pagination Styles */
+.pagination-links nav {
+  display: flex;
   justify-content: center;
+}
+
+.pagination {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 5px;
+  align-items: center;
+}
+
+.page-item {
+  display: flex;
+}
+
+.page-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 40px;
+  padding: 8px 12px;
+  text-decoration: none;
+  color: #0088f0;
+  background-color: white;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.page-link:hover {
+  color: #0066cc;
+  background-color: #f8f9fa;
+  border-color: #0088f0;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 136, 240, 0.1);
+}
+
+.page-item.active .page-link {
+  color: white;
+  background-color: #0088f0;
+  border-color: #0088f0;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 136, 240, 0.3);
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.page-item.disabled .page-link:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+/* Previous/Next buttons */
+.page-item:first-child .page-link,
+.page-item:last-child .page-link {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Responsive pagination */
+@media (max-width: 576px) {
+  .pagination {
+    gap: 2px;
+  }
+  
+  .page-link {
+    min-width: 35px;
+    height: 35px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+  
+  .pagination-info {
+    font-size: 13px;
+  }
 }
 
 /* Thông báo */

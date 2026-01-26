@@ -58,6 +58,8 @@ class StudentAlertWarning {
      */
     async fetchWarnings() {
         try {
+            console.log('Fetching warnings from:', this.config.apiEndpoint);
+            
             const response = await fetch(this.config.apiEndpoint, {
                 method: 'GET',
                 headers: {
@@ -68,14 +70,18 @@ class StudentAlertWarning {
                 credentials: 'same-origin'
             });
 
+            console.log('Response status:', response.status);
+            
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const result = await response.json();
+            console.log('API result:', result);
             
             if (result.success) {
                 this.warnings = result.data;
+                console.log('Warnings loaded:', this.warnings);
             } else {
                 console.error('API error:', result.message);
                 this.warnings = { hasViolations: false, warnings: [] };
@@ -83,6 +89,7 @@ class StudentAlertWarning {
         } catch (error) {
             console.error('Lỗi khi fetch warnings:', error);
             // Fallback to demo data in case of error
+            console.log('Using demo data as fallback');
             this.warnings = await this.getDemoWarnings();
         }
     }
@@ -148,19 +155,27 @@ class StudentAlertWarning {
      * Kiểm tra xem có nên hiển thị cảnh báo không
      */
     shouldShowWarnings() {
+        console.log('Checking shouldShowWarnings...');
+        console.log('hasViolations:', this.warnings.hasViolations);
+        console.log('warnings array:', this.warnings.warnings);
+        
         // Không có vi phạm thì không hiển thị
         if (!this.warnings.hasViolations || !this.warnings.warnings || this.warnings.warnings.length === 0) {
+            console.log('No violations or empty warnings array');
             return false;
         }
 
         // Lấy danh sách đã dismiss từ localStorage
         const dismissed = this.getDismissedWarnings();
+        console.log('Dismissed data:', dismissed);
         
         // Nếu đã dismiss trong session hiện tại, không hiển thị
         if (dismissed.sessionId === this.currentSessionId && dismissed.warningHash === this.getWarningHash()) {
+            console.log('Already dismissed in current session');
             return false;
         }
 
+        console.log('Should show warnings: true');
         // Hiển thị nếu:
         // 1. Session mới (logout/login lại)
         // 2. Có vi phạm mới (hash khác)
@@ -220,10 +235,16 @@ class StudentAlertWarning {
      */
     generateHTML() {
         const warningsHTML = this.warnings.warnings.map(warning => {
-            const subjectsHTML = warning.subjects.map(subject => {
-                const detail = subject.rate || subject.score || subject.status;
-                return `<li><strong>${subject.name}</strong>: ${detail}</li>`;
-            }).join('');
+            let subjectsHTML = '';
+            
+            // Xử lý cả subjects và courses
+            const items = warning.subjects || warning.courses || [];
+            if (items.length > 0) {
+                subjectsHTML = items.map(item => {
+                    const detail = item.rate || item.score || item.status;
+                    return `<li><strong>${item.name}</strong>: ${detail}</li>`;
+                }).join('');
+            }
 
             return `
                 <div class="alert-warning-item alert-${warning.severity}">
@@ -231,8 +252,8 @@ class StudentAlertWarning {
                         <i class="fas fa-exclamation-triangle"></i>
                         <h3>${warning.title}</h3>
                     </div>
-                    <p class="alert-message">${warning.message}</p>
-                    ${warning.subjects && warning.subjects.length > 0 ? `
+                    <p class="alert-message">${warning.description || warning.message}</p>
+                    ${subjectsHTML ? `
                         <div class="alert-subjects">
                             <ul>${subjectsHTML}</ul>
                         </div>

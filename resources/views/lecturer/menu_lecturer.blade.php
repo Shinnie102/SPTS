@@ -19,12 +19,6 @@
                 <p>Lớp quản lý</p>
             </div>
         </a>
-        <a href="{{ route('lecturer.profile') }}">
-            <div class="frame_menu {{ request()->routeIs('lecturer.profile') ? 'menu_active' : '' }}">
-                <i class="fa-solid fa-user"></i>
-                <p>Hồ sơ</p>
-            </div>
-        </a>
     </div>
     <div class="frame_logout">
         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
