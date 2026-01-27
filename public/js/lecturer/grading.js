@@ -390,7 +390,7 @@
     handleSaveStructure: async () => {
       try {
         if (AppState.isLocked) {
-          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa cấu trúc điểm.' });
+          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy nên không thể chỉnh sửa cấu trúc điểm.' });
           return;
         }
         if (AppState.savingStructure) return;
@@ -462,7 +462,7 @@
     handleSaveGrades: async () => {
       try {
         if (AppState.isLocked) {
-          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm số.' });
+          TopWarning.show({ heading: 'Không thể lưu', detail: 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy nên không thể chỉnh sửa điểm số.' });
           return;
         }
         if (AppState.savingGrades) return;

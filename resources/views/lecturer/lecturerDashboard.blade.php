@@ -101,7 +101,7 @@
         </span>
     </td>
     <td>
-        <a href="{{ route('lecturer.class.detail', $class->class_section_id) }}">
+        <a href="{{ route('lecturer.attendance', $class->class_section_id) }}">
             Xem
         </a>
     </td>

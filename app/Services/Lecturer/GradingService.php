@@ -44,7 +44,8 @@ class GradingService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        $isLocked = strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED';
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        $isLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
 
         $classScheme = DB::table('class_grading_scheme')
             ->where('class_section_id', $classSectionId)
@@ -213,10 +214,11 @@ class GradingService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        if (in_array($statusCode, ['COMPLETED', 'CANCELLED'], true)) {
             return [423, [
                 'success' => false,
-                'message' => 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm số.',
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy nên không thể chỉnh sửa điểm số.',
             ]];
         }
 
@@ -503,10 +505,11 @@ class GradingService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        if (in_array($statusCode, ['COMPLETED', 'CANCELLED'], true)) {
             return [200, [
                 'success' => true,
-                'message' => 'Lớp đã ở trạng thái Đã hoàn thành.',
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy.',
             ]];
         }
 
@@ -534,7 +537,6 @@ class GradingService
     private function getStudentsDatasetForClass(int $classSectionId): array
     {
         $enrollments = Enrollment::where('class_section_id', $classSectionId)
-            ->whereIn('enrollment_status_id', [1, 2])
             ->with(['student'])
             ->get();
 

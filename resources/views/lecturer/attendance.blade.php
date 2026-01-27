@@ -41,7 +41,7 @@
                     <div class="lock-header-row">
                         <div>
                             <h2 class="lock-main-title">Khóa dữ liệu điểm danh</h2>
-                            <p class="lock-description">Buổi học này đã có dữ liệu điểm danh. Bạn chỉ có thể xem, không thể chỉnh sửa.</p>
+                            <p class="lock-description">Dữ liệu điểm danh đã được khóa (lớp đã hoàn thành/đã hủy hoặc buổi đã có dữ liệu). Bạn chỉ có thể xem, không thể chỉnh sửa.</p>
                         </div>
                         <div class="lock-status-icon">
                             <img src="{{ asset('lecturer/img/lock-gray.svg') }}" alt="Khóa">
@@ -53,7 +53,7 @@
                         </div>
                         <div class="warning-text-box">
                             <h3 class="warning-heading" style="color: #FEBC2F;">Không thể sửa điểm danh</h3>
-                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu điểm danh cho buổi học này đã được lưu và khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
+                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu điểm danh đã được lưu và khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
                         </div>
                     </div>
                 </div>

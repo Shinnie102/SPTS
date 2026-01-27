@@ -33,7 +33,8 @@ class ClassStatusService
 
         $currentClass->loadMissing('status');
 
-        $isClassLocked = strtoupper((string) ($currentClass->status?->code ?? '')) === 'COMPLETED';
+        $statusCode = strtoupper((string) ($currentClass->status?->code ?? ''));
+        $isClassLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
 
         $classes = ClassSection::with(['courseVersion.course'])
             ->where('lecturer_id', $lecturerId)
@@ -290,10 +291,11 @@ class ClassStatusService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        if (in_array($statusCode, ['COMPLETED', 'CANCELLED'], true)) {
             return [200, [
                 'success' => true,
-                'message' => 'Lớp đã ở trạng thái Đã hoàn thành.',
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy.',
             ]];
         }
 

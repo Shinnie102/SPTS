@@ -42,7 +42,7 @@
                     <div class="lock-header-row">
                         <div>
                             <h2 class="lock-main-title">Khóa dữ liệu lớp học</h2>
-                            <p class="lock-description">Lớp đã ở trạng thái Đã hoàn thành. Bạn chỉ có thể xem, không thể chỉnh sửa.</p>
+                            <p class="lock-description">Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy. Bạn chỉ có thể xem, không thể chỉnh sửa.</p>
                         </div>
                         <div class="lock-status-icon">
                             <img src="{{ asset('lecturer/img/lock-gray.svg') }}" alt="Khóa">
@@ -54,7 +54,7 @@
                         </div>
                         <div class="warning-text-box">
                             <h3 class="warning-heading" style="color: #FEBC2F;">Không thể sửa dữ liệu</h3>
-                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu của lớp đã được khóa. Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
+                            <p class="warning-detail" style="color: #FEBC2F;">Dữ liệu của lớp đã được khóa (Đã hoàn thành/Đã hủy). Để chỉnh sửa, vui lòng liên hệ quản trị viên.</p>
                         </div>
                     </div>
                 </div>

@@ -189,107 +189,62 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
 }
 
 .pagination-info {
   font-size: 14px;
-  color: #6c757d;
-  text-align: center;
+  color: #6b7280;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 999px;
+  line-height: 1.4;
 }
 
-/* Custom Pagination Styles */
-.pagination-links nav {
+.pagination-links {
   display: flex;
   justify-content: center;
 }
 
-.pagination {
+.pagination-links .pagination {
   display: flex;
-  list-style: none;
+  align-items: center;
+  gap: 6px;
   margin: 0;
   padding: 0;
-  gap: 5px;
-  align-items: center;
 }
 
-.page-item {
-  display: flex;
-}
-
-.page-link {
-  display: flex;
+.pagination-links .page-item .page-link {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
-  height: 40px;
-  padding: 8px 12px;
-  text-decoration: none;
-  color: #0088f0;
-  background-color: white;
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  background: #ffffff;
   font-weight: 500;
-  transition: all 0.3s ease;
-  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.page-link:hover {
-  color: #0066cc;
-  background-color: #f8f9fa;
+.pagination-links .page-item .page-link:hover {
+  background: #eff6ff;
   border-color: #0088f0;
-  text-decoration: none;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 136, 240, 0.1);
+  color: #0088f0;
 }
 
-.page-item.active .page-link {
-  color: white;
-  background-color: #0088f0;
+.pagination-links .page-item.active .page-link {
+  background: #0088f0;
   border-color: #0088f0;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 136, 240, 0.3);
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 136, 240, 0.2);
 }
 
-.page-item.disabled .page-link {
-  color: #6c757d;
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-  cursor: not-allowed;
-  opacity: 0.6;
-}
-
-.page-item.disabled .page-link:hover {
-  transform: none;
-  box-shadow: none;
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-}
-
-/* Previous/Next buttons */
-.page-item:first-child .page-link,
-.page-item:last-child .page-link {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-/* Responsive pagination */
-@media (max-width: 576px) {
-  .pagination {
-    gap: 2px;
-  }
-  
-  .page-link {
-    min-width: 35px;
-    height: 35px;
-    padding: 6px 8px;
-    font-size: 13px;
-  }
-  
-  .pagination-info {
-    font-size: 13px;
-  }
+.pagination-links .page-item.disabled .page-link {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 /* Thông báo */

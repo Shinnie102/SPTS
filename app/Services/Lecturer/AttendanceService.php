@@ -21,7 +21,8 @@ class AttendanceService
             ->firstOrFail();
 
         $currentClass->loadMissing('status');
-        $isClassLocked = strtoupper((string) ($currentClass->status?->code ?? '')) === 'COMPLETED';
+        $statusCode = strtoupper((string) ($currentClass->status?->code ?? ''));
+        $isClassLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
 
         $classes = ClassSection::with(['courseVersion.course'])
             ->where('lecturer_id', $lecturerId)
@@ -33,7 +34,6 @@ class AttendanceService
             ->get();
 
         $enrollments = Enrollment::where('class_section_id', $classSectionId)
-            ->whereIn('enrollment_status_id', [1, 2])
             ->with(['student'])
             ->get();
 
@@ -59,6 +59,7 @@ class AttendanceService
                 'attendance_status_id' => $attendance ? $attendance->attendance_status_id : null,
                 'status_name' => $attendance ?
                     ($attendanceStatuses[$attendance->attendance_status_id]->name ?? null) : null,
+                'is_attendable' => in_array((int) $enrollment->enrollment_status_id, [1, 2], true),
             ];
         }
 
@@ -88,14 +89,14 @@ class AttendanceService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        $isClassLocked = strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED';
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        $isClassLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
 
         $meeting = ClassMeeting::where('class_meeting_id', $meetingId)
             ->where('class_section_id', $classId)
             ->firstOrFail();
 
         $enrollments = Enrollment::where('class_section_id', $classId)
-            ->whereIn('enrollment_status_id', [1, 2])
             ->with(['student'])
             ->get();
 
@@ -116,6 +117,7 @@ class AttendanceService
                 'attendance_status_id' => $attendance ? $attendance->attendance_status_id : null,
                 'status_name' => $attendance ?
                     ($attendanceStatuses[$attendance->attendance_status_id]->name ?? null) : null,
+                'is_attendable' => in_array((int) $enrollment->enrollment_status_id, [1, 2], true),
             ];
         }
 
@@ -140,10 +142,11 @@ class AttendanceService
             ->firstOrFail();
 
         $class->loadMissing('status');
-        if (strtoupper((string) ($class->status?->code ?? '')) === 'COMPLETED') {
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        if (in_array($statusCode, ['COMPLETED', 'CANCELLED'], true)) {
             return [423, [
                 'success' => false,
-                'message' => 'Lớp đã ở trạng thái Đã hoàn thành nên không thể chỉnh sửa điểm danh.',
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy nên không thể chỉnh sửa điểm danh.',
             ]];
         }
 
@@ -183,6 +186,25 @@ class AttendanceService
             ]];
         }
 
+        // Chỉ cho phép điểm danh với sinh viên ở trạng thái PENDING/CONFIRMED
+        $eligibleEnrollmentIds = Enrollment::where('class_section_id', $classId)
+            ->whereIn('enrollment_status_id', [1, 2])
+            ->pluck('enrollment_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        $filteredAttendance = array_values(array_filter(
+            $validated['attendance'],
+            fn ($row) => in_array((int) $row['enrollment_id'], $eligibleEnrollmentIds, true)
+        ));
+
+        if (count($filteredAttendance) === 0) {
+            return [422, [
+                'success' => false,
+                'message' => 'Không có sinh viên hợp lệ để điểm danh cho lớp này.',
+            ]];
+        }
+
         if (!Schema::hasTable('meeting_status')) {
             return [500, [
                 'success' => false,
@@ -215,7 +237,7 @@ class AttendanceService
                 'note' => null,
             ]);
 
-            foreach ($validated['attendance'] as $row) {
+            foreach ($filteredAttendance as $row) {
                 Attendance::create([
                     'enrollment_id' => $row['enrollment_id'],
                     'class_meeting_id' => $meeting->class_meeting_id,
