@@ -1,308 +1,122 @@
-// ================= DATA CONFIGURATION =================
-const dashboardData = {
-    // Thống kê tổng quan
-    overview: {
-        totalUsers: {
-            value: 2287,
-            description: 'Học kì 2 năm học 2025–2026'
-        },
-        totalClasses: {
-            value: 200,
-            description: 'Thuộc 20 học phần'
-        },
-        warningStudents: {
-            value: 287,
-            description: 'Chiếm 10% tổng số sinh viên'
-        },
-        problemClasses: {
-            value: 20,
-            description: 'Chiếm 10% tổng số lớp'
-        }
-    },
-
-    // Cảnh báo hệ thống
-    systemAlerts: {
-        totalIssues: 2, // chỉ đếm danger và warning
-        alerts: [
-            {
-                type: 'danger', // danger, warning, info
-                message: 'Grading Scheme GS002 có tổng % = 95%, không thể sử dụng',
-                detail: 'Lớp: ENG202.02'
-            },
-            {
-                type: 'warning',
-                message: 'Lớp CS101.01 vượt quá sức chứa (51/50 sinh viên)',
-                detail: 'Lớp: CS101.01'
-            },
-            {
-                type: 'info',
-                message: 'Kỳ 1 (2024-2025) kết thúc trong 3 ngày',
-                detail: 'Chưa có kì học mới'
-            },
-            {
-                type: 'info',
-                message: 'Hệ thống sẽ bảo trì vào 15/01/2026',
-                detail: 'Dự kiến từ 00:00 - 06:00'
-            }
-        ]
-    },
-
-    // Phân bố nguyên nhân vấn đề (dữ liệu cho biểu đồ)
-    problemDistribution: {
-        labels: ['Vi phạm chuyên cần', 'Vấn đề điểm'],
-        values: [39.48, 60.52], // Phần trăm
-        colors: ['#ef4444', '#3b82f6']
-    },
-
-    // Danh sách lớp có vấn đề
-    problemClasses: [
-        {
-            classCode: 'CS101.01',
-            courseName: 'Nhập môn Khoa học Máy tính',
-            issueCount: 3,
-            severity: 'Cao',
-            status: 'resolved' // resolved, processing, pending
-        },
-        {
-            classCode: 'ENG202.02',
-            courseName: 'Tiếng Anh Chuyên ngành',
-            issueCount: 2,
-            severity: 'Trung bình',
-            status: 'processing'
-        },
-        {
-            classCode: 'MATH301.03',
-            courseName: 'Toán Cao Cấp',
-            issueCount: 1,
-            severity: 'Thấp',
-            status: 'resolved'
-        },
-        {
-            classCode: 'PHY201.01',
-            courseName: 'Vật lý Đại cương',
-            issueCount: 2,
-            severity: 'Cao',
-            status: 'pending'
-        }
-    ]
+// ================= GLOBAL STATE =================
+let dashboardData = {
+    cards: {},
+    problemClassesList: [],
+    problemCauses: {}
 };
 
-// ================= RENDER FUNCTIONS =================
-
-// Render thống kê tổng quan
+// ================= RENDER OVERVIEW =================
 function renderOverviewCards() {
-    const { totalUsers, totalClasses, warningStudents, problemClasses } = dashboardData.overview;
+    const c = dashboardData.cards;
 
-    // Tổng người dùng
-    document.getElementById('value-total-users').textContent = totalUsers.value.toLocaleString();
-    document.getElementById('desc-total-users').textContent = totalUsers.description;
+    const set = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value ?? '-';
+    };
 
-    // Tổng lớp học phần
-    document.getElementById('value-total-classes').textContent = totalClasses.value.toLocaleString();
-    document.getElementById('desc-total-classes').textContent = totalClasses.description;
-
-    // Sinh viên cảnh báo
-    document.getElementById('value-warning-students').textContent = warningStudents.value.toLocaleString();
-    document.getElementById('desc-warning-students').textContent = warningStudents.description;
-
-    // Lớp có vấn đề
-    document.getElementById('value-problem-classes').textContent = problemClasses.value.toLocaleString();
-    document.getElementById('desc-problem-classes').textContent = problemClasses.description;
+    set('value-total-users', c.totalUsers);
+    set('value-total-classes', c.totalClasses);
+    set('value-warning-students', c.warningStudents);
+    set('value-problem-classes', c.problemClasses);
 }
 
-// Render cảnh báo hệ thống
+// ================= RENDER ALERTS =================
 function renderSystemAlerts() {
-    const { totalIssues, alerts } = dashboardData.systemAlerts;
+    const container = document.querySelector('.alert-list');
+    if (!container) return;
 
-    // Cập nhật badge số lượng vấn đề
-    const badge = document.querySelector('.chart-card .badge');
-    if (badge) {
-        badge.textContent = `${totalIssues} vấn đề cần xử lý`;
-    }
-
-    // Render danh sách alerts
-    const alertList = document.querySelector('.alert-list');
-    if (!alertList) return;
-
-    alertList.innerHTML = alerts.map(alert => `
-        <div class="alert-item alert-${alert.type}">
-            <p><strong>${alert.message}</strong></p>
-            <span>${alert.detail}</span>
+    container.innerHTML = `
+        <div class="alert-item alert-success">
+            <p><strong>Dashboard hoạt động</strong></p>
+            <span>Dữ liệu đã load thành công</span>
         </div>
-    `).join('');
+    `;
 }
 
-// Render biểu đồ phân bố nguyên nhân
+// ================= RENDER CHART =================
+let problemChart = null;
+
 function renderProblemChart() {
-    const canvas = document.getElementById('problemCauseChart');
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    const { labels, values, colors } = dashboardData.problemDistribution;
-
-    // Kiểm tra xem Chart.js đã được load chưa
     if (typeof Chart === 'undefined') {
-        console.warn('Chart.js chưa được load. Vui lòng thêm thư viện Chart.js');
+        console.warn('❌ Chart.js chưa được load');
         return;
     }
 
-    new Chart(ctx, {
+    const canvas = document.getElementById('problemCauseChart');
+    if (!canvas) return;
+
+    const labels = Object.keys(dashboardData.problemCauses);
+    const values = Object.values(dashboardData.problemCauses);
+
+    if (problemChart) problemChart.destroy();
+
+    problemChart = new Chart(canvas, {
         type: 'doughnut',
         data: {
-            labels: labels,
+            labels,
             datasets: [{
                 data: values,
-                backgroundColor: colors,
-                borderWidth: 0,
-                hoverOffset: 8
+                backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6']
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 15,
-                        font: {
-                            size: 13,
-                            family: 'Roboto'
-                        },
-                        generateLabels: function(chart) {
-                            const data = chart.data;
-                            return data.labels.map((label, i) => ({
-                                text: `${label}: ${data.datasets[0].data[i]}%`,
-                                fillStyle: data.datasets[0].backgroundColor[i],
-                                hidden: false,
-                                index: i
-                            }));
-                        }
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return `${context.label}: ${context.parsed}%`;
-                        }
-                    }
-                }
+                legend: { position: 'bottom' }
             }
         }
     });
 }
 
-// Render bảng danh sách lớp có vấn đề
+// ================= RENDER TABLE =================
 function renderProblemClassesTable() {
     const tbody = document.querySelector('.issue-table tbody');
     if (!tbody) return;
 
-    const statusMap = {
-        resolved: { text: 'Đã xử lý', class: 'status-closed' },
-        processing: { text: 'Đang xử lý', class: 'status-open' },
-        pending: { text: 'Chờ xử lý', class: 'status-open' }
-    };
-
-    tbody.innerHTML = dashboardData.problemClasses.map(item => {
-        const status = statusMap[item.status];
-        return `
+    if (!dashboardData.problemClassesList.length) {
+        tbody.innerHTML = `
             <tr>
-                <td>${item.classCode}</td>
-                <td>${item.courseName}</td>
-                <td>${item.issueCount}</td>
-                <td>${item.severity}</td>
-                <td><span class="${status.class}">${status.text}</span></td>
-                <td><button class="view-details-btn" data-class="${item.classCode}">Xem chi tiết</button></td>
+                <td colspan="6" style="text-align:center">
+                    Không có dữ liệu
+                </td>
             </tr>
         `;
-    }).join('');
+        return;
+    }
 
-    // Thêm event listeners cho các nút "Xem chi tiết"
-    attachViewDetailButtons();
+    tbody.innerHTML = dashboardData.problemClassesList.map(item => `
+        <tr>
+            <td>${item.class_code}</td>
+            <td>${item.course_name}</td>
+            <td>${item.problem_count}</td>
+            <td>Cảnh báo</td>
+            <td><span class="status-open">Chưa xử lý</span></td>
+            <td>
+                <button class="view-details-btn" data-code="${item.class_code}">
+                    Xem chi tiết
+                </button>
+            </td>
+        </tr>
+    `).join('');
 }
 
-// ================= EVENT HANDLERS =================
-
-// Gắn sự kiện cho các nút "Xem chi tiết"
-function attachViewDetailButtons() {
-    const buttons = document.querySelectorAll('.view-details-btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', function() {
-            const classCode = this.getAttribute('data-class');
-            handleViewDetails(classCode);
-        });
-    });
-}
-
-// Xử lý khi click "Xem chi tiết"
-function handleViewDetails(classCode) {
-    // TODO: Implement logic để hiển thị chi tiết lớp học
-    console.log(`Xem chi tiết lớp: ${classCode}`);
-    alert(`Chức năng xem chi tiết lớp ${classCode} đang được phát triển`);
-}
-
-// ================= INITIALIZATION =================
-
-// Khởi tạo dashboard khi DOM đã load xong
-document.addEventListener('DOMContentLoaded', function () {
-
-    // 1. Ẩn dashboard lúc chưa có data
-    document.body.classList.add('dashboard-loading');
-
-    // 2. Fetch DB thật
+// ================= LOAD DATA =================
+document.addEventListener('DOMContentLoaded', () => {
     fetch('/admin/dashboard/api/data')
         .then(res => res.json())
         .then(data => {
+            console.log('✅ Dashboard API:', data);
 
-            // Update data
-            AdminDashboard.updateData(data);
+            dashboardData.cards = data.cards || {};
+            dashboardData.problemClassesList = data.problemClassesList || [];
+            dashboardData.problemCauses = data.problemCauses || {};
 
-            // Render SAU KHI CÓ DATA
             renderOverviewCards();
             renderSystemAlerts();
             renderProblemChart();
             renderProblemClassesTable();
-
-            // 3. Hiện dashboard
-            document.body.classList.remove('dashboard-loading');
         })
         .catch(err => {
-            console.error('Lỗi tải dữ liệu dashboard:', err);
+            console.error('❌ Lỗi tải dashboard:', err);
         });
 });
-
-
-// ================= UTILITY FUNCTIONS =================
-
-// Hàm cập nhật dữ liệu dashboard (có thể gọi từ API)
-function updateDashboardData(newData) {
-    // Merge dữ liệu mới với dữ liệu hiện tại
-    Object.assign(dashboardData, newData);
-
-    // Re-render các phần đã thay đổi
-    renderOverviewCards();
-    renderSystemAlerts();
-    renderProblemClassesTable();
-
-    console.log('Dashboard data đã được cập nhật');
-}
-
-// Export functions để có thể gọi từ bên ngoài
-window.AdminDashboard = {
-    updateData: updateDashboardData,
-    data: dashboardData
-};
-
-// ================= LOAD DATA FROM API =================
-
-document.addEventListener('DOMContentLoaded', function () {
-    fetch('/admin/dashboard/api/data')
-        .then(res => res.json())
-        .then(data => {
-            updateDashboardData(data);
-        })
-        .catch(err => {
-            console.error('Lỗi tải dữ liệu dashboard:', err);
-        });
-});
-

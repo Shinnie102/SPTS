@@ -9,71 +9,70 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $notifications = [];
+        return view('admin.adminDashboard');
+    }
 
-        /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ PHÂN CÔNG LỚP THÀNH CÔNG
-        | Điều kiện: lớp có ít nhất 1 class_meeting
-        |--------------------------------------------------------------------------
-        */
-        $assignedClasses = DB::table('class_section as cs')
-            ->join('class_meeting as cm', 'cm.class_section_id', '=', 'cs.class_section_id')
-            ->select('cs.class_code', 'cm.created_at')
-            ->orderByDesc('cm.created_at')
-            ->limit(3)
-            ->get();
+    public function getDashboardData()
+    {
+        try {
+            // 1. Tổng số người dùng
+            $totalUsers = DB::table('user')->count();
 
-        foreach ($assignedClasses as $class) {
-            $notifications[] = [
-                'type' => 'success',
-                'title' => 'Phân công lớp thành công',
-                'message' => "Lớp {$class->class_code} đã được phân công giảng dạy",
-                'time' => $class->created_at,
+            // 2. Tổng số lớp học phần
+            $totalClasses = DB::table('class_section')->count();
+
+            // 3. Số sinh viên có vấn đề
+            $warningStudents = DB::table('enrollment')
+                ->where('enrollment_status_id', 2)
+                ->count();
+
+            // 4. Lớp học phần chưa có buổi học nào
+            $classesWithoutMeeting = DB::table('class_section as cs')
+                ->join('course_version as cv', 'cv.course_version_id', '=', 'cs.course_version_id')
+                ->join('course as c', 'c.course_id', '=', 'cv.course_id')
+                ->leftJoin('class_meeting as cm', 'cm.class_section_id', '=', 'cs.class_section_id')
+                ->whereNull('cm.class_meeting_id')
+                ->select(
+                    'cs.class_code',
+                    'c.course_name'
+                )
+                ->get();
+
+            $problemClasses = $classesWithoutMeeting->count();
+
+            // 5. Format danh sách lớp có vấn đề
+            $problemClassesList = $classesWithoutMeeting->map(function($class) {
+                return [
+                    'class_code' => $class->class_code,
+                    'course_name' => $class->course_name,
+                    'problem_count' => 1
+                ];
+            });
+
+            // 6. Phân tích nguyên nhân
+            $problemCauses = [
+                'Chưa có buổi học' => $problemClasses,
+                'Thiếu điểm danh' => 0,
+                'Thiếu điểm' => 0
             ];
+
+            return response()->json([
+                'error' => false,
+                'cards' => [
+                    'totalUsers' => $totalUsers,
+                    'totalClasses' => $totalClasses,
+                    'warningStudents' => $warningStudents,
+                    'problemClasses' => $problemClasses
+                ],
+                'problemClassesList' => $problemClassesList,
+                'problemCauses' => $problemCauses
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => true,
+                'message' => $e->getMessage()
+            ], 500);
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 2️⃣ HỌC KỲ MỚI ĐƯỢC TẠO (ĐÚNG THEO BẢNG semester)
-        |--------------------------------------------------------------------------
-        */
-        $newSemesters = DB::table('semester')
-            ->orderByDesc('created_at')
-            ->limit(2)
-            ->get();
-
-        foreach ($newSemesters as $sem) {
-            $notifications[] = [
-                'type' => 'warning',
-                'title' => 'Học kỳ mới được tạo',
-                'message' => "Học kỳ {$sem->semester_code}",
-                'time' => $sem->created_at,
-            ];
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 3️⃣ CÓ LỖI DỮ LIỆU / THIẾU PHÂN CÔNG
-        | Điều kiện: lớp chưa có class_meeting
-        |--------------------------------------------------------------------------
-        */
-        $missingAssignClasses = DB::table('class_section as cs')
-            ->leftJoin('class_meeting as cm', 'cm.class_section_id', '=', 'cs.class_section_id')
-            ->whereNull('cm.class_meeting_id')
-            ->select('cs.class_code')
-            ->limit(3)
-            ->get();
-
-        foreach ($missingAssignClasses as $class) {
-            $notifications[] = [
-                'type' => 'danger',
-                'title' => 'Có lỗi dữ liệu / thiếu phân công',
-                'message' => "Lớp {$class->class_code} chưa được phân công giảng dạy",
-                'time' => now(),
-            ];
-        }
-
-        return view('admin.adminDashboard', compact('notifications'));
     }
 }
