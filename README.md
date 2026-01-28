@@ -1,12 +1,10 @@
-# PointC – Student Performance Tracking System
+# SPTS – Student Performance Tracking System
 
 Hệ thống quản lý và theo dõi kết quả học tập sinh viên được xây dựng trên Laravel Framework.
 
 ## Mục lục
 
 - [Giới thiệu](#giới-thiệu)
-- [Mục tiêu](#mục-tiêu)
-- [Phạm vi](#phạm-vi)
 - [Công nghệ sử dụng](#công-nghệ-sử-dụng)
 - [Yêu cầu hệ thống](#yêu-cầu-hệ-thống)
 - [Hướng dẫn cài đặt](#hướng-dẫn-cài-đặt)
@@ -19,7 +17,7 @@ Hệ thống quản lý và theo dõi kết quả học tập sinh viên đượ
 
 ## Giới thiệu
 
-PointC (Student Performance Tracking System) là hệ thống quản lý điểm số sinh viên được xây dựng trên nền tảng web với các chức năng:
+SPTS (Student Performance Tracking System) là hệ thống quản lý điểm số sinh viên được xây dựng trên nền tảng web với các chức năng:
 
 - **Admin**: Quản lý người dùng, môn học, phân quyền hệ thống
 - **Giảng viên**: Nhập điểm, quản lý lớp học, theo dõi sinh viên
@@ -27,74 +25,12 @@ PointC (Student Performance Tracking System) là hệ thống quản lý điểm
 
 ---
 
-## Mục tiêu
-
-### Mục tiêu chung
-
-Xây dựng hệ thống quản lý điểm số sinh viên số hóa, tập trung và minh bạch, thay thế phương thức quản lý thủ công truyền thống.
-
-### Mục tiêu cụ thể
-
-**Về kỹ thuật:**
-- Xây dựng cơ sở dữ liệu quan hệ đảm bảo tính toàn vẹn và nhất quán của dữ liệu
-- Áp dụng kiến trúc MVC (Model-View-Controller) để tổ chức mã nguồn khoa học
-- Triển khai hệ thống xác thực và phân quyền dựa trên vai trò (Role-Based Access Control)
-- Tối ưu hóa trải nghiệm người dùng với giao diện responsive
-
-**Về nghiệp vụ:**
-- Cho phép Admin quản lý toàn bộ người dùng và môn học trong hệ thống
-- Hỗ trợ Giảng viên nhập và quản lý điểm số một cách nhanh chóng, chính xác
-- Giúp Sinh viên tra cứu điểm số và theo dõi kết quả học tập một cách kịp thời
-- Giảm thiểu sai sót trong quy trình nhập liệu và tính toán điểm
-
----
-
-## Phạm vi
-
-### Phạm vi chức năng
-
-Hệ thống PointC bao gồm các chức năng chính:
-
-**Quản lý người dùng:**
-- Đăng ký, đăng nhập, phân quyền tài khoản
-- Quản lý thông tin sinh viên, giảng viên
-- Đổi mật khẩu, cập nhật thông tin cá nhân
-
-**Quản lý môn học:**
-- Thêm, sửa, xóa môn học
-- Phân công giảng viên phụ trách môn học
-- Quản lý danh sách sinh viên theo lớp
-
-**Quản lý điểm số:**
-- Nhập điểm thành phần (chuyên cần, giữa kỳ, cuối kỳ)
-- Tự động tính điểm tổng kết theo công thức
-- Xem bảng điểm theo môn học, theo học kỳ
-- Xuất báo cáo điểm
-
-**Ngoài phạm vi:**
-
-Hệ thống không bao gồm các chức năng:
-- Quản lý học phí và thanh toán
-- Hệ thống thư viện số
-- E-learning và bài giảng trực tuyến
-- Quản lý lịch học và thời khóa biểu
-- Quản lý ký túc xá
-
-### Phạm vi công nghệ
-
-- **Frontend**: HTML5, CSS3, JavaScript, Blade Template Engine
-- **Backend**: PHP 8.2+, Laravel Framework 12.x
-- **Database**: MySQL 8.0+
-- **Server**: Apache (XAMPP) hoặc Laravel Built-in Server
-- **Tools**: Composer, Git, NPM
-
----
-
 ## Công nghệ sử dụng
 
 - **Backend**: Laravel 12.x, PHP 8.2+
-- **Frontend**: Blade Template, HTML5, CSS3, JavaScript
+- **Frontend**: Blade Template, TailwindCSS, HTML5, CSS3, JavaScript
 - **Database**: MySQL 8.0+
+- **Build Tool**: Vite
 - **Server**: Apache (XAMPP) hoặc Laravel Built-in Server
 - **Package Manager**: Composer, NPM
 
@@ -107,7 +43,7 @@ Hệ thống không bao gồm các chức năng:
 - **PHP >= 8.2** (đi kèm XAMPP)
 - **Composer** (quản lý dependencies PHP)
 - **MySQL** (đi kèm XAMPP)
-- **Node.js & NPM** (nếu sử dụng Vite/frontend assets)
+- **Node.js & NPM** (để build frontend assets với Vite)
 - **Git** (để clone và quản lý code)
 - **XAMPP** (môi trường phát triển)
 
@@ -133,15 +69,15 @@ git --version   # Git 2.x+
 
 ```bash
 # Clone dự án
-git clone <repository-url> PointC
+git clone https://github.com/Shinnie102/SPTS.git
 
 # Di chuyển vào thư mục dự án
-cd PointC
+cd SPTS
 ```
 
 **Nếu nhận dự án từ đồng đội:**
 
-- Giải nén file zip vào thư mục `D:\Download\Program\xampp\htdocs\PointC`
+- Giải nén file zip vào thư mục `?:\xampp\htdocs\SPTS`
 - Mở Terminal tại thư mục dự án
 
 ### Bước 3: Cài đặt dependencies
@@ -149,10 +85,8 @@ cd PointC
 ```bash
 # Cài đặt PHP dependencies
 composer install
-composer require phpoffice/phpspreadsheet dompdf/dompdf
 
-
-# Cài đặt Node dependencies (nếu có)
+# Cài đặt Node dependencies
 npm install
 ```
 
@@ -179,14 +113,14 @@ php artisan key:generate
 
 1. **Khởi động XAMPP** → Bật **Apache** và **MySQL**
 2. **Truy cập phpMyAdmin**: http://localhost/phpmyadmin
-3. **Tạo database mới** với tên: `PointC_db` 
+3. **Tạo database mới** với tên: `academic_management` 
 
 ### Bước 4: Cập nhật file `.env`
 
 Mở file `.env` và chỉnh sửa thông tin database:
 
 ```env
-APP_NAME=PointC
+APP_NAME=SPTS
 APP_ENV=local
 APP_KEY=base64:xxxxxxxxxxxx
 APP_DEBUG=true
@@ -195,9 +129,9 @@ APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=PointC_db          # Tên database vừa tạo
-DB_USERNAME=root             # Username MySQL
-DB_PASSWORD=                 # Password
+DB_DATABASE=academic_management    # Tên database vừa tạo
+DB_USERNAME=root                   # Username MySQL
+DB_PASSWORD=                       # Password MySQL
 ```
 
 ### Bước 5: Chạy Migration
@@ -210,7 +144,17 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### Bước 6: Tạo Storage Link
+### Bước 6: Build frontend assets
+
+```bash
+# Build assets cho production
+npm run build
+
+# Hoặc chạy development mode (hot reload)
+npm run dev
+```
+
+### Bước 7: Tạo Storage Link
 
 ```bash
 php artisan storage:link
@@ -220,7 +164,7 @@ php artisan storage:link
 
 ## Chạy dự án
 
-### Laravel Development Server
+### Cách 1: Laravel Development Server
 
 ```bash
 # Chạy server tại port 8000
@@ -230,34 +174,48 @@ php artisan serve
 php artisan serve --port=8080
 ```
 
+### Cách 2: Sử dụng script tự động (khuyến nghị)
+
+```bash
+# Chạy tất cả services cùng lúc (server, queue, logs, vite)
+composer run dev
+```
+
 Truy cập: **http://localhost:8000**
 
 ## Cấu trúc thư mục
 
 ```
-PointC/
+SPTS/
 ├── app/                    # Mã nguồn ứng dụng
+│   ├── Contracts/          # Interface contracts
 │   ├── Http/Controllers/   # Controllers (MVC)
 │   ├── Models/             # Models (Eloquent ORM)
-│   └── ...
+│   ├── Repositories/       # Repository pattern
+│   └── Services/           # Business logic services
 ├── bootstrap/              # Khởi tạo framework
 ├── config/                 # File cấu hình
 ├── database/
 │   ├── migrations/         # Database migrations
-│   └── seeders/            # Database seeders
+│   ├── seeders/            # Database seeders
+│   └── *.sql               # Database backup files
 ├── public/                 # Entry point (index.php)
+│   ├── css/                # Compiled CSS
+│   ├── js/                 # Compiled JavaScript
+│   └── images/             # Static images
 ├── resources/
-│   ├── views/              # Blade templates
-│   └── js/css/             # Frontend assets
+│   ├── css/                # Source CSS files
+│   └── views/              # Blade templates
 ├── routes/
 │   ├── web.php             # Định tuyến web
-│   └── api.php             # Định tuyến API
+│   └── console.php         # Console commands
 ├── storage/                # File tạm, logs
-├── tests/                  # Unit tests
+├── tests/                  # Unit & Feature tests
 ├── .env                    # Cấu hình môi trường (KHÔNG commit)
 ├── artisan                 # Laravel CLI
 ├── composer.json           # PHP dependencies
-└── package.json            # Node dependencies
+├── package.json            # Node dependencies
+└── vite.config.js          # Vite configuration
 ```
 
 ---
@@ -295,17 +253,28 @@ php artisan view:clear
 
 ---
 
-## Đội ngũ phát triển
+## Scripts có sẵn
 
----
+```bash
+# Setup dự án từ đầu
+composer run setup
 
-## Hỗ trợ
+# Chạy development mode với hot reload
+composer run dev
 
-Nếu gặp vấn đề, liên hệ qua:
-- Email:
+# Chạy tests
+composer run test
+
+# Build frontend assets
+npm run build
+
+# Development mode cho frontend
+npm run dev
+```
+
 ---
 
 ## License
 
-Dự án này thuộc về nhóm phát triển PointC - Sử dụng cho mục đích học tập.
+Dự án này sử dụng cho mục đích học tập.
 
