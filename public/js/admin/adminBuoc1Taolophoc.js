@@ -71,35 +71,125 @@
         const data = json.data || {};
 
         addOptions(selects.academicYear, data.academic_years || [], (y) => ({ value: y.id, label: y.name }));
-        // Học kỳ sẽ load khi chọn năm học
         addOptions(selects.semester, [], () => ({}));
         addOptions(selects.faculty, data.faculties || [], (f) => ({ value: f.id, label: f.name }));
-        // Chuyên ngành sẽ load khi chọn khoa
         addOptions(selects.major, [], () => ({}));
-        // Học phần sẽ load khi chọn chuyên ngành
         addOptions(selects.course, [], () => ({}));
         addOptions(selects.timeSlot, data.time_slots || [], (t) => ({ value: t.id, label: `${t.slot_code} (${t.start_time} - ${t.end_time})` }));
         addOptions(selects.room, data.rooms || [], (r) => ({ value: r.id, label: `${r.room_code} - ${r.room_name || ''} (Sức chứa: ${r.capacity || 'N/A'})` }));
 
-        // Generate meeting dates (next 14 days) as button-style checkboxes
+        // --- BẮT ĐẦU: UI chọn lịch học thông minh ---
         if (selects.meetingDate) {
-            const today = new Date();
-            let html = '';
-            for (let i = 0; i < 14; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-                const label = d.toLocaleDateString('vi-VN');
-                const value = d.toISOString().slice(0, 10);
-                const dayName = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'][d.getDay()];
-                html += `<label style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; border: 1px solid #ddd; border-radius: 3px; cursor: pointer; transition: all 0.2s; background: #f9f9f9;" class="date-checkbox-label">
-                    <input type="checkbox" class="meeting-date-checkbox" value="${value}" data-label="${label}" style="cursor: pointer; width: 16px; height: 16px; margin: 0; flex-shrink: 0;" onchange="this.parentElement.style.background=this.checked?'#e3f2fd':'#f9f9f9'; this.parentElement.style.borderColor=this.checked?'#1976d2':'#ddd';">
-                    <span style="font-size: 1rem; flex: 1;">
-                        <div style="font-weight: 500; line-height: 1.2;">${label}</div>
-                        <div style="font-size: 0.85rem; color: #666; line-height: 1;">${dayName}</div>
-                    </span>
-                </label>`;
+            // Inject UI chọn thứ + khoảng ngày
+            const lichhocContainer = selects.meetingDate;
+            lichhocContainer.innerHTML = '';
+            const weekdays = [
+                { label: 'Thứ 2', value: 1 },
+                { label: 'Thứ 3', value: 2 },
+                { label: 'Thứ 4', value: 3 },
+                { label: 'Thứ 5', value: 4 },
+                { label: 'Thứ 6', value: 5 },
+                { label: 'Thứ 7', value: 6 },
+                { label: 'Chủ nhật', value: 0 }
+            ];
+            const ui = document.createElement('div');
+            ui.style.marginBottom = '10px';
+            ui.innerHTML = `
+                <div style="display:flex;gap:18px;flex-wrap:nowrap;margin-bottom:12px;justify-content:flex-start;align-items:center;">
+                    ${weekdays.map(w => `<label style='display:flex;align-items:center;gap:6px;font-size:1.08em;font-weight:500;white-space:nowrap;'><input type='checkbox' class='weekday-picker' value='${w.value}' style='width:1.2em;height:1.2em;accent-color:#0284C7;'>${w.label}</label>`).join('')}
+                </div>
+                <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+                    <span>Từ ngày:</span><input type='date' id='auto-date-start' style='padding:2px 4px;'>
+                    <span>Đến ngày:</span><input type='date' id='auto-date-end' style='padding:2px 4px;'>
+                    <button type='button' id='auto-generate-dates' style='padding:2px 10px;border-radius:3px;border:1px solid #1976d2;background:#1976d2;color:#fff;cursor:pointer;'>Tạo lịch</button>
+                </div>
+                <div id='auto-preview-dates' style='font-size:0.95em;color:#1976d2;margin-bottom:8px;'></div>
+                <div id='auto-checkbox-list' style='display:grid;grid-template-columns:repeat(3,1fr);gap:6px;'></div>
+            `;
+            lichhocContainer.appendChild(ui);
+
+            // Preview + render lịch học
+            function generateDates() {
+                const checkedWeekdays = Array.from(ui.querySelectorAll('.weekday-picker:checked')).map(cb => +cb.value);
+                const start = ui.querySelector('#auto-date-start').value;
+                const end = ui.querySelector('#auto-date-end').value;
+                if (!checkedWeekdays.length || !start || !end) return [];
+                const startDate = new Date(start);
+                const endDate = new Date(end);
+                let cur = new Date(startDate);
+                const result = [];
+                while (cur <= endDate) {
+                    if (checkedWeekdays.includes(cur.getDay())) {
+                        result.push(new Date(cur));
+                    }
+                    cur.setDate(cur.getDate() + 1);
+                }
+                return result;
             }
-            selects.meetingDate.innerHTML = html;
+
+            function renderPreview() {
+                const dates = generateDates();
+                const preview = ui.querySelector('#auto-preview-dates');
+                if (!dates.length) {
+                    preview.textContent = '';
+                    return;
+                }
+                preview.innerHTML = '<b>Các buổi học sẽ diễn ra:</b><br>' + dates.map(d => {
+                    const dayName = ['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
+                    return `${dayName} – ${d.toLocaleDateString('vi-VN')}`;
+                }).join('<br>');
+            }
+
+            ui.querySelectorAll('.weekday-picker, #auto-date-start, #auto-date-end').forEach(el => {
+                el.addEventListener('change', renderPreview);
+            });
+
+            // Khi bấm "Tạo lịch" sẽ render checkbox ngày học
+            ui.querySelector('#auto-generate-dates').addEventListener('click', () => {
+                const dates = generateDates();
+                const checkboxList = ui.querySelector('#auto-checkbox-list');
+                checkboxList.innerHTML = '';
+                dates.forEach(d => {
+                    const value = d.toISOString().slice(0,10);
+                    const label = d.toLocaleDateString('vi-VN');
+                    const dayName = ['CN','T2','T3','T4','T5','T6','T7'][d.getDay()];
+                    const wrapper = document.createElement('label');
+                    wrapper.style.display = 'flex';
+                    wrapper.style.alignItems = 'center';
+                    wrapper.style.justifyContent = 'center';
+                    wrapper.style.gap = '8px';
+                    wrapper.style.padding = '8px';
+                    wrapper.style.border = '1px solid #ddd';
+                    wrapper.style.borderRadius = '3px';
+                    wrapper.style.cursor = 'pointer';
+                    wrapper.style.transition = 'all 0.2s';
+                    wrapper.style.background = '#f9f9f9';
+                    wrapper.classList.add('date-checkbox-label');
+                    const input = document.createElement('input');
+                    input.type = 'checkbox';
+                    input.className = 'meeting-date-checkbox';
+                    input.value = value;
+                    input.dataset.label = label;
+                    input.checked = true;
+                    input.style.cursor = 'pointer';
+                    input.style.width = '16px';
+                    input.style.height = '16px';
+                    input.style.margin = '0';
+                    input.style.flexShrink = '0';
+                    input.onchange = function () {
+                        this.parentElement.style.background = this.checked ? '#e3f2fd' : '#f9f9f9';
+                        this.parentElement.style.borderColor = this.checked ? '#1976d2' : '#ddd';
+                    };
+                    const span = document.createElement('span');
+                    span.style.fontSize = '1rem';
+                    span.style.flex = '1';
+                    span.innerHTML = `<div style="font-weight: 500; line-height: 1.2;">${label}</div><div style="font-size: 0.85rem; color: #666; line-height: 1;">${dayName}</div>`;
+                    wrapper.appendChild(input);
+                    wrapper.appendChild(span);
+                    checkboxList.appendChild(wrapper);
+                });
+                renderPreview();
+            });
         }
     }
 

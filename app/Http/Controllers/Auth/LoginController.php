@@ -52,7 +52,7 @@ class LoginController extends Controller
         }
 
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => 'Mật khẩu hoặc email không đúng.',
         ])->onlyInput('email');
     }
 
