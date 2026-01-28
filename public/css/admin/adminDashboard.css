@@ -384,14 +384,58 @@
     .issue-table {
         font-size: 12px;
     }
-    
+
     .issue-table th,
     .issue-table td {
         padding: 10px 12px;
     }
-    
+
     .issue-list-section {
         padding: 16px;
         overflow-x: auto;
     }
+    /* ===== ALERT SUCCESS ===== */
+.alert-success {
+    border-left-color: #10b981;
+    background: #d1fae5;
+}
+
+.alert-success:hover {
+    background: #a7f3d0;
+}
+
+/* ===== ALERT CRITICAL ===== */
+.alert-critical {
+    border-left-color: #dc2626;
+    background: #fee2e2;
+    animation: pulse-alert 2s infinite;
+}
+
+.alert-critical:hover {
+    background: #fecaca;
+}
+
+@keyframes pulse-alert {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.9;
+    }
+}
+
+/* ===== LOADING STATE ===== */
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #f3f4f6;
+    border-top-color: #2196F3;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 }
