@@ -149,6 +149,8 @@ cd PointC
 ```bash
 # Cài đặt PHP dependencies
 composer install
+composer require phpoffice/phpspreadsheet dompdf/dompdf
+
 
 # Cài đặt Node dependencies (nếu có)
 npm install

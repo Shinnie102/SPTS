@@ -3,6 +3,7 @@
 namespace App\Contracts;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 
 /**
  * Interface StudentScoreRepositoryInterface
@@ -48,7 +49,7 @@ interface StudentScoreRepositoryInterface
      * Lấy danh sách môn rớt
      *
      * @param int $studentId
-     * @return Collection
+     * @return SupportCollection
      */
-    public function getFailedCourses(int $studentId): Collection;
+    public function getFailedCourses(int $studentId): SupportCollection;
 }

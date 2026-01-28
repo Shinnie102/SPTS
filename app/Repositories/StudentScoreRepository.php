@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Contracts\StudentScoreRepositoryInterface;
 use App\Models\StudentScore;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -81,7 +82,6 @@ class StudentScoreRepository implements StudentScoreRepositoryInterface
         return DB::table('student_score')
             ->join('enrollment', 'student_score.enrollment_id', '=', 'enrollment.enrollment_id')
             ->where('enrollment.student_id', $studentId)
-            ->where('enrollment.enrollment_status_id', self::STATUS_COMPLETED)
             ->whereNotNull('student_score.score_value')
             ->avg('student_score.score_value');
     }
@@ -100,7 +100,7 @@ class StudentScoreRepository implements StudentScoreRepositoryInterface
     /**
      * {@inheritDoc}
      */
-    public function getFailedCourses(int $studentId): Collection
+    public function getFailedCourses(int $studentId): SupportCollection
     {
         return DB::table('enrollment')
             ->join('class_section', 'enrollment.class_section_id', '=', 'class_section.class_section_id')
@@ -108,13 +108,13 @@ class StudentScoreRepository implements StudentScoreRepositoryInterface
             ->join('course', 'course_version.course_id', '=', 'course.course_id')
             ->leftJoin('student_score', 'enrollment.enrollment_id', '=', 'student_score.enrollment_id')
             ->where('enrollment.student_id', $studentId)
-            ->where('enrollment.enrollment_status_id', self::STATUS_COMPLETED)
-            ->groupBy('enrollment.enrollment_id', 'course.course_name')
-            ->havingRaw('AVG(student_score.score_value) < ? OR AVG(student_score.score_value) IS NULL', [self::PASSING_SCORE])
+            ->whereNotNull('student_score.score_value')
+            ->where('student_score.score_value', '<', 4.0)
             ->select(
                 'course.course_name',
-                DB::raw('COALESCE(AVG(student_score.score_value), 0) as avg_score')
+                'student_score.score_value as avg_score'
             )
+            ->distinct()
             ->get();
     }
 }

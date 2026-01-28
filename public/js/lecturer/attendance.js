@@ -262,7 +262,9 @@ async function loadAttendanceData(meetingId) {
             updateLockStatus(isLocked);
             
             // Cập nhật dropdown nếu có
-            const selectTrigger = document.querySelector('.select-trigger .current-text');
+            const sessionSelect = document.getElementById('session-select');
+            const sessionWrapper = sessionSelect ? sessionSelect.closest('.select-wrapper') : null;
+            const selectTrigger = sessionWrapper ? sessionWrapper.querySelector('.select-trigger .current-text') : null;
             if (selectTrigger) {
                 const selectedOption = document.querySelector(`#session-select option[value="${meetingId}"]`);
                 if (selectedOption) {
@@ -298,6 +300,14 @@ function updateLockStatus(locked) {
     statusButtons.forEach(btn => {
         btn.disabled = locked;
     });
+
+    // Disable session controls when locked
+    const sessionSelect = document.getElementById('session-select');
+    if (sessionSelect) sessionSelect.disabled = locked;
+    const addMeetingBtn = document.getElementById('add-meeting-btn');
+    if (addMeetingBtn) addMeetingBtn.disabled = locked;
+    const datePicker = document.getElementById('meeting-date-picker');
+    if (datePicker) datePicker.disabled = locked;
     
     // Thêm/xóa class table-locked
     const tableContainer = document.querySelector('.attendance-table-container');

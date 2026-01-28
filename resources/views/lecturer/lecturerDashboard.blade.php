@@ -38,7 +38,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar"></div>
                         <h2 class="stat-title">Lớp phụ trách</h2>
-                       <p class="stat-number">{{ $totalClasses }}</p>
+                       <p class="stat-number" data-stat="totalClasses">{{ $totalClasses ?? 0 }}</p>
                         <p class="stat-subtitle">Đang giảng dạy</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-4.svg') }}" alt="Lớp học icon" />
                     </article>
@@ -47,7 +47,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar warning"></div>
                         <h2 class="stat-title">Cảnh báo</h2>
-                        <p class="stat-number warning">{{ $warnings }}</p>
+                        <p class="stat-number warning" data-stat="warnings">{{ $warnings ?? 0 }}</p>
                         <p class="stat-subtitle">Sinh viên có nguy cơ học vụ</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-5.svg') }}" alt="Cảnh báo icon" />
                     </article>
@@ -56,7 +56,7 @@
                     <article class="stat-card">
                         <div class="stat-color-bar"></div>
                         <h2 class="stat-title">Nhập điểm</h2>
-                        <p class="stat-number">{{ $completedGrading }}</p>
+                        <p class="stat-number" data-stat="completedGrading">{{ $completedGrading ?? 0 }}</p>
                         <p class="stat-subtitle">Lớp hoàn tất nhập điểm</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-6.svg') }}" alt="Nhập điểm icon" />
                     </article>
@@ -65,7 +65,7 @@
                     <article class="stat-card warning-accent">
                         <div class="stat-color-bar warning"></div>
                         <h2 class="stat-title warning">Cần nhập điểm</h2>
-                        <p class="stat-number warning">{{ $pendingGrading }}</p>
+                        <p class="stat-number warning" data-stat="pendingGrading">{{ $pendingGrading ?? 0 }}</p>
                         <p class="stat-subtitle">Lớp sắp đến hạn.</p>
                         <img class="stat-icon" src="{{ asset('lecturer/img/vector-7.svg') }}" alt="Cần nhập điểm icon" />
                     </article>
@@ -90,7 +90,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-@foreach ($latestClasses as $class)
+@forelse (($latestClasses ?? []) as $class)
 <tr>
     <td>{{ $class->course_code }}</td>
     <td>{{ $class->course_name }}</td>
@@ -101,12 +101,16 @@
         </span>
     </td>
     <td>
-        <a href="{{ route('lecturer.class.detail', $class->class_section_id) }}">
+        <a href="{{ route('lecturer.attendance', $class->class_section_id) }}">
             Xem
         </a>
     </td>
 </tr>
-@endforeach
+@empty
+<tr>
+    <td colspan="5" style="text-align:center; opacity: 0.7;">Chưa có lớp học phần</td>
+</tr>
+@endforelse
 </tbody>
 
                         </table>
@@ -126,12 +130,12 @@
                                 <section class="chart-axis" aria-label="Chart visualization">
                                     <div class="main-chart">
                                         <aside class="y-axis-left" role="list" aria-label="Y-axis values">
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 100">100</span>
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 80">80</span>
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 60">60</span>
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 40">40</span>
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 20">20</span>
-                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis value 0">0</span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick"></span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick"></span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick"></span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick"></span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick"></span>
+                                            <span class="y-axis-label" role="listitem" aria-label="Y-axis tick">0</span>
                                         </aside>
                                         <div class="graphi-grid" role="img" aria-label="Bar chart showing student distribution by grade ranges">
                                             <div class="x-lines" aria-hidden="true">
@@ -175,6 +179,10 @@
                                         </div>
                                     </div>
                                 </footer>
+
+                                <p class="chart-subtitle" style="margin-top: 8px;">
+                                    Tổng số sinh viên có điểm: <strong id="score-total-students">0</strong>
+                                </p>
                             </main>
                         </div>
                     </section>
@@ -184,7 +192,6 @@
                         <!-- Thêm liên kết vào tiêu đề cảnh báo -->
                             <h3 class="warnings-title" id="warning-heading">Cảnh báo học vụ</h3>
                             <p class="warnings-subtitle">Cảnh báo sớm sinh viên có nguy cơ</p>
-                        </a>
 
                         <div class="warnings-list" id="warnings-list">
                             <!-- Warning items will be rendered by JavaScript (chỉ 4 cảnh báo) -->
@@ -196,7 +203,12 @@
     </div>
 
     <!-- Javascript -->
-    <script src="{{ asset('js/lecturer/data.js') }}"></script>
+    <script>
+        window.LecturerDashboardConfig = {
+            apiUrl: "{{ route('lecturer.dashboard.api.data') }}",
+            warningIconUrl: "{{ asset('lecturer/img/vector-8.svg') }}"
+        };
+    </script>
     <script src="{{ asset('js/lecturer/render.js') }}"></script>
 
 </body>

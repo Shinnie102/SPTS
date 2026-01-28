@@ -20,6 +20,10 @@ class AttendanceService
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
 
+        $currentClass->loadMissing('status');
+        $statusCode = strtoupper((string) ($currentClass->status?->code ?? ''));
+        $isClassLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
+
         $classes = ClassSection::with(['courseVersion.course'])
             ->where('lecturer_id', $lecturerId)
             ->orderBy('class_section_id', 'desc')
@@ -30,7 +34,6 @@ class AttendanceService
             ->get();
 
         $enrollments = Enrollment::where('class_section_id', $classSectionId)
-            ->whereIn('enrollment_status_id', [1, 2])
             ->with(['student'])
             ->get();
 
@@ -56,6 +59,7 @@ class AttendanceService
                 'attendance_status_id' => $attendance ? $attendance->attendance_status_id : null,
                 'status_name' => $attendance ?
                     ($attendanceStatuses[$attendance->attendance_status_id]->name ?? null) : null,
+                'is_attendable' => in_array((int) $enrollment->enrollment_status_id, [1, 2], true),
             ];
         }
 
@@ -64,6 +68,9 @@ class AttendanceService
             $attendanceCount = Attendance::where('class_meeting_id', $currentMeeting->class_meeting_id)->count();
             $isAttendanceLocked = $attendanceCount > 0;
         }
+
+        // Class-level lock overrides meeting-level lock
+        $isAttendanceLocked = $isClassLocked || $isAttendanceLocked;
 
         return compact(
             'currentClass',
@@ -77,16 +84,19 @@ class AttendanceService
 
     public function getAttendanceData(int $classId, int $meetingId, int $lecturerId): array
     {
-        ClassSection::where('class_section_id', $classId)
+        $class = ClassSection::where('class_section_id', $classId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        $isClassLocked = in_array($statusCode, ['COMPLETED', 'CANCELLED'], true);
 
         $meeting = ClassMeeting::where('class_meeting_id', $meetingId)
             ->where('class_section_id', $classId)
             ->firstOrFail();
 
         $enrollments = Enrollment::where('class_section_id', $classId)
-            ->whereIn('enrollment_status_id', [1, 2])
             ->with(['student'])
             ->get();
 
@@ -107,10 +117,12 @@ class AttendanceService
                 'attendance_status_id' => $attendance ? $attendance->attendance_status_id : null,
                 'status_name' => $attendance ?
                     ($attendanceStatuses[$attendance->attendance_status_id]->name ?? null) : null,
+                'is_attendable' => in_array((int) $enrollment->enrollment_status_id, [1, 2], true),
             ];
         }
 
         $isLocked = Attendance::where('class_meeting_id', $meetingId)->count() > 0;
+        $isLocked = $isClassLocked || $isLocked;
 
         return [
             'success' => true,
@@ -125,9 +137,18 @@ class AttendanceService
      */
     public function saveAttendance(Request $request, int $classId, int $lecturerId): array
     {
-        ClassSection::where('class_section_id', $classId)
+        $class = ClassSection::where('class_section_id', $classId)
             ->where('lecturer_id', $lecturerId)
             ->firstOrFail();
+
+        $class->loadMissing('status');
+        $statusCode = strtoupper((string) ($class->status?->code ?? ''));
+        if (in_array($statusCode, ['COMPLETED', 'CANCELLED'], true)) {
+            return [423, [
+                'success' => false,
+                'message' => 'Lớp đã ở trạng thái Đã hoàn thành hoặc Đã hủy nên không thể chỉnh sửa điểm danh.',
+            ]];
+        }
 
         // Không cho lưu vào buổi đã tồn tại trong nghiệp vụ hiện tại
         if ($request->filled('meeting_id')) {
@@ -165,6 +186,25 @@ class AttendanceService
             ]];
         }
 
+        // Chỉ cho phép điểm danh với sinh viên ở trạng thái PENDING/CONFIRMED
+        $eligibleEnrollmentIds = Enrollment::where('class_section_id', $classId)
+            ->whereIn('enrollment_status_id', [1, 2])
+            ->pluck('enrollment_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        $filteredAttendance = array_values(array_filter(
+            $validated['attendance'],
+            fn ($row) => in_array((int) $row['enrollment_id'], $eligibleEnrollmentIds, true)
+        ));
+
+        if (count($filteredAttendance) === 0) {
+            return [422, [
+                'success' => false,
+                'message' => 'Không có sinh viên hợp lệ để điểm danh cho lớp này.',
+            ]];
+        }
+
         if (!Schema::hasTable('meeting_status')) {
             return [500, [
                 'success' => false,
@@ -197,7 +237,7 @@ class AttendanceService
                 'note' => null,
             ]);
 
-            foreach ($validated['attendance'] as $row) {
+            foreach ($filteredAttendance as $row) {
                 Attendance::create([
                     'enrollment_id' => $row['enrollment_id'],
                     'class_meeting_id' => $meeting->class_meeting_id,

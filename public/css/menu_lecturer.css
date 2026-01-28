@@ -21,15 +21,17 @@ html {
     width: 5rem;
     border-right: 1px solid #DEDCDC;
     
-    /* Sticky positioning */
-    position: sticky;
-    top: 0;
+    /* Fixed positioning */
+    position: fixed;
+    top: 3.5rem;
+    left: 0;
     
     /* Chiều cao bằng viewport, không overflow ở đây */
-    height: 100vh;
+    height: calc(100vh - 3.5rem);
     
     /* Tránh overflow-y: hidden | auto | scroll từ cha */
     flex-shrink: 0;
+    z-index: 999;
 }
 
 /* Menu items container - cuộn riêng bên trong */

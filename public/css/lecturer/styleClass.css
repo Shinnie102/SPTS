@@ -187,7 +187,64 @@
 .pagination-container {
   margin-top: 30px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6b7280;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  padding: 6px 12px;
+  border-radius: 999px;
+  line-height: 1.4;
+}
+
+.pagination-links {
+  display: flex;
   justify-content: center;
+}
+
+.pagination-links .pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+.pagination-links .page-item .page-link {
+  min-width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  color: #0f172a;
+  background: #ffffff;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.pagination-links .page-item .page-link:hover {
+  background: #eff6ff;
+  border-color: #0088f0;
+  color: #0088f0;
+}
+
+.pagination-links .page-item.active .page-link {
+  background: #0088f0;
+  border-color: #0088f0;
+  color: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 136, 240, 0.2);
+}
+
+.pagination-links .page-item.disabled .page-link {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 /* Thông báo */

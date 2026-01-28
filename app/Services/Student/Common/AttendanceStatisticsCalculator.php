@@ -67,17 +67,17 @@ class AttendanceStatisticsCalculator
 
         // Lấy thông tin course, semester, year
         $classSection = $enrollment->classSection;
-        $course = $classSection->courseVersion->course;
-        $semester = $classSection->semester;
-        $academicYear = $semester->academicYear;
+        $course = $classSection?->courseVersion?->course;
+        $semester = $classSection?->semester;
+        $academicYear = $semester?->academicYear;
 
         return [
-            'class_code' => $classSection->class_code ?? 'N/A',
-            'code' => $course->course_code,
-            'name' => $course->course_name,
-            'semester' => $semester->semester_code,
-            'semesterName' => $semester->semester_code, 
-            'year' => $academicYear->year_code,
+            'class_code' => $classSection?->class_code ?? 'N/A',
+            'code' => $course?->course_code ?? 'N/A',
+            'name' => $course?->course_name ?? 'N/A',
+            'semester' => $semester?->semester_code ?? 'N/A',
+            'semesterName' => $semester?->semester_code ?? 'N/A', 
+            'year' => $academicYear?->year_code ?? 'N/A',
             'totalSessions' => $totalSessions,
             'present' => $present,
             'absent' => $absent,

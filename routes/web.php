@@ -218,6 +218,9 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
 
     Route::get('/dashboard', [LecturerDashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/dashboard/api/data', [LecturerDashboardController::class, 'getDashboardData'])
+        ->name('dashboard.api.data');
+
     // ✅ Route đánh dấu đã đọc thông báo
     Route::post('/notifications/mark-all-read', [LecturerDashboardController::class, 'markAllRead'])
         ->name('notifications.markAllRead');
@@ -240,6 +243,7 @@ Route::middleware(['auth', 'role:LECTURER'])->prefix('lecturer')->name('lecturer
     Route::post('/class/{id}/grading/lock', [GradingController::class, 'lockGrades'])->name('grading.lock');
 
     Route::get('/class/{id}/status', [ClassStatusController::class, 'show'])->name('class.status');
+    Route::post('/class/{id}/status/lock', [ClassStatusController::class, 'lock'])->name('class.status.lock');
     Route::get('/class/{id}/export-scores', [ClassController::class, 'exportScores'])->name('class.exportScores');
 
     Route::get('/class/{id}/report', [ReportController::class, 'report'])->name('report');

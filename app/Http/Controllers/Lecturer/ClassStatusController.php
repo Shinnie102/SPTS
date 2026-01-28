@@ -27,4 +27,16 @@ class ClassStatusController extends Controller
 
         return view('lecturer.classStatus', $viewData);
     }
+
+    /**
+     * POST /lecturer/class/{id}/status/lock
+     * Lock class data by moving class_section_status to COMPLETED.
+     */
+    public function lock(Request $request, $id, ClassStatusService $classStatusService)
+    {
+        $lecturerId = Auth::id();
+
+        [$status, $payload] = $classStatusService->lockClass((int) $id, (int) $lecturerId);
+        return response()->json($payload, $status);
+    }
 }
