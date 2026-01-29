@@ -70,7 +70,7 @@ class StudentScoreService
 
         // Xử lý dữ liệu theo semester
         $groupedData = $this->groupBySemester($enrollments);
-        
+
         // Tính tổng quan (sử dụng ScoreCalculator)
         $summary = $this->calculator->calculateCumulativeGPA($groupedData);
 
@@ -92,19 +92,20 @@ class StudentScoreService
 
         foreach ($enrollments as $enrollment) {
             $classSection = $enrollment->classSection;
-            
+
             if (!$classSection || !$classSection->semester) {
                 continue;
             }
 
             $semester = $classSection->semester;
-            $semesterKey = $semester->semester_code;
+            $academicYear = $semester->academicYear;
+            $semesterKey = $semester->semester_code . '_' . ($academicYear ? $academicYear->academic_year_id : 'no_year');
 
             if (!isset($grouped[$semesterKey])) {
                 // Sử dụng ScoreSemesterGrouper để format semester name và sort key
                 $semesterName = $this->grouper->formatSemesterName($semester);
-                $sortKey = $this->grouper->createSortKey($semesterKey);
-                
+                $sortKey = $this->grouper->createSortKey($semester);
+
                 // Lấy danh sách components cho semester này
                 $classGradingScheme = $classSection->classGradingScheme;
                 $components = $classGradingScheme?->gradingScheme?->gradingComponents ?? collect();
@@ -115,19 +116,20 @@ class StudentScoreService
                         'weight' => $comp->weight_percent
                     ];
                 })->toArray();
-                
+
                 $grouped[$semesterKey] = [
                     'semester_name' => $semesterName,
                     'sort_key' => $sortKey,
-                    'gpa' => 0,
-                    'credits' => 0,
+                    'courses' => [],
                     'components' => $componentList,
-                    'courses' => []
+                    'credits' => 0,
+                    'gpa' => null,
+                    'progress' => 0
                 ];
             }
 
             $courseData = $this->processCourseScore($enrollment);
-            
+
             if ($courseData) {
                 $grouped[$semesterKey]['courses'][] = $courseData;
             }

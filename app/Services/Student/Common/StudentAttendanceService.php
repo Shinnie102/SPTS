@@ -100,11 +100,22 @@ class StudentAttendanceService
         $grouped = [];
         
         foreach ($courseStats as $stat) {
-            $semesterKey = $stat['semesterName'];
+            // Tạo key duy nhất cho semester bằng cách kết hợp semester code và year
+            $semesterKey = $stat['semesterName'] . '_' . $stat['year'];
             
             if (!isset($grouped[$semesterKey])) {
-                // Sử dụng ScoreSemesterGrouper để format semester name và sort key
-                $semesterName = $this->semesterGrouper->formatSemesterName($semesterKey);
+                // Tạo semester name format "Học kỳ X - Năm YYYY-YYYY"
+                $semesterCode = $stat['semesterName'];
+                $yearCode = $stat['year'];
+                
+                if (preg_match('/HK(\d+)/', $semesterCode, $matches)) {
+                    $semesterNumber = $matches[1];
+                    $semesterName = "Học kỳ {$semesterNumber} - Năm {$yearCode}";
+                } else {
+                    $semesterName = $semesterCode;
+                }
+                
+                // Sử dụng ScoreSemesterGrouper để tạo sort key
                 $sortKey = $this->semesterGrouper->createSortKey($semesterKey);
                 
                 $grouped[$semesterKey] = [

@@ -65,6 +65,9 @@ class EnrollmentRepository implements EnrollmentRepositoryInterface
     {
         return $this->model
             ->where('student_id', $studentId)
+            ->whereHas('classSection.semester.academicYear', function($query) {
+                $query->whereIn('status_id', [1, 2]); // ACTIVE or COMPLETED
+            })
             ->with([
                 'classSection.courseVersion.course',
                 'classSection.semester.academicYear',
