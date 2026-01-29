@@ -350,7 +350,7 @@
         const json = await res.json();
         if (res.ok && json.success) {
             if (isEditMode) {
-                window.location.href = `/admin/lop-hoc/${classSectionId}/chi-tiet`;
+                window.location.href = `/admin/lop-hoc/${classSectionId}/sua-buoc-2`;
             } else {
                 window.location.href = '/admin/lop-hoc/tao-buoc-2';
             }
@@ -550,7 +550,7 @@
         
         // Update button text for edit mode
         if (isEditMode && continueBtn) {
-            continueBtn.textContent = 'Cập nhật';
+            continueBtn.textContent = 'Tiếp tục';
         }
         
         // Load existing data in edit mode
