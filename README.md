@@ -86,6 +86,9 @@ cd SPTS
 # Cài đặt PHP dependencies
 composer install
 
+# Cài đặt các thư viện PHP bổ sung (Excel, PDF)
+composer require phpoffice/phpspreadsheet dompdf/dompdf
+
 # Cài đặt Node dependencies
 npm install
 ```
